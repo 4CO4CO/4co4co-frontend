@@ -5,11 +5,11 @@ on:
     types:
       - opened
       - edited
+      - reopened
   pull_request:
     types:
       - opened
       - reopened
-  workflow_dispatch:
 
 jobs:
   label:

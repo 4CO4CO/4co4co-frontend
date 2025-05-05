@@ -2,10 +2,9 @@ name: Auto Assign
 
 on:
   pull_request:
-    types: [opened, ready_for_review]
+    types: [opened, ready_for_review, reopened]
   issues:
-    types: [opened]
-  workflow_dispatch:
+    types: [opened, reopened]
 
 jobs:
   assign:
