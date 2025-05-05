@@ -1,60 +1,68 @@
 filters:
   - label: ':bug: fix'
     regexs:
-      - \bFix\b
-      - \bfix\b
+      - /\b[Ff]ix\b/
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':sparkles: FEAT'
     regexs:
-      - \bFeat\b
-      - \bfeat\b
-      - \bFeature\b
-      - \bfeature\b
+      - /\b[Ff]eat\b/
+      - /\b[Ff]eature\b/
+    events: [issues, pull_request]
     targets: [title]
 
   - label: ':memo: DOCS'
     regexs:
-      - \bDocs\b
-      - \bdocs\b
-      - \bREADME\b
+      - /\b[Dd]ocs\b/
+      - /\bREADME\b/
+    events: [pull_request]
+    targets: [title, comment]
 
   - label: ':hammer_and_wrench: CHORE'
     regexs:
-      - \bChore\b
-      - \bchore\b
+      - /\b[Cc]hore\b/
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':lipstick: DESIGN'
     regexs:
-      - \bDesign\b
-      - \bdesign\b
+      - /\b[Dd]esign\b/
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':art: STYLE'
     regexs:
-      - \bStyle\b
-      - \bstyle\b
+      - /\b[Ss]tyle\b/
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':mailbox_with_mail: API'
     regexs:
-      - \bAPI\b
-      - \bapi\b
+      - /\bAPI\b/i
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':recycle: REFACTOR'
     regexs:
-      - \bRefactor\b
-      - \brefactor\b
+      - /\b[Rr]efactor\b/
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':wrench: INIT'
     regexs:
-      - \bINIT\b
-      - \bInit\b
-      - \binit\b
+      - /\binit\b/i
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':ambulance: !HOTFIX'
     regexs:
-      - \bHOTFIX\b
-      - \bhotfix\b
+      - /\bhotfix\b/i
+    events: [issues, pull_request]
+    targets: [title, comment]
 
   - label: ':bookmark: RELEASE'
     regexs:
-      - \bRelease\b
-      - \brelease\b
+      - /\brelease\b/i
+    events: [issues, pull_request]
+    targets: [title, comment]
