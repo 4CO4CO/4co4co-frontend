@@ -6,7 +6,7 @@ on:
     types: [opened]
 
 jobs:
-  add-to-project:
+  add_to_project::
     runs-on: ubuntu-latest
 
     permissions:
