@@ -8,6 +8,12 @@ on:
 jobs:
   add-to-project:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
     steps:
       - name: Link issue/PR to project
         uses: actions/add-to-project@v1
