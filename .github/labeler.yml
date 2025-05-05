@@ -1,63 +1,59 @@
 filters:
   - label: ':bug: fix'
-    include:
-      - '\bFix\b'
-      - '\bfix\b'
+    regexs:
+      - \bFix\b
+      - \bfix\b
 
   - label: ':sparkles: FEAT'
-    include:
-      - '\bFeat\b'
-      - '\bfeat\b'
-      - '\bFeature\b'
-      - '\bfeature\b'
+    regexs:
+      - \bFeat\b
+      - \bfeat\b
+      - \bFeature\b
+      - \bfeature\b
 
   - label: ':memo: DOCS'
-    include:
-      - '\bDocs\b'
-      - '\bdocs\b'
-      - '\bREADME\b'
+    regexs:
+      - \bDocs\b
+      - \bdocs\b
+      - \bREADME\b
 
   - label: ':hammer_and_wrench: CHORE'
-    include:
-      - '\bChore\b'
-      - '\bchore\b'
+    regexs:
+      - \bChore\b
+      - \bchore\b
 
   - label: ':lipstick: DESIGN'
-    include:
-      - '\bDesign\b'
-      - '\bdesign\b'
+    regexs:
+      - \bDesign\b
+      - \bdesign\b
 
   - label: ':art: STYLE'
-    include:
-      - '\bStyle\b'
-      - '\bstyle\b'
+    regexs:
+      - \bStyle\b
+      - \bstyle\b
 
   - label: ':mailbox_with_mail: API'
-    include:
-      - '\bAPI\b'
-      - '\bapi\b'
+    regexs:
+      - \bAPI\b
+      - \bapi\b
 
   - label: ':recycle: REFACTOR'
-    include:
-      - '\bRefactor\b'
-      - '\brefactor\b'
+    regexs:
+      - \bRefactor\b
+      - \brefactor\b
 
   - label: ':wrench: INIT'
-    include:
-      - '\bINIT\b'
-      - '\bInit\b'
-      - '\binit\b'
+    regexs:
+      - \bINIT\b
+      - \bInit\b
+      - \binit\b
 
   - label: ':ambulance: !HOTFIX'
-    include:
-      - '\bHOTFIX\b'
-      - '\bhotfix\b'
+    regexs:
+      - \bHOTFIX\b
+      - \bhotfix\b
 
   - label: ':bookmark: RELEASE'
-    include:
-      - '\bRelease\b'
-      - '\brelease\b'
-
-enable:
-  issues: true
-  prs: true
+    regexs:
+      - \bRelease\b
+      - \brelease\b

@@ -19,3 +19,4 @@ jobs:
       - uses: hkusu/review-assign-action@v1
         with:
           assignees: ${{ github.actor }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
