@@ -26,4 +26,3 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           disable-bot: true
-          config-file-name: .github/labeler.yml

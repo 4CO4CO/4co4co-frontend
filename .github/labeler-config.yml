@@ -10,6 +10,7 @@ filters:
       - \bfeat\b
       - \bFeature\b
       - \bfeature\b
+    targets: [title]
 
   - label: ':memo: DOCS'
     regexs:
