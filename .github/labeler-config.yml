@@ -3,7 +3,7 @@ filters:
     regexs:
       - /\b[Ff]ix\b/
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':sparkles: FEAT'
     regexs:
@@ -17,52 +17,52 @@ filters:
       - /\b[Dd]ocs\b/
       - /\bREADME\b/
     events: [pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':hammer_and_wrench: CHORE'
     regexs:
       - /\b[Cc]hore\b/
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':lipstick: DESIGN'
     regexs:
       - /\b[Dd]esign\b/
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':art: STYLE'
     regexs:
       - /\b[Ss]tyle\b/
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':mailbox_with_mail: API'
     regexs:
       - /\bAPI\b/i
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':recycle: REFACTOR'
     regexs:
       - /\b[Rr]efactor\b/
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':wrench: INIT'
     regexs:
       - /\binit\b/i
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':ambulance: !HOTFIX'
     regexs:
       - /\bhotfix\b/i
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
 
   - label: ':bookmark: RELEASE'
     regexs:
       - /\brelease\b/i
     events: [issues, pull_request]
-    targets: [title, comment]
+    targets: [title]
