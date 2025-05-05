@@ -1,0 +1,27 @@
+enable:
+  issues: true
+  prs: true
+
+labels:
+  ":bug: fix":
+    include: ['\bFix\b', '\bfix\b']
+  ":sparkles: FEAT":
+    include: ['\bFeat\b', '\bfeat\b', '\bFeature\b', '\bfeature\b']
+  ":memo: DOCS":
+    include: ['\bDocs\b', '\bdocs\b', '\bREADME\b']
+  ":hammer_and_wrench: CHORE":
+    include: ['\bChore\b', '\bchore\b']
+  ":lipstick: DESIGN":
+    include: ['\bDesign\b', '\bdesign\b']
+  ":art: STYLE":
+    include: ['\bStyle\b', '\bstyle\b']
+  ":mailbox_with_mail: API":
+    include: ['\bAPI\b', '\bapi\b']
+  ":recycle: REFACTOR":
+    include: ['\bRefactor\b', '\brefactor\b']
+  ":wrench: INIT":
+    include: ['\bINIT\b', '\bInit\b', '\binit\b']
+  ":ambulance: !HOTFIX":
+    include: ['\bHOTFIX\b', '\bhotfix\b']
+  ":bookmark: RELEASE":
+    include: ['\bRelease\b', '\brelease\b']
