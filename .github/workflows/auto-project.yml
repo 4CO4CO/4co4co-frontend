@@ -1,0 +1,16 @@
+name: Auto Project
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Link issue/PR to project
+        uses: actions/add-to-project@v1
+        with:
+          project-url: https://github.com/orgs/4CO4CO/projects/1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
