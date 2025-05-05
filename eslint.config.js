@@ -102,6 +102,6 @@ export default [
     },
   },
   {
-    ignores: ['commitlint.config.js', 'vite.config.ts'],
+    ignores: ['commitlint.config.cjs', 'vite.config.ts'],
   },
 ];
