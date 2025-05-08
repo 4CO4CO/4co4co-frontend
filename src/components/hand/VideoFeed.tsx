@@ -15,7 +15,7 @@ export const VideoFeed = forwardRef<VideoFeedRef>((_, ref) => {
 
   return (
     <div className={video.container}>
-      <Webcam ref={webcamRef} audio={false} style={{ width: '100%', height: '100%' }} />
+      <Webcam className={video.invisibleVideo} ref={webcamRef} audio={false} />
     </div>
   );
 });
