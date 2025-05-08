@@ -10,4 +10,12 @@ export const video = {
     zIndex: -1,
     overflow: 'hidden',
   }),
+
+  invisibleVideo: style({
+    opacity: '0',
+    pointerEvents: 'none',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+  }),
 };
