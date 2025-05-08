@@ -1,4 +1,3 @@
-// src/components/hand/VideoFeed.tsx
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { video } from './video.css';
