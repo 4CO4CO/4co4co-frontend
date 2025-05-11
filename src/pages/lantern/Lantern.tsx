@@ -6,9 +6,14 @@ import { useHandMark } from '../../components/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/lantern/VideoFeed';
 import { get } from '@/apis';
 
-// 사각형 좌표
+// 사각형
 type Rect = { x: number; y: number; width: number; height: number };
-const rect = { x: 200, y: 150, width: 100, height: 100 };
+type LanternWithRect = {
+  lantern_id: string;
+  owner_name: string;
+  emotion: string;
+  rect: Rect;
+};
 
 // 충돌 판정 함수
 const isInside = (pos: { x: number; y: number }, rect: Rect) => {
@@ -36,15 +41,11 @@ const isFist = (marks: Keypoint[], handedness: 'Left' | 'Right') => {
 
 const Lantern = () => {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
-  const [hit, setHit] = useState(false);
+  const [hitLanternId, setHitLanternId] = useState<string | null>(null);
   const { handCenter, marks, handedness } = useHandMark();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
-  const [currentLantern, setCurrentLantern] = useState<{
-    lantern_id: string;
-    owner_name: string;
-    emotion: string;
-  } | null>(null);
+  const [lanterns, setLanterns] = useState<LanternWithRect[]>([]);
 
   useEffect(() => {
     const fetchLanterns = async () => {
@@ -60,10 +61,16 @@ const Lantern = () => {
           }[];
         }>(`/lanterns?current_lantern_id=${currentLanternId}`);
 
-        const found = response.data.find((item) => item.is_current_lantern);
-        if (found) {
-          setCurrentLantern(found);
-        }
+        const lanternsWithRect = response.data.map((lantern) => ({
+          ...lantern,
+          rect: {
+            x: Math.random() * 600,
+            y: Math.random() * 400,
+            width: 100,
+            height: 100,
+          },
+        }));
+        setLanterns(lanternsWithRect);
       } catch (error) {
         console.error(error);
         alert('다시 시도해주세요');
@@ -78,46 +85,44 @@ const Lantern = () => {
 
     setPos(handCenter);
 
-    const entered = isInside(handCenter, rect);
     const fist = isFist(marks, handedness);
-
-    if (entered && fist) {
-      setHit(true);
-    } else {
-      setHit(false);
+    if (!fist) {
+      setHitLanternId(null);
+      return;
     }
-  }, [handCenter, marks]);
+
+    for (const lantern of lanterns) {
+      if (isInside(handCenter, lantern.rect)) {
+        setHitLanternId(lantern.lantern_id);
+        return;
+      }
+    }
+
+    setHitLanternId(null);
+  }, [handCenter, marks, handedness, lanterns]);
 
   return (
     <>
       <VideoFeed />
       <HandTracker onUpdate={setPos} />
-      {currentLantern && (
+      {lanterns.map((lantern) => (
         <div
+          key={lantern.lantern_id}
           style={{
             position: 'absolute',
-            top: 30,
-            left: 30,
-            padding: '8px 16px',
-            backgroundColor: 'yellow',
+            top: lantern.rect.y,
+            left: lantern.rect.x,
+            width: hitLanternId === lantern.lantern_id ? lantern.rect.width * 1.3 : lantern.rect.width,
+            height: hitLanternId === lantern.lantern_id ? lantern.rect.height * 1.3 : lantern.rect.height,
+            backgroundColor: hitLanternId === lantern.lantern_id ? 'orange' : 'skyblue',
             borderRadius: 8,
-            fontWeight: 'bold',
+            transition: 'all 0.2s ease',
           }}
         >
-          {currentLantern.owner_name}
+          {lantern.owner_name}
         </div>
-      )}
-      <div
-        style={{
-          position: 'absolute',
-          top: rect.y,
-          left: rect.x,
-          width: hit ? rect.width * 1.3 : rect.width,
-          height: hit ? rect.height * 1.3 : rect.height,
-          backgroundColor: hit ? 'orange' : 'skyblue',
-          transition: 'all 0.2s ease',
-        }}
-      />
+      ))}
+
       {pos && (
         <div
           style={{
