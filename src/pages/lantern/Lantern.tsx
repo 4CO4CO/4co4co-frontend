@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { HandTracker } from '../../components/lantern/HandTracker';
 import { useHandMark } from '../../components/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/lantern/VideoFeed';
 import { get } from '@/apis';
 import { LanternWithRect } from '@/components/lantern/constants';
-import { isFist, isInside } from '@/components/lantern/utils';
+import { useLanternHit } from '@/components/lantern/hooks/useLanternHit';
 
 const Lantern = () => {
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
-  const [hitLanternId, setHitLanternId] = useState<string | null>(null);
-  const { handCenter, marks, handedness } = useHandMark();
+  const { handCenter } = useHandMark();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
   const [lanterns, setLanterns] = useState<LanternWithRect[]>([]);
+  const { hitLanternId } = useLanternHit(lanterns);
 
   useEffect(() => {
     const fetchLanterns = async () => {
@@ -48,31 +46,9 @@ const Lantern = () => {
     fetchLanterns();
   }, [currentLanternId]);
 
-  useEffect(() => {
-    if (!handCenter || !marks || !handedness) return;
-
-    setPos(handCenter);
-
-    const fist = isFist(marks, handedness);
-    if (!fist) {
-      setHitLanternId(null);
-      return;
-    }
-
-    for (const lantern of lanterns) {
-      if (isInside(handCenter, lantern.rect)) {
-        setHitLanternId(lantern.lantern_id);
-        return;
-      }
-    }
-
-    setHitLanternId(null);
-  }, [handCenter, marks, handedness, lanterns]);
-
   return (
     <>
       <VideoFeed />
-      <HandTracker onUpdate={setPos} />
       {lanterns.map((lantern) => (
         <div
           key={lantern.lantern_id}
@@ -91,12 +67,12 @@ const Lantern = () => {
         </div>
       ))}
 
-      {pos && (
+      {handCenter && (
         <div
           style={{
             position: 'absolute',
-            top: pos.y,
-            left: pos.x,
+            top: handCenter.y,
+            left: handCenter.x,
             width: 20,
             height: 20,
             borderRadius: '50%',
