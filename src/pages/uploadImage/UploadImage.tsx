@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
 import * as styles from './UploadImage.css';
+import { post } from '@/apis';
 
 const UploadImage = () => {
   const [step, setStep] = useState(1);
@@ -9,8 +9,6 @@ const UploadImage = () => {
   const [prompt, setPrompt] = useState('');
   const [lanternId, setLanternId] = useState('');
 
-  const navigator = useNavigate();
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
     if (!file) return; // file 없으면 early return
@@ -18,22 +16,27 @@ const UploadImage = () => {
   };
 
   const handleSubmitImage = async () => {
-    const URL = import.meta.env.VITE_API_BASE_URL + '/lanterns';
     const formData = new FormData();
     formData.append('name', name);
     if (image) {
       formData.append('image', image);
     }
+
     try {
-      const response = await fetch(URL, {
-        method: 'POST',
-        body: formData,
+      const response = await post<{
+        status: string;
+        message: string;
+        data: {
+          lantern_id: string;
+        };
+      }>('/lanterns', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      const result = await response.json();
-      alert(result.data.lantern_id);
-      if (result.data.lantern_id) {
+      if (response.data.lantern_id) {
         setStep(2);
-        setLanternId(result.data.lantern_id);
+        setLanternId(response.data.lantern_id);
       }
     } catch (error) {
       console.error(error);
@@ -42,15 +45,28 @@ const UploadImage = () => {
   };
 
   const handleSubmitPrompt = async () => {
-    const URL = import.meta.env.VITE_API_BASE_URL + `/lanterns/${lanternId}/music`;
     try {
-      const response = await fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify({ prompt: prompt }),
-      });
-      const result = await response.json();
-      alert(result.data.file_path);
-      navigator('/');
+      const response = await post<{
+        data: {
+          status: string;
+          message: string;
+          data: {
+            file_path: string;
+          };
+        };
+      }>(
+        `/lanterns/${lanternId}/music`,
+        { prompt: prompt },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      alert('성공');
+      if (response.data.data.file_path) {
+        alert(response.data.data.file_path);
+      }
     } catch (error) {
       console.error(error);
       alert('다시 시도해주세요');
