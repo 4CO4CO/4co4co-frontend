@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import * as styles from './Lantern.css';
 import { useHandMark } from '../../components/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/lantern/VideoFeed';
 import { get } from '@/apis';
@@ -49,35 +50,31 @@ const Lantern = () => {
   return (
     <>
       <VideoFeed />
-      {lanterns.map((lantern) => (
-        <div
-          key={lantern.lantern_id}
-          style={{
-            position: 'absolute',
-            top: lantern.rect.y,
-            left: lantern.rect.x,
-            width: hitLanternId === lantern.lantern_id ? lantern.rect.width * 1.3 : lantern.rect.width,
-            height: hitLanternId === lantern.lantern_id ? lantern.rect.height * 1.3 : lantern.rect.height,
-            backgroundColor: hitLanternId === lantern.lantern_id ? 'orange' : 'skyblue',
-            borderRadius: 8,
-            transition: 'all 0.2s ease',
-          }}
-        >
-          {lantern.owner_name}
-        </div>
-      ))}
+      {lanterns.map((lantern) => {
+        const isHit = hitLanternId === lantern.lantern_id;
+        const size = isHit ? lantern.rect.width * 1.3 : lantern.rect.width;
+        return (
+          <div
+            key={lantern.lantern_id}
+            className={styles.lanternBox({ state: isHit ? 'hit' : 'normal' })}
+            style={{
+              top: lantern.rect.y,
+              left: lantern.rect.x,
+              width: size,
+              height: size,
+            }}
+          >
+            {lantern.owner_name}
+          </div>
+        );
+      })}
 
       {handCenter && (
         <div
+          className={styles.handPointer}
           style={{
-            position: 'absolute',
             top: handCenter.y,
             left: handCenter.x,
-            width: 20,
-            height: 20,
-            borderRadius: '50%',
-            backgroundColor: 'lime',
-            pointerEvents: 'none',
           }}
         />
       )}
