@@ -13,9 +13,9 @@ const isInside = (pos: { x: number; y: number }, rect: Rect) => {
   return pos.x >= rect.x && pos.x <= rect.x + rect.width && pos.y >= rect.y && pos.y <= rect.y + rect.height;
 };
 
-// 네 손가락이 모두 접혔는지 확인 (주먹 제스처)
+// 주먹 확인
 const isFist = (marks: Keypoint[], handedness: 'Left' | 'Right') => {
-  // 엄지 검출 추가 (엄지가 검지 아래로 위치)
+  // 엄지 검출
   let thumbCrossed;
   if (handedness === 'Right') {
     thumbCrossed = marks[4].x > marks[8].x;
@@ -35,14 +35,14 @@ const isFist = (marks: Keypoint[], handedness: 'Left' | 'Right') => {
 const MVP = () => {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [hit, setHit] = useState(false);
-  const { indexFingerTip, marks, handedness } = useHandMark();
+  const { handCenter, marks, handedness } = useHandMark();
 
   useEffect(() => {
-    if (!indexFingerTip || !marks || !handedness) return;
+    if (!handCenter || !marks || !handedness) return;
 
-    setPos(indexFingerTip);
+    setPos(handCenter);
 
-    const entered = isInside(indexFingerTip, rect);
+    const entered = isInside(handCenter, rect);
     const fist = isFist(marks, handedness);
 
     if (entered && fist) {
@@ -50,7 +50,7 @@ const MVP = () => {
     } else {
       setHit(false);
     }
-  }, [indexFingerTip, marks]);
+  }, [handCenter, marks]);
 
   return (
     <>

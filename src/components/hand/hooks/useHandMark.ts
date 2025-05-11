@@ -17,7 +17,7 @@ let detector: handPoseDetection.HandDetector | null = null;
 const POSITION_THRESHOLD = 0.01;
 
 export const useHandMark = () => {
-  const [indexFingerTip, setIndexFingerTip] = useState<{ x: number; y: number } | null>(null); // 추적된 손끝 좌표
+  const [handCenter, setHandCenter] = useState<{ x: number; y: number } | null>(null); // 추적된 손끝 좌표
   const [marks, setMarks] = useState<Keypoint[] | null>(null);
   const [handedness, setHandedness] = useState<'Left' | 'Right' | null>(null);
   // 이전 상태 저장용 ref
@@ -81,7 +81,7 @@ export const useHandMark = () => {
           const hand = hands[0];
 
           if (hand && isMounted) {
-            const tip = hand.keypoints.find((k) => k.name === 'index_finger_tip');
+            const tip = hand.keypoints.find((k) => k.name === 'middle_finger_mcp');
             if (tip) {
               // 위치 변화 체크
               const newPos = { x: tip.x, y: tip.y };
@@ -92,7 +92,7 @@ export const useHandMark = () => {
 
               if (isChanged) {
                 prevPosRef.current = newPos;
-                setIndexFingerTip(newPos);
+                setHandCenter(newPos);
                 lastUpdate = timestamp;
               }
             }
@@ -125,5 +125,5 @@ export const useHandMark = () => {
     };
   }, []);
 
-  return { indexFingerTip, marks, handedness };
+  return { handCenter, marks, handedness };
 };
