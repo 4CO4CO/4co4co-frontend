@@ -66,6 +66,7 @@ const Form = () => {
         socket.onclose = () => {
           console.log('WebSocket disconnected');
         };
+
         socket.onerror = (err) => {
           console.error('WebSocket error', err);
           socket.close();
@@ -110,6 +111,15 @@ const Form = () => {
       navigate(`/lanterns?currentLanternId=${lanternId}`);
     }
   }, [isImageCompleted, isMusicCompleted, lanternId]);
+
+  useEffect(() => {
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <>
