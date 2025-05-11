@@ -19,6 +19,7 @@ const POSITION_THRESHOLD = 0.01;
 export const useHandMark = () => {
   const [indexFingerTip, setIndexFingerTip] = useState<{ x: number; y: number } | null>(null); // 추적된 손끝 좌표
   const [marks, setMarks] = useState<Keypoint[] | null>(null);
+  const [handedness, setHandedness] = useState<'Left' | 'Right' | null>(null);
   // 이전 상태 저장용 ref
   const prevPosRef = useRef<{ x: number; y: number } | null>(null);
   const prevMarksRef = useRef<Keypoint[] | null>(null);
@@ -103,6 +104,7 @@ export const useHandMark = () => {
             if (isMarksChanged) {
               prevMarksRef.current = hand.keypoints;
               setMarks(hand.keypoints);
+              setHandedness(hand.handedness);
             }
           }
         } catch (e) {
@@ -123,5 +125,5 @@ export const useHandMark = () => {
     };
   }, []);
 
-  return { indexFingerTip, marks };
+  return { indexFingerTip, marks, handedness };
 };
