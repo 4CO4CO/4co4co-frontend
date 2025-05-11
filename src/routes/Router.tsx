@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter } from 'react-router-dom';
 import { UploadImagePage } from './lazy';
 
 const router = createBrowserRouter([
