@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import * as styles from './UploadImage.css';
+import { useNavigate } from 'react-router-dom';
+import * as styles from './Form.css';
 import { post } from '@/apis';
 
-const UploadImage = () => {
+const Form = () => {
   const [step, setStep] = useState(1);
   const [image, setImage] = useState<File>();
   const [name, setName] = useState('');
   const [prompt, setPrompt] = useState('');
   const [lanternId, setLanternId] = useState('');
+  const navigate = useNavigate();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
@@ -46,7 +48,7 @@ const UploadImage = () => {
 
   const handleSubmitPrompt = async () => {
     try {
-      const response = await post<{
+      await post<{
         data: {
           status: string;
           message: string;
@@ -63,14 +65,11 @@ const UploadImage = () => {
           },
         },
       );
-      alert('성공');
-      if (response.data.data.file_path) {
-        alert(response.data.data.file_path);
-      }
     } catch (error) {
       console.error(error);
       alert('다시 시도해주세요');
     }
+    navigate(`/lanterns?currentLanternId=${lanternId}`);
   };
 
   return (
@@ -123,4 +122,4 @@ const UploadImage = () => {
   );
 };
 
-export default UploadImage;
+export default Form;

@@ -1,15 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { UploadImagePage } from './lazy';
-import MVP from '@/pages/handInteraction/MVP';
+import { LanternPage, FormPage } from './lazy';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <UploadImagePage />,
+    element: <FormPage />,
   },
   {
-    path: '/detect',
-    element: <MVP />,
+    path: '/lanterns',
+    element: <LanternPage />,
   },
 ]);
 

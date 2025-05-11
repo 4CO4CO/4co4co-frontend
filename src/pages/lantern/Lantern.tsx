@@ -1,8 +1,10 @@
 import { Keypoint } from '@tensorflow-models/hand-pose-detection';
 import { useEffect, useState } from 'react';
-import { HandTracker } from '../../components/hand/HandTracker';
-import { useHandMark } from '../../components/hand/hooks/useHandMark';
-import { VideoFeed } from '../../components/hand/VideoFeed';
+import { useSearchParams } from 'react-router-dom';
+import { HandTracker } from '../../components/lantern/HandTracker';
+import { useHandMark } from '../../components/lantern/hooks/useHandMark';
+import { VideoFeed } from '../../components/lantern/VideoFeed';
+import { get } from '@/apis';
 
 // 사각형 좌표
 type Rect = { x: number; y: number; width: number; height: number };
@@ -32,10 +34,44 @@ const isFist = (marks: Keypoint[], handedness: 'Left' | 'Right') => {
   );
 };
 
-const MVP = () => {
+const Lantern = () => {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [hit, setHit] = useState(false);
   const { handCenter, marks, handedness } = useHandMark();
+  const [searchParams] = useSearchParams();
+  const currentLanternId = searchParams.get('currentLanternId');
+  const [currentLantern, setCurrentLantern] = useState<{
+    lantern_id: string;
+    owner_name: string;
+    emotion: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchLanterns = async () => {
+      try {
+        const response = await get<{
+          status: string;
+          message: string;
+          data: {
+            lantern_id: string;
+            owner_name: string;
+            emotion: string;
+            is_current_lantern: boolean;
+          }[];
+        }>(`/lanterns?current_lantern_id=${currentLanternId}`);
+
+        const found = response.data.find((item) => item.is_current_lantern);
+        if (found) {
+          setCurrentLantern(found);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('다시 시도해주세요');
+      }
+    };
+
+    fetchLanterns();
+  }, [currentLanternId]);
 
   useEffect(() => {
     if (!handCenter || !marks || !handedness) return;
@@ -56,6 +92,21 @@ const MVP = () => {
     <>
       <VideoFeed />
       <HandTracker onUpdate={setPos} />
+      {currentLantern && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 30,
+            left: 30,
+            padding: '8px 16px',
+            backgroundColor: 'yellow',
+            borderRadius: 8,
+            fontWeight: 'bold',
+          }}
+        >
+          {currentLantern.owner_name}
+        </div>
+      )}
       <div
         style={{
           position: 'absolute',
@@ -85,4 +136,4 @@ const MVP = () => {
   );
 };
 
-export default MVP;
+export default Lantern;

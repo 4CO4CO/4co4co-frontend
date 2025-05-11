@@ -1,3 +1,4 @@
 import { lazy } from 'react';
 
-export const UploadImagePage = lazy(() => import('@/pages/uploadImage/UploadImage'));
+export const FormPage = lazy(() => import('@/pages/form/Form'));
+export const LanternPage = lazy(() => import('@/pages/lantern/Lantern'));
