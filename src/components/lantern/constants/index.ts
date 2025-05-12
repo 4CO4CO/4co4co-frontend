@@ -7,3 +7,12 @@ export type LanternWithRect = {
   emotion: string;
   rect: Rect;
 };
+
+// 풍등 상세 데이터
+export type LanternData = {
+  lantern_id: string;
+  owner_name: string;
+  panorama: string;
+  background_sound: string;
+  is_current_lantern: boolean;
+};
