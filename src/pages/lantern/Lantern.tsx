@@ -15,6 +15,8 @@ const Lantern = () => {
   const { hitLanternId } = useLanternHit(lanterns);
 
   useEffect(() => {
+    if (!currentLanternId) return;
+
     const fetchLanterns = async () => {
       try {
         const response = await get<{
