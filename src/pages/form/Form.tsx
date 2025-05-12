@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
-import * as styles from './UploadImage.css';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as styles from './Form.css';
 import { post } from '@/apis';
 
-const UploadImage = () => {
+const Form = () => {
   const [step, setStep] = useState(1);
   const [image, setImage] = useState<File>();
   const [name, setName] = useState('');
   const [prompt, setPrompt] = useState('');
   const [lanternId, setLanternId] = useState('');
+  const socketRef = useRef<WebSocket | null>(null);
+  const [isImageCompleted, setIsImageCompleted] = useState(false);
+  const [isMusicCompleted, setIsMusicCompleted] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
@@ -37,6 +43,34 @@ const UploadImage = () => {
       if (response.data.lantern_id) {
         setStep(2);
         setLanternId(response.data.lantern_id);
+
+        const socket = new WebSocket(
+          `${import.meta.env.VITE_WEBSOCKET_BASE_URL}/ws/lanterns/${response.data.lantern_id}`,
+        );
+        socketRef.current = socket;
+
+        socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+
+          if (data.status === 'completed') {
+            setIsImageCompleted(true);
+            socket.close();
+          }
+
+          if (data.status === 'failed') {
+            console.log(`에러: ${data.error}`);
+            socket.close();
+          }
+        };
+
+        socket.onclose = () => {
+          console.log('WebSocket disconnected');
+        };
+
+        socket.onerror = (err) => {
+          console.error('WebSocket error', err);
+          socket.close();
+        };
       }
     } catch (error) {
       console.error(error);
@@ -63,15 +97,29 @@ const UploadImage = () => {
           },
         },
       );
-      alert('성공');
       if (response.data.data.file_path) {
-        alert(response.data.data.file_path);
+        setIsMusicCompleted(true);
       }
     } catch (error) {
       console.error(error);
       alert('다시 시도해주세요');
     }
   };
+
+  useEffect(() => {
+    if (isImageCompleted && isMusicCompleted && lanternId) {
+      navigate(`/lanterns?currentLanternId=${lanternId}`);
+    }
+  }, [isImageCompleted, isMusicCompleted, lanternId]);
+
+  useEffect(() => {
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -123,4 +171,4 @@ const UploadImage = () => {
   );
 };
 
-export default UploadImage;
+export default Form;
