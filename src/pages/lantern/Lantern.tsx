@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
 import { useHandMark } from '../../components/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/lantern/VideoFeed';
@@ -13,9 +13,13 @@ const Lantern = () => {
   const currentLanternId = searchParams.get('currentLanternId');
   const [lanterns, setLanterns] = useState<LanternWithRect[]>([]);
   const { hitLanternId } = useLanternHit(lanterns);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!currentLanternId) return;
+    if (!currentLanternId) {
+      navigate('/');
+      return;
+    }
 
     const fetchLanterns = async () => {
       try {

@@ -58,7 +58,7 @@ const Form = () => {
           }
 
           if (data.status === 'failed') {
-            alert(`에러: ${data.error}`);
+            console.log(`에러: ${data.error}`);
             socket.close();
           }
         };
