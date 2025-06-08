@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
+import LanternDetail from './LanternDetail';
 import { useHandMark } from '../../components/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/lantern/VideoFeed';
 import { get } from '@/apis';
@@ -16,6 +17,19 @@ const Lantern = () => {
   const navigate = useNavigate();
   const [hitLanternData, setHitLanternData] = useState<LanternData>();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  const handleClose = () => {
+    setIsDetailOpen(false);
+    setHitLanternData(undefined);
+  };
+
+  useEffect(() => {
+    if (hitLanternData) {
+      setIsDetailOpen(true);
+    }
+  }, [hitLanternData]);
 
   useEffect(() => {
     if (!currentLanternId) {
@@ -111,26 +125,42 @@ const Lantern = () => {
   return (
     <>
       <VideoFeed />
-      {lanterns.length > 0 &&
-        lanterns.map((lantern) => {
-          const isHit = hitLanternId === lantern.lantern_id;
-          return isHit ? (
-            <img key={lantern.lantern_id} className={styles.lanternImg} src={hitLanternData?.panorama} />
-          ) : (
-            <div
-              key={lantern.lantern_id}
-              className={styles.lanternBox}
-              style={{
-                top: lantern.rect.y,
-                left: lantern.rect.x,
-                width: lantern.rect.width,
-                height: lantern.rect.height,
-              }}
-            >
-              {lantern.owner_name}
-            </div>
-          );
-        })}
+
+      {isDetailOpen && hitLanternData ? (
+        <LanternDetail
+          imageSrc={hitLanternData.panorama}
+          onClose={() => {
+            handleClose();
+            setHitLanternData(undefined);
+          }}
+        />
+      ) : (
+        <>
+          {lanterns.map((lantern) => {
+            const isHit = hitLanternId === lantern.lantern_id;
+            return isHit ? (
+              <img
+                key={lantern.lantern_id}
+                className={styles.lanternImg}
+                src={hitLanternData?.panorama}
+              />
+            ) : (
+              <div
+                key={lantern.lantern_id}
+                className={styles.lanternBox}
+                style={{
+                  top: lantern.rect.y,
+                  left: lantern.rect.x,
+                  width: lantern.rect.width,
+                  height: lantern.rect.height,
+                }}
+              >
+                {lantern.owner_name}
+              </div>
+            );
+          })}
+        </>
+      )}
 
       {handCenter && (
         <div
