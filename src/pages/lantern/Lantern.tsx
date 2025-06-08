@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
-import LanternDetail from './LanternDetail';
 import { useHandMark } from '../../components/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/lantern/VideoFeed';
 import { get } from '@/apis';
-import { LanternData, LanternWithRect } from '@/components/lantern/constants';
+import { LanternWithRect } from '@/components/lantern/constants';
 import { useLanternHit } from '@/components/lantern/hooks/useLanternHit';
 
 const Lantern = () => {
@@ -15,21 +14,6 @@ const Lantern = () => {
   const [lanterns, setLanterns] = useState<LanternWithRect[]>([]);
   const { hitLanternId } = useLanternHit(lanterns);
   const navigate = useNavigate();
-  const [hitLanternData, setHitLanternData] = useState<LanternData>();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-
-  const handleClose = () => {
-    setIsDetailOpen(false);
-    setHitLanternData(undefined);
-  };
-
-  useEffect(() => {
-    if (hitLanternData) {
-      setIsDetailOpen(true);
-    }
-  }, [hitLanternData]);
 
   useEffect(() => {
     if (!currentLanternId) {
@@ -69,106 +53,33 @@ const Lantern = () => {
     fetchLanterns();
   }, [currentLanternId]);
 
-  const fetchLanternDetail = async (lantern_id: string) => {
-    try {
-      const response = await get<{
-        status: string;
-        message: string;
-        data: {
-          lantern_id: string;
-          owner_name: string;
-          panorama: string;
-          background_sound: string;
-          is_current_lantern: boolean;
-        };
-      }>(`/lanterns/${lantern_id}?current_lantern_id=${currentLanternId}`);
-
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
-    if (!hitLanternId) return;
-
-    const fetch = async () => {
-      const response = await fetchLanternDetail(hitLanternId);
-      if (response) setHitLanternData(response);
-    };
-    fetch();
+    if (hitLanternId) {
+      navigate(`/lanterns/${hitLanternId}?currentLanternId=${currentLanternId}`);
+    }
   }, [hitLanternId]);
-
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (hitLanternData?.background_sound) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-      const audio = new Audio(hitLanternData.background_sound);
-      audioRef.current = audio;
-      audio.play().catch((err) => {
-        console.error('Audio playback failed:', err);
-      });
-    }
-  }, [hitLanternData?.background_sound]);
 
   return (
     <>
       <VideoFeed />
-
-      {isDetailOpen && hitLanternData ? (
-        <LanternDetail
-          imageSrc={hitLanternData.panorama}
-          onClose={() => {
-            handleClose();
-            setHitLanternData(undefined);
+      {lanterns.map((lantern) => (
+        <div
+          key={lantern.lantern_id}
+          className={styles.lanternBox}
+          style={{
+            top: lantern.rect.y,
+            left: lantern.rect.x,
+            width: lantern.rect.width,
+            height: lantern.rect.height,
           }}
-        />
-      ) : (
-        <>
-          {lanterns.map((lantern) => {
-            const isHit = hitLanternId === lantern.lantern_id;
-            return isHit ? (
-              <img
-                key={lantern.lantern_id}
-                className={styles.lanternImg}
-                src={hitLanternData?.panorama}
-              />
-            ) : (
-              <div
-                key={lantern.lantern_id}
-                className={styles.lanternBox}
-                style={{
-                  top: lantern.rect.y,
-                  left: lantern.rect.x,
-                  width: lantern.rect.width,
-                  height: lantern.rect.height,
-                }}
-              >
-                {lantern.owner_name}
-              </div>
-            );
-          })}
-        </>
-      )}
-
+        >
+          {lantern.owner_name}
+        </div>
+      ))}
       {handCenter && (
         <div
           className={styles.handPointer}
-          style={{
-            top: handCenter.y,
-            left: handCenter.x,
-          }}
+          style={{ top: handCenter.y, left: handCenter.x }}
         />
       )}
     </>
