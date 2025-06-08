@@ -4,6 +4,7 @@ import * as styles from './LanternDetail.css';
 import { get } from '@/apis';
 import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
+import { isFist } from '@/components/lantern/utils';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
 
 const LanternDetail = () => {
@@ -60,24 +61,23 @@ const LanternDetail = () => {
     };
   }, [lanternData?.background_sound]);
 
-  // 랜턴 닫기 버튼 인터렉션을 통한 네비게이션
+  // 풍등 닫기 버튼 주먹 제스처 인식
   useEffect(() => {
-    if (!marks || handedness !== 'Right' || !closeButtonRef.current) return;
+    if (!marks || !handedness || !closeButtonRef.current) return;
 
     const rect = closeButtonRef.current.getBoundingClientRect();
     const indexTip = marks.find((k) => k.name === 'index_finger_tip');
-    const indexPIP = marks.find((k) => k.name === 'index_finger_pip');
+    if (!indexTip) return;
 
-    if (!indexTip || !indexPIP) return;
-
-    const isFist = indexTip.y > indexPIP.y;
     const isInCloseArea =
       indexTip.x >= rect.left &&
       indexTip.x <= rect.right &&
       indexTip.y >= rect.top &&
       indexTip.y <= rect.bottom;
 
-    if (isFist && isInCloseArea && !hasNavigatedRef.current) {
+    const fist = isFist(marks, handedness);
+
+    if (fist && isInCloseArea && !hasNavigatedRef.current) {
       hasNavigatedRef.current = true;
       navigate(`/lanterns?currentLanternId=${currentLanternId}`);
     }
