@@ -1,28 +1,20 @@
 import { style } from '@vanilla-extract/css';
-import { recipe } from '@vanilla-extract/recipes';
 
-export const lanternBox = recipe({
-  base: {
-    position: 'absolute',
-    borderRadius: 8,
-    transition: 'all 0.2s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  variants: {
-    state: {
-      normal: {
-        backgroundColor: 'skyblue',
-      },
-      hit: {
-        backgroundColor: 'orange',
-      },
-    },
-  },
-  defaultVariants: {
-    state: 'normal',
-  },
+export const lanternImg = style({
+  position: 'absolute',
+  transition: 'all 0.2s ease',
+  width: '100vw',
+  height: '100vh',
+});
+
+export const lanternBox = style({
+  position: 'absolute',
+  borderRadius: 8,
+  transition: 'all 0.2s ease',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: 'orange',
 });
 
 export const handPointer = style({

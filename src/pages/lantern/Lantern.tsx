@@ -53,35 +53,33 @@ const Lantern = () => {
     fetchLanterns();
   }, [currentLanternId]);
 
+  useEffect(() => {
+    if (hitLanternId) {
+      navigate(`/lanterns/${hitLanternId}?currentLanternId=${currentLanternId}`);
+    }
+  }, [hitLanternId]);
+
   return (
     <>
       <VideoFeed />
-      {lanterns.map((lantern) => {
-        const isHit = hitLanternId === lantern.lantern_id;
-        const size = isHit ? lantern.rect.width * 1.3 : lantern.rect.width;
-        return (
-          <div
-            key={lantern.lantern_id}
-            className={styles.lanternBox({ state: isHit ? 'hit' : 'normal' })}
-            style={{
-              top: lantern.rect.y,
-              left: lantern.rect.x,
-              width: size,
-              height: size,
-            }}
-          >
-            {lantern.owner_name}
-          </div>
-        );
-      })}
-
+      {lanterns.map((lantern) => (
+        <div
+          key={lantern.lantern_id}
+          className={styles.lanternBox}
+          style={{
+            top: lantern.rect.y,
+            left: lantern.rect.x,
+            width: lantern.rect.width,
+            height: lantern.rect.height,
+          }}
+        >
+          {lantern.owner_name}
+        </div>
+      ))}
       {handCenter && (
         <div
           className={styles.handPointer}
-          style={{
-            top: handCenter.y,
-            left: handCenter.x,
-          }}
+          style={{ top: handCenter.y, left: handCenter.x }}
         />
       )}
     </>
