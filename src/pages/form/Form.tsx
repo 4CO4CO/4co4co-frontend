@@ -183,7 +183,7 @@ const Form = () => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
-          <button type="submit" onClick={handleSubmitPrompt}>
+          <button type="submit" className={styles.buttonStyle} onClick={handleSubmitPrompt}>
             제출하기
           </button>
         </>
