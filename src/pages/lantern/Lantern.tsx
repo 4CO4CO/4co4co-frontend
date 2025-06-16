@@ -34,15 +34,35 @@ const Lantern = () => {
           }[];
         }>(`/lanterns?current_lantern_id=${currentLanternId}`);
 
-        const lanternsWithRect = response.data.map((lantern) => ({
+        // 5 * 4 그리드 좌표 계산
+        const gridCols = 5;
+        const gridRows = 4;
+        const gap = 20;
+        const boxSize = 100;
+
+        const gridPositions = Array.from({ length: gridCols * gridRows }, (_, index) => {
+          const row = Math.floor(index / gridCols);
+          const col = index % gridCols;
+          return {
+            x: col * (boxSize + gap),
+            y: row * (boxSize + gap),
+          };
+        });
+
+        // 랜턴 데이터의 개수에 맞게 그리드 위치를 랜덤하게 섞고 제한
+        const shuffledPositions = [...gridPositions].sort(() => Math.random() - 0.5);
+        const limitedPositions = shuffledPositions.slice(0, response.data.length);
+
+        // 랜덤 위치 할당
+        const lanternsWithRect = response.data.map((lantern, index) => ({
           ...lantern,
           rect: {
-            x: Math.random() * 600,
-            y: Math.random() * 400,
-            width: 100,
-            height: 100,
+            ...limitedPositions[index],
+            width: boxSize,
+            height: boxSize,
           },
         }));
+
         setLanterns(lanternsWithRect);
       } catch (error) {
         console.error(error);
@@ -60,13 +80,14 @@ const Lantern = () => {
   }, [hitLanternId]);
 
   return (
-    <>
+    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
       <VideoFeed />
       {lanterns.map((lantern) => (
         <div
           key={lantern.lantern_id}
           className={styles.lanternBox}
           style={{
+            position: 'absolute',
             top: lantern.rect.y,
             left: lantern.rect.x,
             width: lantern.rect.width,
@@ -82,7 +103,7 @@ const Lantern = () => {
           style={{ top: handCenter.y, left: handCenter.x }}
         />
       )}
-    </>
+    </div>
   );
 };
 
