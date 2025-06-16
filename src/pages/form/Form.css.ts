@@ -1,5 +1,20 @@
 import { style } from '@vanilla-extract/css';
 
+export const upload_wrapper = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  margin: '90px 155px',
+});
+
+export const title = style({
+  fontSize: '28px',
+});
+
+export const text = style({
+  fontSize: '18px',
+  color: '#626262',
+});
+
 export const image_container = style({
   width: 400,
   height: (400 * 9) / 16,
@@ -21,8 +36,6 @@ export const image = style({
 
 export const button_container = style({
   position: 'relative',
-  background: 'black',
-  color: 'white',
   height: 'inherit',
   width: 'inherit',
   display: 'flex',
@@ -44,4 +57,15 @@ export const text_input = style({
   padding: 14,
   boxSizing: 'border-box',
   borderRadius: 8,
+});
+
+export const buttonStyle = style({
+  fontSize: '16px',
+  background: '#FCBC42',
+  width: '311px',
+  height: '53px',
+  border: 'none',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  marginLeft: '20px',
 });

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as styles from './Form.css';
 import { post } from '@/apis';
+import UploadImg from '@/public/assets/upload.svg?react';
 
 const Form = () => {
   const [step, setStep] = useState(1);
@@ -125,32 +126,52 @@ const Form = () => {
     <>
       {step === 1 && (
         <>
-          <div className={styles.image_container}>
-            {!image ? (
-              <div className={styles.button_container}>
-                이미지 업로드하기
-                <input
-                  className={styles.file_input}
-                  type="file"
-                  accept=".png, .jpeg, .jpg, .webp, .heic, .heif"
-                  multiple
-                  onChange={handleImageUpload}
-                />
-              </div>
-            ) : (
-              <img className={styles.image} src={URL.createObjectURL(image)} alt="추억 이미지" />
-            )}
-          </div>
-          <input
-            className={styles.text_input}
-            type="text"
-            placeholder="이름을 작성해주세요"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <button type="submit" onClick={handleSubmitImage}>
-            제출하기
-          </button>
+          <section className={styles.upload_wrapper}>
+            <div>
+              <h1 className={styles.title}>
+                2025
+                <br />
+                당신의
+                <br />
+                TOP 10 사진은?
+              </h1>
+              <p>
+                2025년은 당신에게 어떤 한 해였나요?
+                <br /> 당신이 기억하고 싶은 순간들을 알려주세요. <br />
+                기억의 차원이 그 순간들을 잊지 않도록 <br />
+                전시를 만들어 드릴게요!
+              </p>
+            </div>
+            <img src="/public/assets/info.png" width={495} />
+          </section>
+          <section style={{ marginLeft: '155px' }}>
+            <div className={styles.image_container}>
+              {!image ? (
+                <div className={styles.button_container}>
+                  <UploadImg />
+                  <input
+                    className={styles.file_input}
+                    type="file"
+                    accept=".png, .jpeg, .jpg, .webp, .heic, .heif"
+                    multiple
+                    onChange={handleImageUpload}
+                  />
+                </div>
+              ) : (
+                <img className={styles.image} src={URL.createObjectURL(image)} alt="추억 이미지" />
+              )}
+            </div>
+            <input
+              className={styles.text_input}
+              type="text"
+              placeholder="이름을 작성해주세요"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <button className={styles.buttonStyle} type="submit" onClick={handleSubmitImage}>
+              제출하기
+            </button>
+          </section>
         </>
       )}
       {step === 2 && (
