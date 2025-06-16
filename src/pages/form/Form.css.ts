@@ -6,12 +6,17 @@ export const image_container = style({
   overflow: 'hidden',
   position: 'relative',
   borderRadius: 8,
+  backgroundColor: '#fff',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 });
 
 export const image = style({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
+  maxWidth: '100%',
+  maxHeight: '100%',
+  objectFit: 'contain',
+  objectPosition: 'center',
 });
 
 export const button_container = style({
