@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Intro from './components/Intro/Intro';
 import Process from './components/Process/Process';
+import Ticket from './components/Ticket/Ticket';
 import * as styles from './Main.css';
 
 const Main = () => {
@@ -19,7 +20,6 @@ const Main = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
   return (
     <div className={styles.mainContainer} ref={containerRef}>
       <section className={styles.section}>
@@ -27,6 +27,9 @@ const Main = () => {
       </section>
       <section className={styles.section}>
         <Process />
+      </section>
+      <section className={styles.section}>
+        <Ticket />
       </section>
     </div>
   );
