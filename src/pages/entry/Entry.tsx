@@ -49,6 +49,12 @@ const Entry = () => {
     console.log('입장 코드:', entryCode.trim());
   };
 
+  const handleCancel = () => {
+    setEntryCode('');
+    setErrorMessage('');
+    console.log('취소 버튼 클릭');
+  };
+
   // 입력 필드 변경 시 오류 메시지 삭제
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -61,12 +67,12 @@ const Entry = () => {
 
   return (
     <div className={styles.container}>
-      {/* 왼쪽 섹션 (2개) */}
+      {/* 왼쪽 섹션 */}
       <div className={styles.backgroundLanternContainer}>
         <Lantern className={styles.leftLantern1} role="img" aria-label="Left Big Lantern 1" />
         <RoundLantern className={styles.leftLantern2} role="img" aria-label="Left Big Lantern 2" />
 
-        {/* 오른쪽 섹션 (10개) */}
+        {/* 오른쪽 섹션 */}
         <Lantern className={styles.rightLantern1} role="img" aria-label="Right Lantern 1" />
         <Lantern className={styles.rightLantern2} role="img" aria-label="Right Lantern 2" />
         <Lantern className={styles.rightLantern3} role="img" aria-label="Right Lantern 3" />
@@ -103,18 +109,28 @@ const Entry = () => {
           </div>
         )}
 
-        <button
-          className={styles.enterButton}
-          onClick={handleSubmit}
-          type="button"
-        >
-          지금 바로 입장하기
-        </button>
+        <div className={styles.buttonContainer}>
+          <button
+            className={styles.cancelButton}
+            onClick={handleCancel}
+            type="button"
+          >
+            취소
+          </button>
+
+          <button
+            className={styles.enterButton}
+            onClick={handleSubmit}
+            type="button"
+          >
+            지금 바로 입장하기
+          </button>
+        </div>
       </div>
 
       {/* 배경 그라데이션 */}
       <div className={styles.backgroundGradient}>
-        {/* 블러 섹션 (6개) */}
+        {/* 블러 섹션 */}
         <div className={styles.lanternContainer}>
           <Lantern className={styles.blurLantern1} role="img" aria-label="Blur Lantern 1" />
           <Lantern className={styles.blurLantern2} role="img" aria-label="Blur Lantern 2" />
@@ -122,6 +138,9 @@ const Entry = () => {
           <Lantern className={styles.blurLantern4} role="img" aria-label="Blur Lantern 4" />
           <Lantern className={styles.blurLantern5} role="img" aria-label="Blur Lantern 5" />
           <Lantern className={styles.blurLantern6} role="img" aria-label="Blur Lantern 6" />
+          <Lantern className={styles.blurLantern7} role="img" aria-label="Mobile Blur Lantern 7" />
+          <Lantern className={styles.blurLantern8} role="img" aria-label="Mobile Blur Lantern 8" />
+          <Lantern className={styles.blurLantern9} role="img" aria-label="Mobile Blur Lantern 9" />
         </div>
       </div>
     </div>

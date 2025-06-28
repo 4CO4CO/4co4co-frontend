@@ -38,6 +38,14 @@ export const contentWrapper = style({
   flexDirection: 'column',
   alignItems: 'flex-start',
   textAlign: 'left',
+
+  '@media': {
+    '(max-width: 798px)': {
+      top: '40px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
+  },
 });
 
 export const mainTitle = style({
@@ -61,6 +69,13 @@ export const subTitle = style({
   lineHeight: 'normal',
   marginBottom: '30px',
   whiteSpace: 'pre-line',
+
+  '@media': {
+    '(max-width: 798px)': {
+      fontSize: '10px',
+      marginBottom: '20px',
+    },
+  },
 });
 
 export const inputField = style({
@@ -88,6 +103,13 @@ export const inputField = style({
     fontWeight: 500,
     lineHeight: 'normal',
   },
+
+  '@media': {
+    '(max-width: 798px)': {
+      padding: '18px 12px',
+      marginBottom: '10px',
+    },
+  },
 });
 
 export const errorMessage = style({
@@ -98,6 +120,55 @@ export const errorMessage = style({
   marginBottom: '10px',
   minHeight: '20px',
   lineHeight: '1.4',
+});
+
+export const buttonContainer = style({
+  display: 'flex',
+  width: '311px',
+
+  '@media': {
+    '(max-width: 798px)': {
+      gap: '10px',
+      justifyContent: 'space-between',
+    },
+  },
+});
+
+export const cancelButton = style({
+  width: '100px',
+  height: '53px',
+  flexShrink: 0,
+  borderRadius: '10px',
+  background: '#B9B9B9',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  zIndex: 5,
+  position: 'relative',
+  display: 'none',
+
+  color: '#FFF',
+  textAlign: 'center',
+  fontFamily: 'Pretendard',
+  fontSize: '16px',
+  fontStyle: 'normal',
+  fontWeight: 700,
+  lineHeight: 'normal',
+
+  ':hover': {
+    background: '#A0A0A0',
+    transform: 'translateY(-1px)',
+  },
+
+  ':active': {
+    transform: 'translateY(0)',
+  },
+
+  '@media': {
+    '(max-width: 798px)': {
+      display: 'block',
+    },
+  },
 });
 
 export const enterButton = style({
@@ -128,6 +199,13 @@ export const enterButton = style({
   ':active': {
     transform: 'translateY(0)',
   },
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '205px',
+      padding: '17px 12px',
+    },
+  },
 });
 
 export const backgroundGradient = style({
@@ -143,6 +221,16 @@ export const backgroundGradient = style({
   `,
   zIndex: 1,
   overflow: 'visible',
+
+  '@media': {
+    '(max-width: 798px)': {
+      bottom: '-100px',
+      left: '-60px',
+      width: 'calc(100vw + 120px)',
+      height: '40vh',
+      borderRadius: '150px 150px 0 0',
+    },
+  },
 });
 
 export const lanternContainer = style({
@@ -177,7 +265,7 @@ export const clearLanternCustom = style({
   animation: `${floatClearCustom} 8s ease-in-out infinite`,
 });
 
-// 왼쪽 섹션 (2개)
+// 왼쪽 섹션 (2개 - 0개)
 export const leftLantern1 = style([clearLanternCustom, {
   width: '90px',
   height: '90px',
@@ -186,6 +274,12 @@ export const leftLantern1 = style([clearLanternCustom, {
   vars: { '--base-rotation': '0deg' },
   animationDelay: '0s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '0px',
+    },
+  },
 }]);
 
 export const leftLantern2 = style([clearLanternCustom, {
@@ -196,17 +290,32 @@ export const leftLantern2 = style([clearLanternCustom, {
   vars: { '--base-rotation': '0deg' },
   animationDelay: '1.5s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '0px',
+    },
+  },
 }]);
 
-// 오른쪽 섹션 (10개) - 각각 다른 기본 각도
+// 오른쪽 섹션 (10개 - 9개)
 export const rightLantern1 = style([clearLanternCustom, {
-  width: '36px',
-  height: '36px',
+  width: '80px',
+  height: '80px',
   top: '47px',
   right: '515px',
   vars: { '--base-rotation': '0deg' },
   animationDelay: '0s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '23px',
+      height: '23px',
+      top: '7px',
+      left: '47px',
+    },
+  },
 }]);
 
 export const rightLantern2 = style([clearLanternCustom, {
@@ -217,6 +326,15 @@ export const rightLantern2 = style([clearLanternCustom, {
   vars: { '--base-rotation': '0deg' },
   animationDelay: '1s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '15px',
+      height: '15px',
+      top: '19px',
+      left: '98px',
+    },
+  },
 }]);
 
 export const rightLantern3 = style([clearLanternCustom, {
@@ -227,6 +345,16 @@ export const rightLantern3 = style([clearLanternCustom, {
   vars: { '--base-rotation': '0deg' },
   animationDelay: '2s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '23px',
+      height: '23px',
+      top: '20px',
+      right: '164px',
+      vars: { '--base-rotation': '0deg' },
+    },
+  },
 }]);
 
 export const rightLantern4 = style([clearLanternCustom, {
@@ -237,6 +365,16 @@ export const rightLantern4 = style([clearLanternCustom, {
   vars: { '--base-rotation': '20deg' },
   animationDelay: '3s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '27px',
+      height: '33px',
+      top: '45px',
+      right: '195px',
+      vars: { '--base-rotation': '20deg' },
+    },
+  },
 }]);
 
 export const rightLantern5 = style([clearLanternCustom, {
@@ -247,6 +385,16 @@ export const rightLantern5 = style([clearLanternCustom, {
   vars: { '--base-rotation': '15deg' },
   animationDelay: '1.5s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '68px',
+      height: '68px',
+      top: '25px',
+      right: '20px',
+      vars: { '--base-rotation': '15deg' },
+    },
+  },
 }]);
 
 export const rightLantern6 = style([clearLanternCustom, {
@@ -257,6 +405,15 @@ export const rightLantern6 = style([clearLanternCustom, {
   vars: { '--base-rotation': '8deg' },
   animationDelay: '2.5s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '49px',
+      height: '48px',
+      top: '70px',
+      left: '3px',
+    },
+  },
 }]);
 
 export const rightLantern7 = style([clearLanternCustom, {
@@ -267,6 +424,15 @@ export const rightLantern7 = style([clearLanternCustom, {
   vars: { '--base-rotation': '0deg' },
   animationDelay: '4s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '15px',
+      height: '15px',
+      top: '129px',
+      left: '89px',
+    },
+  },
 }]);
 
 export const rightLantern8 = style([clearLanternCustom, {
@@ -277,6 +443,15 @@ export const rightLantern8 = style([clearLanternCustom, {
   vars: { '--base-rotation': '12deg' },
   animationDelay: '0.5s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '40px',
+      height: '40px',
+      top: '130px',
+      right: '206px',
+    },
+  },
 }]);
 
 export const rightLantern9 = style([clearLanternCustom, {
@@ -287,6 +462,16 @@ export const rightLantern9 = style([clearLanternCustom, {
   vars: { '--base-rotation': '9deg' },
   animationDelay: '3.5s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '15px',
+      height: '15px',
+      top: '98px',
+      right: '115px',
+      vars: { '--base-rotation': '20deg' },
+    },
+  },
 }]);
 
 export const rightLantern10 = style([clearLanternCustom, {
@@ -297,59 +482,179 @@ export const rightLantern10 = style([clearLanternCustom, {
   vars: { '--base-rotation': '20deg' },
   animationDelay: '2.8s',
   zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      display: 'none',
+    },
+  },
 }]);
 
-// 블러 섹션 (6개)
+// 블러 섹션 (6개 - 9개)
 export const blurLantern1 = style([floatingLanternCustom, {
   width: '90px',
   height: '88px',
-  bottom: '35%',
-  left: '8%',
-  vars: { '--base-rotation': '5deg' },
+  bottom: '160px',
+  left: '105px',
+  vars: { '--base-rotation': '15deg' },
   animationDelay: '0s',
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '49px',
+      height: '48px',
+      bottom: '198px',
+      left: '70px',
+      display: 'block',
+    },
+  },
 }]);
 
 export const blurLantern2 = style([floatingLanternCustom, {
   width: '68px',
   height: '67px',
-  bottom: '33%',
-  left: '55%',
+  bottom: '170px',
+  right: '700px',
   vars: { '--base-rotation': '3deg' },
   animationDelay: '1s',
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '40px',
+      height: '40px',
+      bottom: '200px',
+      right: '220px',
+    },
+  },
 }]);
 
 export const blurLantern3 = style([floatingLanternCustom, {
   width: '22px',
   height: '22px',
-  bottom: '50%',
-  left: '63%',
+  bottom: '260px',
+  right: '600px',
   vars: { '--base-rotation': '12deg' },
   animationDelay: '2s',
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '15px',
+      height: '15px',
+      bottom: '200px',
+      right: '170px',
+    },
+  },
 }]);
 
 export const blurLantern4 = style([floatingLanternCustom, {
   width: '56px',
   height: '57px',
-  bottom: '50%',
-  left: '72%',
+  bottom: '250px',
+  right: '400px',
   vars: { '--base-rotation': '-6deg' },
   animationDelay: '3s',
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '27px',
+      height: '33px',
+      bottom: '140px',
+      right: '220px',
+    },
+  },
 }]);
 
 export const blurLantern5 = style([floatingLanternCustom, {
   width: '58px',
   height: '58px',
-  bottom: '60%',
-  right: '8%',
+  bottom: '350px',
+  right: '160px',
   vars: { '--base-rotation': '-15deg' },
   animationDelay: '1.5s',
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '68px',
+      height: '68px',
+      bottom: '140px',
+      right: '80px',
+      vars: { '--base-rotation': '-5deg' },
+    },
+  },
 }]);
 
 export const blurLantern6 = style([floatingLanternCustom, {
   width: '21px',
   height: '22px',
-  bottom: '40%',
-  right: '15%',
+  bottom: '200px',
+  right: '260px',
   vars: { '--base-rotation': '-4deg' },
   animationDelay: '2.5s',
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '23px',
+      height: '23px',
+      bottom: '110px',
+      right: '180px',
+    },
+  },
+}]);
+
+// 모바일 전용 블러 풍등들
+export const blurLantern7 = style([floatingLanternCustom, {
+  width: '15px',
+  height: '15px',
+  bottom: '270px',
+  left: '200px',
+  vars: { '--base-rotation': '8deg' },
+  animationDelay: '3.5s',
+  zIndex: 2,
+  display: 'block',
+
+  '@media': {
+    '(min-width: 799px)': {
+      display: 'none',
+    },
+  },
+}]);
+
+export const blurLantern8 = style([floatingLanternCustom, {
+  width: '23px',
+  height: '23px',
+  bottom: '100px',
+  left: '140px',
+  vars: { '--base-rotation': '10deg' },
+  animationDelay: '4s',
+  zIndex: 2,
+  display: 'block',
+
+  '@media': {
+    '(min-width: 799px)': {
+      display: 'none',
+    },
+  },
+}]);
+
+export const blurLantern9 = style([floatingLanternCustom, {
+  width: '15px',
+  height: '15px',
+  bottom: '130px',
+  left: '200px',
+  vars: { '--base-rotation': '10deg' },
+  animationDelay: '4.5s',
+  zIndex: 2,
+  display: 'block',
+
+  '@media': {
+    '(min-width: 799px)': {
+      display: 'none',
+    },
+  },
 }]);
