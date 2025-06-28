@@ -1,10 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { LanternPage, FormPage, LanternDetailPage } from './lazy';
+import { LanternPage, FormPage, LanternDetailPage, LoadingPage } from './lazy';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <FormPage />,
+  },
+  {
+    path: '/loading',
+    element: <LoadingPage />,
   },
   {
     path: '/lanterns',
