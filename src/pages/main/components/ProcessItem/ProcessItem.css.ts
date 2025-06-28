@@ -10,6 +10,14 @@ export const container = style({
   height: '321px',
   position: 'relative',
   boxSizing: 'border-box',
+
+  '@media': {
+    '(max-width: 798px)': {
+      padding: '20px 14px',
+      width: '140px',
+      height: '215px',
+    }
+  }
 });
 
 export const title = style({
@@ -28,12 +36,27 @@ export const iconWrapper = style({
   justifyContent: 'flex-end',
   flex: 1,
   alignItems: 'center',
+
+  '@media': {
+    '(max-width: 798px)': {
+      justifyContent: 'center',
+      flex: 1,
+    }
+  }
 });
 
 export const icon = style({
   width: '135px',
   height: '135px',
   objectFit: 'contain',
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '75px',
+      height: '75px',
+      flexShrink: 0,
+    }
+  }
 });
 
 export const description = style({
@@ -45,4 +68,11 @@ export const description = style({
   lineHeight: 'normal',
   margin: 0,
   textAlign: 'left',
+
+  '@media': {
+    '(max-width: 798px)': {
+      fontSize: '10px',
+      textAlign: 'left',
+    }
+  }
 });
