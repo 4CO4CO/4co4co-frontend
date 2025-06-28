@@ -90,6 +90,16 @@ export const inputField = style({
   },
 });
 
+export const errorMessage = style({
+  color: '#ff4444',
+  fontSize: '14px',
+  fontFamily: 'Pretendard',
+  fontWeight: 500,
+  marginBottom: '10px',
+  minHeight: '20px',
+  lineHeight: '1.4',
+});
+
 export const enterButton = style({
   width: '311px',
   height: '53px',

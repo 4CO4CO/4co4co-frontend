@@ -5,16 +5,57 @@ import RoundLantern from '@/assets/RoundLantern.svg?react';
 
 const Entry = () => {
   const [entryCode, setEntryCode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = () => {
-    if (entryCode.trim()) {
-      console.log('입장 코드:', entryCode);
+  const validateEntryCode = (code: string) => {
+    const trimmedCode = code.trim();
+
+    if (!trimmedCode) {
+      return '입장코드를 입력해주세요.';
     }
+
+    // 전체 형식 체크(이름-숫자4자리)
+    const entryCodeRegex = /^([가-힣a-zA-Z0-9\s]+)-(\d{4})$/;
+    const match = trimmedCode.match(entryCodeRegex);
+
+    if (!match) {
+      return '입장코드는 이름-숫자4자리 형식으로 입력해주세요. (예: 홍길동-1234)';
+    }
+    // 이름 부분 검증
+    const [, name] = match;
+    if (name.length < 1 || name.length > 50) {
+      return '이름은 1자 이상, 50자 이하로 입력해주세요.';
+    }
+    const nameRegex = /^[가-힣a-zA-Z0-9\s]+$/;
+    if (!nameRegex.test(name)) {
+      return '이름은 한글, 영문, 숫자만 입력 가능합니다.';
+    }
+    if (name.replace(/\s/g, '').length === 0) {
+      return '공백만으로는 이름을 입력할 수 없습니다.';
+    }
+
+    return null;
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
+  const handleSubmit = () => {
+    const error = validateEntryCode(entryCode);
+
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
+
+    setErrorMessage('');
+    console.log('입장 코드:', entryCode.trim());
+  };
+
+  // 입력 필드 변경 시 오류 메시지 삭제
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEntryCode(value);
+
+    if (errorMessage) {
+      setErrorMessage('');
     }
   };
 
@@ -53,9 +94,14 @@ const Entry = () => {
           className={styles.inputField}
           placeholder="받으신 입장코드를 입력해주세요."
           value={entryCode}
-          onChange={(e) => setEntryCode(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onChange={handleInputChange}
         />
+
+        {errorMessage && (
+          <div className={styles.errorMessage}>
+            {errorMessage}
+          </div>
+        )}
 
         <button
           className={styles.enterButton}
