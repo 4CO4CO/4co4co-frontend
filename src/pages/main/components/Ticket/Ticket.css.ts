@@ -7,6 +7,12 @@ export const container = style({
   alignItems: 'center',
   justifyContent: 'center',
   padding: '0 4rem',
+
+  '@media': {
+    '(max-width: 798px)': {
+      padding: '0 2rem',
+    }
+  }
 });
 
 export const contentWrapper = style({
@@ -39,6 +45,13 @@ export const ticketIcon = style({
   width: '310px',
   height: '222px',
   objectFit: 'contain',
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '210px',
+      height: '150px',
+    }
+  }
 });
 
 export const startButton = style({
