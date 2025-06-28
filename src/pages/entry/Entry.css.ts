@@ -1,4 +1,22 @@
-import { style } from '@vanilla-extract/css';
+import { style, keyframes } from '@vanilla-extract/css';
+
+const floatBlurCustom = keyframes({
+  '0%, 100%': {
+    transform: 'translateY(0px) rotate(calc(-180deg + var(--base-rotation, 0deg)))',
+  },
+  '50%': {
+    transform: 'translateY(-20px) rotate(calc(-175deg + var(--base-rotation, 0deg)))',
+  },
+});
+
+const floatClearCustom = keyframes({
+  '0%, 100%': {
+    transform: 'translateY(0px) rotate(var(--base-rotation, 0deg))',
+  },
+  '50%': {
+    transform: 'translateY(-15px) rotate(calc(var(--base-rotation, 0deg) - 5deg))',
+  },
+});
 
 export const container = style({
   position: 'relative',
@@ -136,17 +154,17 @@ export const backgroundLanternContainer = style({
   zIndex: 2,
 });
 
-// 공통 스타일
+// 공통 애니메이션 스타일
 export const floatingLanternCustom = style({
   position: 'absolute',
   filter: 'blur(5px)',
+  animation: `${floatBlurCustom} 6s ease-in-out infinite`,
   opacity: 0.8,
-  transform: 'rotate(calc(-180deg + var(--base-rotation, 0deg)))',
 });
 
 export const clearLanternCustom = style({
   position: 'absolute',
-  transform: 'rotate(var(--base-rotation, 0deg))',
+  animation: `${floatClearCustom} 8s ease-in-out infinite`,
 });
 
 // 왼쪽 섹션 (2개)
@@ -156,6 +174,7 @@ export const leftLantern1 = style([clearLanternCustom, {
   top: '28px',
   left: '40px',
   vars: { '--base-rotation': '0deg' },
+  animationDelay: '0s',
   zIndex: 3,
 }]);
 
@@ -165,16 +184,18 @@ export const leftLantern2 = style([clearLanternCustom, {
   top: '184px',
   left: '63px',
   vars: { '--base-rotation': '0deg' },
+  animationDelay: '1.5s',
   zIndex: 3,
 }]);
 
-// 오른쪽 섹션 (10개)
+// 오른쪽 섹션 (10개) - 각각 다른 기본 각도
 export const rightLantern1 = style([clearLanternCustom, {
   width: '36px',
   height: '36px',
   top: '47px',
   right: '515px',
   vars: { '--base-rotation': '0deg' },
+  animationDelay: '0s',
   zIndex: 3,
 }]);
 
@@ -184,6 +205,7 @@ export const rightLantern2 = style([clearLanternCustom, {
   top: '78px',
   right: '434px',
   vars: { '--base-rotation': '0deg' },
+  animationDelay: '1s',
   zIndex: 3,
 }]);
 
@@ -193,6 +215,7 @@ export const rightLantern3 = style([clearLanternCustom, {
   top: '55px',
   right: '253px',
   vars: { '--base-rotation': '0deg' },
+  animationDelay: '2s',
   zIndex: 3,
 }]);
 
@@ -202,6 +225,7 @@ export const rightLantern4 = style([clearLanternCustom, {
   top: '119px',
   right: '306px',
   vars: { '--base-rotation': '20deg' },
+  animationDelay: '3s',
   zIndex: 3,
 }]);
 
@@ -211,6 +235,7 @@ export const rightLantern5 = style([clearLanternCustom, {
   top: '87px',
   right: '50px',
   vars: { '--base-rotation': '15deg' },
+  animationDelay: '1.5s',
   zIndex: 3,
 }]);
 
@@ -220,6 +245,7 @@ export const rightLantern6 = style([clearLanternCustom, {
   top: '157px',
   right: '584px',
   vars: { '--base-rotation': '8deg' },
+  animationDelay: '2.5s',
   zIndex: 3,
 }]);
 
@@ -229,6 +255,7 @@ export const rightLantern7 = style([clearLanternCustom, {
   top: '251px',
   right: '450px',
   vars: { '--base-rotation': '0deg' },
+  animationDelay: '4s',
   zIndex: 3,
 }]);
 
@@ -238,6 +265,7 @@ export const rightLantern8 = style([clearLanternCustom, {
   top: '252px',
   right: '324px',
   vars: { '--base-rotation': '12deg' },
+  animationDelay: '0.5s',
   zIndex: 3,
 }]);
 
@@ -247,6 +275,7 @@ export const rightLantern9 = style([clearLanternCustom, {
   top: '202px',
   right: '180px',
   vars: { '--base-rotation': '9deg' },
+  animationDelay: '3.5s',
   zIndex: 3,
 }]);
 
@@ -256,6 +285,7 @@ export const rightLantern10 = style([clearLanternCustom, {
   top: '334px',
   right: '100px',
   vars: { '--base-rotation': '20deg' },
+  animationDelay: '2.8s',
   zIndex: 3,
 }]);
 
@@ -266,6 +296,7 @@ export const blurLantern1 = style([floatingLanternCustom, {
   bottom: '35%',
   left: '8%',
   vars: { '--base-rotation': '5deg' },
+  animationDelay: '0s',
 }]);
 
 export const blurLantern2 = style([floatingLanternCustom, {
@@ -274,6 +305,7 @@ export const blurLantern2 = style([floatingLanternCustom, {
   bottom: '33%',
   left: '55%',
   vars: { '--base-rotation': '3deg' },
+  animationDelay: '1s',
 }]);
 
 export const blurLantern3 = style([floatingLanternCustom, {
@@ -282,6 +314,7 @@ export const blurLantern3 = style([floatingLanternCustom, {
   bottom: '50%',
   left: '63%',
   vars: { '--base-rotation': '12deg' },
+  animationDelay: '2s',
 }]);
 
 export const blurLantern4 = style([floatingLanternCustom, {
@@ -290,6 +323,7 @@ export const blurLantern4 = style([floatingLanternCustom, {
   bottom: '50%',
   left: '72%',
   vars: { '--base-rotation': '-6deg' },
+  animationDelay: '3s',
 }]);
 
 export const blurLantern5 = style([floatingLanternCustom, {
@@ -298,6 +332,7 @@ export const blurLantern5 = style([floatingLanternCustom, {
   bottom: '60%',
   right: '8%',
   vars: { '--base-rotation': '-15deg' },
+  animationDelay: '1.5s',
 }]);
 
 export const blurLantern6 = style([floatingLanternCustom, {
@@ -306,4 +341,5 @@ export const blurLantern6 = style([floatingLanternCustom, {
   bottom: '40%',
   right: '15%',
   vars: { '--base-rotation': '-4deg' },
+  animationDelay: '2.5s',
 }]);
