@@ -11,6 +11,67 @@ export const container = style({
   boxSizing: 'border-box',
 });
 
+export const beamBack = style({
+  position: 'absolute',
+  top: '45vh',
+  left: '47%',
+  transform: 'translate(-50%, -50%)',
+  width: '450px',
+  flexShrink: 0,
+  zIndex: 0,
+
+  '@media': {
+    '(max-width: 798px)': {
+      top: '40vh',
+      width: '330px',
+    },
+  },
+});
+
+export const beamFront = style({
+  position: 'absolute',
+  top: '55vh',
+  left: '55%',
+  transform: 'translate(-50%, -50%)',
+  width: '400px',
+  flexShrink: 0,
+  zIndex: 2,
+
+  '@media': {
+    '(max-width: 798px)': {
+      top: '47vh',
+      left: '57%',
+      width: '280px',
+    },
+  },
+});
+
+export const cube = style({
+  position: 'absolute',
+  top: '48vh',
+  left: '50%',
+  width: '20vw',
+  minWidth: '350px',
+  height: 'auto',
+  zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      transform: 'translateX(-10%) translateY(-2vh)',
+      minWidth: '250px',
+      top: '45vh',
+      left: '55%',
+    },
+
+    '(max-width: 425px)': {
+      transform: 'translateX(-10%) translateY(-2vh)',
+      minWidth: '200px',
+      top: '48vh',
+      left: '50%',
+    },
+  },
+});
+
 export const textWrapper = style({
   position: 'absolute',
   top: '30vh',
@@ -29,6 +90,12 @@ export const subTitle = style({
   fontStyle: 'normal',
   fontWeight: 600,
   letterSpacing: '2px',
+
+  '@media': {
+    '(max-width: 798px)': {
+      fontSize: '12px',
+    },
+  },
 });
 
 export const mainTitle = style({
@@ -40,37 +107,10 @@ export const mainTitle = style({
   lineHeight: 'normal',
   letterSpacing: '6px',
   marginTop: '18px',
-});
 
-export const beamBack = style({
-  position: 'absolute',
-  top: '45vh',
-  left: '47%',
-  transform: 'translate(-50%, -50%)',
-  width: '35vw',
-  maxWidth: '450px',
-  flexShrink: 0,
-  zIndex: 0,
-});
-
-export const beamFront = style({
-  position: 'absolute',
-  top: '55vh',
-  left: '55%',
-  transform: 'translate(-50%, -50%)',
-  width: '30vw',
-  maxWidth: '400px',
-  flexShrink: 0,
-  zIndex: 2,
-});
-
-export const cube = style({
-  position: 'absolute',
-  bottom: '12vh',
-  right: '30vw',
-  width: '10vw',
-  minWidth: '350px',
-  maxWidth: '350px',
-  height: 'auto',
-  zIndex: 3,
+  '@media': {
+    '(max-width: 798px)': {
+      fontSize: '40px',
+    },
+  },
 });
