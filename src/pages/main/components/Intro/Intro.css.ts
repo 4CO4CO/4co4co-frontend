@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css';
 export const container = style({
   position: 'relative',
   width: '100vw',
-  height: '100vh',
+  height: '100dvh',
   backgroundColor: '#f9f6ef',
   overflow: 'hidden',
   margin: 0,

@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
 export const mainContainer = style({
-  height: '100vh',
+  height: '100dvh',
   overflowY: 'scroll',
   scrollSnapType: 'y mandatory',
   backgroundColor: '#f9f6ef',

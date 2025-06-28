@@ -1,5 +1,5 @@
 import * as styles from './Ticket.css';
-import TicketIcon from '@/assets/TicketIcon.svg';
+import TicketIcon from '@/assets/TicketIcon.svg?react';
 
 const Ticket = () => {
   return (
@@ -12,7 +12,7 @@ const Ticket = () => {
         </h2>
 
         <div className={styles.ticketWrapper}>
-          <img src={TicketIcon} alt="티켓" className={styles.ticketIcon} />
+          <TicketIcon className={styles.ticketIcon} role="img" aria-label="Ticket" />
         </div>
 
         <button className={styles.startButton}>

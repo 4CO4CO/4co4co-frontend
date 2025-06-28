@@ -1,14 +1,14 @@
 import * as styles from './Intro.css';
-import BeamBack from '@/assets/BeamBack.svg';
-import BeamFront from '@/assets/BeamFront.svg';
-import Cube from '@/assets/Cube.svg';
+import BeamBack from '@/assets/BeamBack.svg?react';
+import BeamFront from '@/assets/BeamFront.svg?react';
+import Cube from '@/assets/Cube.svg?react';
 
 const Intro = () => {
   return (
     <div className={styles.container}>
-      <img src={BeamBack} alt="Beam Back" className={styles.beamBack} />
-      <img src={Cube} alt="Cube" className={styles.cube} />
-      <img src={BeamFront} alt="Beam Front" className={styles.beamFront} />
+      <BeamBack className={styles.beamBack} role="img" aria-label="Beam Back" />
+      <Cube className={styles.cube} role="img" aria-label="Cube" />
+      <BeamFront className={styles.beamFront} role="img" aria-label="Beam Front" />
 
       <div className={styles.textWrapper}>
         <p className={styles.subTitle}>사진 한 장, 떠오르는 추억 한 편</p>
