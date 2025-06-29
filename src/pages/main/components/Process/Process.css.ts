@@ -81,12 +81,3 @@ export const mobileSlider = style({
     }
   }
 });
-
-export const cardWrapper = style({
-  '@media': {
-    '(max-width: 798px)': {
-      flexShrink: 0,
-      transition: 'opacity 0.3s ease-in-out',
-    }
-  }
-});
