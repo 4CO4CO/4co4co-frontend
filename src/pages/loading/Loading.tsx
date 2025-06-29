@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import * as styles from './Loading.css';
-import LoadingIcon from '@/assets/loading.svg?react';
 
 interface LoadingProps {
   entryCode?: string;
@@ -29,7 +29,7 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
         <h1 className={styles.mainTitle}>전시 만드는 중...</h1>
 
         <div className={styles.loadingIconContainer}>
-          <LoadingIcon className={styles.loadingIcon} />
+          <LoadingAnimation />
         </div>
 
         <div className={styles.registrationBox}>
