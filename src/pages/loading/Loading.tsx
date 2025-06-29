@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import CompletionModal from './components/completionModal/CompletionModal';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
+import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
 
 interface LoadingProps {
   entryCode?: string;
 }
-
-const texts = [
-  "전시 만드는 중",
-  "추억을 분석하는 중",
-  "1년을 되돌아 보는 중",
-  "취향을 반영 하는 중"
-];
 
 const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -29,7 +23,7 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
       dotCount++;
 
       if (dotCount > 3) {
-        textIndex = (textIndex + 1) % texts.length;
+        textIndex = (textIndex + 1) % LOADING_TEXTS.length;
         dotCount = 0;
         setCurrentTextIndex(textIndex);
       }
@@ -76,7 +70,7 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
       <div className={styles.container}>
         <div className={styles.contentWrapper}>
           <h1 className={styles.mainTitle}>
-            {texts[currentTextIndex]}{dots}
+            {LOADING_TEXTS[currentTextIndex]}{dots}
           </h1>
 
           <div className={styles.loadingIconContainer}>
