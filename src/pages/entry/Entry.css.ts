@@ -272,6 +272,7 @@ export const leftLantern1 = style([clearLanternCustom, {
   top: '28px',
   left: '40px',
   vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
   animationDelay: '0s',
   zIndex: 3,
 
@@ -288,6 +289,7 @@ export const leftLantern2 = style([clearLanternCustom, {
   top: '184px',
   left: '63px',
   vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
   animationDelay: '1.5s',
   zIndex: 3,
 
@@ -305,6 +307,7 @@ export const rightLantern1 = style([clearLanternCustom, {
   top: '47px',
   right: '515px',
   vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
   animationDelay: '0s',
   zIndex: 3,
 
@@ -324,6 +327,7 @@ export const rightLantern2 = style([clearLanternCustom, {
   top: '78px',
   right: '434px',
   vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
   animationDelay: '1s',
   zIndex: 3,
 
@@ -343,6 +347,7 @@ export const rightLantern3 = style([clearLanternCustom, {
   top: '55px',
   right: '253px',
   vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
   animationDelay: '2s',
   zIndex: 3,
 
@@ -363,6 +368,7 @@ export const rightLantern4 = style([clearLanternCustom, {
   top: '119px',
   right: '306px',
   vars: { '--base-rotation': '20deg' },
+  transform: 'rotate(20deg)',
   animationDelay: '3s',
   zIndex: 3,
 
@@ -383,6 +389,7 @@ export const rightLantern5 = style([clearLanternCustom, {
   top: '87px',
   right: '50px',
   vars: { '--base-rotation': '15deg' },
+  transform: 'rotate(15deg)',
   animationDelay: '1.5s',
   zIndex: 3,
 
@@ -403,6 +410,7 @@ export const rightLantern6 = style([clearLanternCustom, {
   top: '157px',
   right: '584px',
   vars: { '--base-rotation': '8deg' },
+  transform: 'rotate(8deg)',
   animationDelay: '2.5s',
   zIndex: 3,
 
@@ -422,6 +430,7 @@ export const rightLantern7 = style([clearLanternCustom, {
   top: '251px',
   right: '450px',
   vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
   animationDelay: '4s',
   zIndex: 3,
 
@@ -441,6 +450,7 @@ export const rightLantern8 = style([clearLanternCustom, {
   top: '252px',
   right: '324px',
   vars: { '--base-rotation': '12deg' },
+  transform: 'rotate(12deg)',
   animationDelay: '0.5s',
   zIndex: 3,
 
@@ -460,6 +470,7 @@ export const rightLantern9 = style([clearLanternCustom, {
   top: '202px',
   right: '180px',
   vars: { '--base-rotation': '9deg' },
+  transform: 'rotate(9deg)',
   animationDelay: '3.5s',
   zIndex: 3,
 
@@ -480,6 +491,7 @@ export const rightLantern10 = style([clearLanternCustom, {
   top: '334px',
   right: '100px',
   vars: { '--base-rotation': '20deg' },
+  transform: 'rotate(20deg)',
   animationDelay: '2.8s',
   zIndex: 3,
 
@@ -497,6 +509,7 @@ export const blurLantern1 = style([floatingLanternCustom, {
   bottom: '160px',
   left: '105px',
   vars: { '--base-rotation': '15deg' },
+  transform: 'rotate(-165deg)',
   animationDelay: '0s',
   zIndex: 2,
 
@@ -517,6 +530,7 @@ export const blurLantern2 = style([floatingLanternCustom, {
   bottom: '170px',
   right: '700px',
   vars: { '--base-rotation': '3deg' },
+  transform: 'rotate(-177deg)',
   animationDelay: '1s',
   zIndex: 2,
 
@@ -536,6 +550,7 @@ export const blurLantern3 = style([floatingLanternCustom, {
   bottom: '260px',
   right: '600px',
   vars: { '--base-rotation': '12deg' },
+  transform: 'rotate(-168deg)',
   animationDelay: '2s',
   zIndex: 2,
 
@@ -555,6 +570,7 @@ export const blurLantern4 = style([floatingLanternCustom, {
   bottom: '250px',
   right: '400px',
   vars: { '--base-rotation': '-6deg' },
+  transform: 'rotate(-186deg)',
   animationDelay: '3s',
   zIndex: 2,
 
@@ -574,6 +590,7 @@ export const blurLantern5 = style([floatingLanternCustom, {
   bottom: '350px',
   right: '160px',
   vars: { '--base-rotation': '-15deg' },
+  transform: 'rotate(-195deg)',
   animationDelay: '1.5s',
   zIndex: 2,
 
@@ -594,6 +611,7 @@ export const blurLantern6 = style([floatingLanternCustom, {
   bottom: '200px',
   right: '260px',
   vars: { '--base-rotation': '-4deg' },
+  transform: 'rotate(-184deg)',
   animationDelay: '2.5s',
   zIndex: 2,
 
@@ -614,6 +632,7 @@ export const blurLantern7 = style([floatingLanternCustom, {
   bottom: '270px',
   left: '200px',
   vars: { '--base-rotation': '8deg' },
+  transform: 'rotate(-172deg)',
   animationDelay: '3.5s',
   zIndex: 2,
   display: 'block',
@@ -631,6 +650,7 @@ export const blurLantern8 = style([floatingLanternCustom, {
   bottom: '100px',
   left: '140px',
   vars: { '--base-rotation': '10deg' },
+  transform: 'rotate(-170deg)',
   animationDelay: '4s',
   zIndex: 2,
   display: 'block',
@@ -648,6 +668,7 @@ export const blurLantern9 = style([floatingLanternCustom, {
   bottom: '130px',
   left: '200px',
   vars: { '--base-rotation': '10deg' },
+  transform: 'rotate(-170deg)',
   animationDelay: '4.5s',
   zIndex: 2,
   display: 'block',
