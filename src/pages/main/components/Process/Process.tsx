@@ -1,34 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
+import { PROCESS_DATA } from './constants/processData';
 import * as styles from './Process.css';
 import ProcessItem from '../ProcessItem/ProcessItem';
-import HourglassIcon from '@/assets/HourglassIcon.svg';
-import LanternIcon from '@/assets/LanternIcon.svg';
-import UploadIcon from '@/assets/UploadIcon.svg';
 
 const Process = () => {
-  const processData = [
-    {
-      icon: UploadIcon,
-      title: "올리고",
-      description: "다시 추억하고 싶은\n시간의 풍경 사진을\n찾아서 업로드합니다."
-    },
-    {
-      icon: LanternIcon,
-      title: "띄우며",
-      description: "생성된 영상을 보며\n마음껏 만지고 교감하며\n소리와 진동을 느껴보세요."
-    },
-    {
-      icon: HourglassIcon,
-      title: "넘어요",
-      description: "나만의 전시를 체험하며\n추억이 되살아나는 경험으로\n기억의 차원을 넘어보세요!"
-    }
-  ];
-
-  const [cardList, setCardList] = useState([...processData, ...processData]);
+  const [cardList, setCardList] = useState([...PROCESS_DATA, ...PROCESS_DATA]);
   const [position, setPosition] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // 슬라이드 애니메이션 함수
   const slideCards = useCallback(() => {
     if (isAnimating) return;
 
@@ -68,7 +47,7 @@ const Process = () => {
 
         {/* 데스크톱용 그리드 */}
         <div className={`${styles.processGrid} ${styles.desktopGrid}`}>
-          {processData.map((item, index) => (
+          {PROCESS_DATA.map((item, index) => (
             <ProcessItem
               key={index}
               icon={item.icon}
@@ -88,16 +67,12 @@ const Process = () => {
             }}
           >
             {cardList.map((item, index) => (
-              <div
-                key={`card-${Math.random()}-${index}`}
-                className={styles.cardWrapper}
-              >
-                <ProcessItem
-                  icon={item.icon}
-                  title={item.title}
-                  description={item.description}
-                />
-              </div>
+              <ProcessItem
+                key={`card-${index}`}
+                icon={item.icon}
+                title={item.title}
+                description={item.description}
+              />
             ))}
           </div>
         </div>
