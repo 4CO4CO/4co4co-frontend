@@ -21,6 +21,14 @@ export const modal = style({
   textAlign: 'center',
   boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.2)',
   position: 'relative',
+
+  '@media': {
+    'screen and (max-width: 768px)': {
+      padding: '20px 30px',
+      maxWidth: '90vw',
+      borderRadius: '15px',
+    }
+  }
 });
 
 export const title = style({
@@ -30,6 +38,14 @@ export const title = style({
   fontWeight: '700',
   letterSpacing: '2.4px',
   marginBottom: '20px',
+
+  '@media': {
+    'screen and (max-width: 768px)': {
+      fontSize: '18px',
+      letterSpacing: '1.8px',
+      marginBottom: '15px',
+    }
+  }
 });
 
 export const message = style({
@@ -40,6 +56,13 @@ export const message = style({
   fontWeight: '700',
   marginBottom: '30px',
   whiteSpace: 'pre-line',
+
+  '@media': {
+    'screen and (max-width: 768px)': {
+      fontSize: '14px',
+      marginBottom: '20px',
+    }
+  }
 });
 
 export const buttonContainer = style({
@@ -47,6 +70,12 @@ export const buttonContainer = style({
   gap: '6px',
   justifyContent: 'center',
   alignItems: 'center',
+
+  '@media': {
+    'screen and (max-width: 768px)': {
+      gap: '6px',
+    }
+  }
 });
 
 export const enterButton = style({
@@ -61,6 +90,13 @@ export const enterButton = style({
   border: 'none',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
+
+  '@media': {
+    'screen and (max-width: 768px)': {
+      fontSize: '14px',
+      padding: '12px 50px',
+    }
+  }
 });
 
 export const cancelButton = style({
@@ -75,4 +111,11 @@ export const cancelButton = style({
   border: 'none',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
+
+  '@media': {
+    'screen and (max-width: 768px)': {
+      fontSize: '14px',
+      padding: '12px 25px',
+    }
+  }
 });
