@@ -1,9 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { LanternPage, FormPage, EntryPage, LanternDetailPage } from './lazy';
+import { MainPage, LanternPage, FormPage, EntryPage, LanternDetailPage } from './lazy';
 
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <MainPage />,
+  },
+  {
+    path: '/upload',
     element: <FormPage />,
   },
   {
