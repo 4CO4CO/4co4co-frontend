@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as styles from './Entry.css';
 import Lantern from '@/assets/Lantern.svg?react';
 import RoundLantern from '@/assets/RoundLantern.svg?react';
@@ -7,6 +8,7 @@ import { validateEntryCode } from '@/utils/validation';
 const Entry = () => {
   const [entryCode, setEntryCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     const error = validateEntryCode(entryCode);
@@ -21,9 +23,7 @@ const Entry = () => {
   };
 
   const handleCancel = () => {
-    setEntryCode('');
-    setErrorMessage('');
-    console.log('취소 버튼 클릭');
+    navigate(-1);
   };
 
   // 입력 필드 변경 시 오류 메시지 삭제
