@@ -1,4 +1,3 @@
-import React from 'react';
 import * as styles from './ProcessItem.css';
 
 interface ProcessItemProps {
@@ -14,14 +13,7 @@ const ProcessItem = ({ icon, title, description }: ProcessItemProps) => {
       <div className={styles.iconWrapper}>
         <img src={icon} alt={title} className={styles.icon} />
       </div>
-      <p className={styles.description}>
-        {description.split('\n').map((line, index) => (
-          <React.Fragment key={index}>
-            {line}
-            {index < description.split('\n').length - 1 && <br />}
-          </React.Fragment>
-        ))}
-      </p>
+      <pre className={styles.description}>{description}</pre>
     </div>
   );
 };
