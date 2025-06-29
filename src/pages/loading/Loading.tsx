@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import * as styles from './Loading.css';
 
@@ -6,8 +6,37 @@ interface LoadingProps {
   entryCode?: string;
 }
 
+const texts = [
+  "전시 만드는 중",
+  "추억을 분석하는 중",
+  "1년을 되돌아 보는 중",
+  "취향을 반영 하는 중"
+];
+
 const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [dots, setDots] = useState('');
+
+  // ... 추가 애니메이션
+  useEffect(() => {
+    let dotCount = 0;
+    let textIndex = 0;
+
+    const interval = setInterval(() => {
+      dotCount++;
+
+      if (dotCount > 3) {
+        textIndex = (textIndex + 1) % texts.length;
+        dotCount = 0;
+        setCurrentTextIndex(textIndex);
+      }
+
+      setDots('.'.repeat(dotCount));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopyCode = async () => {
     try {
@@ -20,13 +49,15 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
   };
 
   const handleEnterLanternFestival = () => {
-    console.log('풍등 축제 미리 입장하기 클릭');
+    // console.log('풍등 축제 미리 입장하기 클릭');
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.contentWrapper}>
-        <h1 className={styles.mainTitle}>전시 만드는 중...</h1>
+        <h1 className={styles.mainTitle}>
+          {texts[currentTextIndex]}{dots}
+        </h1>
 
         <div className={styles.loadingIconContainer}>
           <LoadingAnimation />
