@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CloseButton } from './components/CloseButton/CloseButton';
 import { createMockData } from './constants/mockData';
 import * as styles from './LanternDetail.css';
-// import { get } from '@/apis';
 import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
 import { isFist } from '@/components/lantern/utils';
@@ -13,9 +12,13 @@ const LanternDetail = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [lanternData, setLanternData] = useState<LanternData>();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const hasNavigatedRef = useRef(false);
+  const [currentMusicIndex, setCurrentMusicIndex] = useState(1);
+  const [isUserInteracted, setIsUserInteracted] = useState(false);
+  const [showInteractionMessage, setShowInteractionMessage] = useState(false);
 
   const { handCenter, marks, handedness } = useHandMark();
 
@@ -39,18 +42,67 @@ const LanternDetail = () => {
     fetchDetail();
   }, [lanternId, navigate]);
 
-  // 배경음 재생 (첫 번째 음성 재생)
+  // 가운데 이미지로 스크롤 위치 고정
   useEffect(() => {
-    if (lanternData?.background_sounds && lanternData.background_sounds.length > 0) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+    if (lanternData && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = window.innerWidth;
+    }
+  }, [lanternData]);
+
+  // 음악 재생을 위한 사용자 상호작용 감지
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setIsUserInteracted(true);
+      setShowInteractionMessage(false);
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('scroll', handleUserInteraction);
+    };
+
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('scroll', handleUserInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('scroll', handleUserInteraction);
+    };
+  }, []);
+
+  // 음악 재생
+  useEffect(() => {
+    if (!lanternData?.background_sounds) return;
+
+    const playMusic = async () => {
+      try {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.src = '';
+          audioRef.current = null;
+        }
+
+        const audio = new Audio(lanternData.background_sounds[currentMusicIndex]);
+        audioRef.current = audio;
+
+        audio.addEventListener('ended', () => {
+          const nextIndex = (currentMusicIndex + 1) % 3;
+          setCurrentMusicIndex(nextIndex);
+        });
+        console.log('음악 재생:', currentMusicIndex);
+        await audio.play();
+      } catch (error) {
+        console.error('오디오 재생 실패:', error);
+        if (!isUserInteracted) {
+          setShowInteractionMessage(true);
+          setTimeout(() => {
+            if (isUserInteracted) {
+              playMusic();
+            }
+          }, 3000);
+        }
       }
-      const audio = new Audio(lanternData.background_sounds[0]);
-      audioRef.current = audio;
-      audio.play().catch((err) => {
-        console.error('오디오 재생 실패:', err);
-      });
+    };
+
+    if (isUserInteracted || currentMusicIndex === 1) {
+      playMusic();
     }
 
     return () => {
@@ -59,7 +111,7 @@ const LanternDetail = () => {
         audioRef.current = null;
       }
     };
-  }, [lanternData?.background_sounds]);
+  }, [currentMusicIndex, lanternData?.background_sounds, isUserInteracted]);
 
   // 풍등 닫기 버튼 주먹 제스처 인식
   useEffect(() => {
@@ -92,26 +144,32 @@ const LanternDetail = () => {
   return (
     <div className={styles.overlay}>
       <VideoFeed />
+      <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
 
-      <CloseButton
-        ref={closeButtonRef}
-        onClick={handleCloseClick}
-      />
-
-      {/* 첫 번째 이미지 표시 */}
-      {lanternData.images && lanternData.images.length > 0 && (
-        <img
-          src={lanternData.images[0]}
-          className={styles.fullImage}
-          alt="랜턴 이미지"
-        />
-      )}
+      <div ref={scrollContainerRef} className={styles.scrollContainer}>
+        <div className={styles.panoramaWrapper}>
+          {lanternData.images.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              className={styles.panoramaImage}
+              alt={`풍등 이미지 ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
 
       {handCenter && (
         <div
           className={styles.handPointer}
           style={{ top: handCenter.y, left: handCenter.x }}
         />
+      )}
+
+      {showInteractionMessage && (
+        <div className={styles.interactionMessage}>
+          화면을 클릭하면 음악이 재생됩니다
+        </div>
       )}
     </div>
   );
