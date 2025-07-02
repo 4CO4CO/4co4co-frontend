@@ -1,16 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as styles from './LanternDetail.css';
-import { get } from '@/apis';
+// import { get } from '@/apis';
 import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
 import { isFist } from '@/components/lantern/utils';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
 
+// 목 데이터
+const createMockData = (lanternId: string): LanternData => ({
+  lantern_id: lanternId,
+  owner_name: "테스트 사용자",
+  images: [
+    "https://picsum.photos/800/600?random=1",
+    "https://picsum.photos/800/600?random=2",
+    "https://picsum.photos/800/600?random=3"
+  ],
+  background_sounds: [
+    "https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3",
+    "https://sample-videos.com/zip/10/mp3/SampleAudio_0.4mb_mp3.mp3",
+    "https://sample-videos.com/zip/10/mp3/SampleAudio_0.7mb_mp3.mp3"
+  ],
+});
+
 const LanternDetail = () => {
   const { lanternId } = useParams();
-  const [searchParams] = useSearchParams();
-  const currentLanternId = searchParams.get('currentLanternId');
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [lanternData, setLanternData] = useState<LanternData>();
@@ -20,17 +34,16 @@ const LanternDetail = () => {
   const { handCenter, marks, handedness } = useHandMark();
 
   useEffect(() => {
-    if (!lanternId || !currentLanternId) {
+    if (!lanternId) {
       navigate('/');
       return;
     }
 
+    // 임시용 목 데이터 사용
     const fetchDetail = async () => {
       try {
-        const response = await get<{ status: string; message: string; data: LanternData }>(
-          `/lanterns/${lanternId}?current_lantern_id=${currentLanternId}`
-        );
-        setLanternData(response.data);
+        const mockData = createMockData(lanternId);
+        setLanternData(mockData);
       } catch (error) {
         console.error(error);
         navigate(-1);
@@ -38,15 +51,16 @@ const LanternDetail = () => {
     };
 
     fetchDetail();
-  }, [lanternId, currentLanternId]);
+  }, [lanternId, navigate]);
 
+  // 배경음 재생 (첫 번째 음성 재생)
   useEffect(() => {
-    if (lanternData?.background_sound) {
+    if (lanternData?.background_sounds && lanternData.background_sounds.length > 0) {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
-      const audio = new Audio(lanternData.background_sound);
+      const audio = new Audio(lanternData.background_sounds[0]);
       audioRef.current = audio;
       audio.play().catch((err) => {
         console.error('오디오 재생 실패:', err);
@@ -59,7 +73,7 @@ const LanternDetail = () => {
         audioRef.current = null;
       }
     };
-  }, [lanternData?.background_sound]);
+  }, [lanternData?.background_sounds]);
 
   // 풍등 닫기 버튼 주먹 제스처 인식
   useEffect(() => {
@@ -79,9 +93,9 @@ const LanternDetail = () => {
 
     if (fist && isInCloseArea && !hasNavigatedRef.current) {
       hasNavigatedRef.current = true;
-      navigate(`/lanterns?currentLanternId=${currentLanternId}`);
+      navigate('/lanterns');
     }
-  }, [marks, handedness]);
+  }, [marks, handedness, navigate]);
 
   if (!lanternData) return null;
 
@@ -91,11 +105,19 @@ const LanternDetail = () => {
       <button
         ref={closeButtonRef}
         className={styles.closeButton}
-        onClick={() => navigate(`/lanterns?currentLanternId=${currentLanternId}`)}
+        onClick={() => navigate('/lanterns')}
       >
         닫기
       </button>
-      <img src={lanternData.panorama} className={styles.fullImage} alt="랜턴 이미지" />
+
+      {/* 첫 번째 이미지 표시 */}
+      {lanternData.images && lanternData.images.length > 0 && (
+        <img
+          src={lanternData.images[0]}
+          className={styles.fullImage}
+          alt="랜턴 이미지"
+        />
+      )}
 
       {handCenter && (
         <div
