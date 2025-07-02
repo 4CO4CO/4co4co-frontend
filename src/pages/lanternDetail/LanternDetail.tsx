@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { CloseButton } from './components/CloseButton/CloseButton';
 import * as styles from './LanternDetail.css';
 // import { get } from '@/apis';
 import { LanternData } from '@/components/lantern/constants';
@@ -97,18 +98,20 @@ const LanternDetail = () => {
     }
   }, [marks, handedness, navigate]);
 
+  const handleCloseClick = () => {
+    navigate('/lanterns');
+  };
+
   if (!lanternData) return null;
 
   return (
     <div className={styles.overlay}>
       <VideoFeed />
-      <button
+
+      <CloseButton
         ref={closeButtonRef}
-        className={styles.closeButton}
-        onClick={() => navigate('/lanterns')}
-      >
-        닫기
-      </button>
+        onClick={handleCloseClick}
+      />
 
       {/* 첫 번째 이미지 표시 */}
       {lanternData.images && lanternData.images.length > 0 && (
