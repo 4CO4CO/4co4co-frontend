@@ -7,7 +7,7 @@ export const overlay = style({
   width: '100vw',
   height: '100vh',
   backgroundColor: 'black',
-  zIndex: 999,
+  zIndex: 0,
   overflow: 'hidden',
 });
 
@@ -19,7 +19,7 @@ export const scrollContainer = style({
   height: '100vh',
   overflowX: 'scroll',
   overflowY: 'hidden',
-  zIndex: 1000,
+  zIndex: 1,
   '::-webkit-scrollbar': {
     height: '8px',
   },
