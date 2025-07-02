@@ -1,28 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CloseButton } from './components/CloseButton/CloseButton';
+import { createMockData } from './constants/mockData';
 import * as styles from './LanternDetail.css';
 // import { get } from '@/apis';
 import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
 import { isFist } from '@/components/lantern/utils';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
-
-// 목 데이터
-const createMockData = (lanternId: string): LanternData => ({
-  lantern_id: lanternId,
-  owner_name: "테스트 사용자",
-  images: [
-    "https://picsum.photos/800/600?random=1",
-    "https://picsum.photos/800/600?random=2",
-    "https://picsum.photos/800/600?random=3"
-  ],
-  background_sounds: [
-    "https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3",
-    "https://sample-videos.com/zip/10/mp3/SampleAudio_0.4mb_mp3.mp3",
-    "https://sample-videos.com/zip/10/mp3/SampleAudio_0.7mb_mp3.mp3"
-  ],
-});
 
 const LanternDetail = () => {
   const { lanternId } = useParams();
