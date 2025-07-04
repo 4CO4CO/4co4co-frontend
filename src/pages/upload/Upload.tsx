@@ -1,4 +1,4 @@
-import UploadTip from './components/UploadTip';
+import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
 import Spacing from '@/components/spacing';
 

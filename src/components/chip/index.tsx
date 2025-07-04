@@ -1,7 +1,11 @@
 import * as styles from './index.css';
 
-const Chip = () => {
-  return <div className={styles.container}>Chip</div>;
+interface ChipProps {
+  children: string;
+}
+
+const Chip = ({ children }: ChipProps) => {
+  return <div className={styles.container}>{children}</div>;
 };
 
 export default Chip;
