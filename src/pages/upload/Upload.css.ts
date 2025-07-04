@@ -52,3 +52,10 @@ export const description = style({
     [MOBILE_MEDIA_QUERY]: { ...fonts.font.body_10_B },
   },
 });
+
+export const button_wrapper = style({
+  width: '100%',
+  maxWidth: '31.1rem',
+  display: 'flex',
+  gap: '0.6rem',
+});

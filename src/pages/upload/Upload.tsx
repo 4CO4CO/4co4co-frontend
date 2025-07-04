@@ -1,6 +1,7 @@
 import UploadImage from './components/uploadImage';
 import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
+import Button from '@/components/button';
 import Spacing from '@/components/spacing';
 
 const Upload = () => {
@@ -19,7 +20,15 @@ const Upload = () => {
       </section>
       <Spacing size={4} />
       <UploadImage />
+      <Spacing size={1.8} />
       <UploadTip className={styles.mobileOnly} />
+      <Spacing size={2.5} />
+      <div className={styles.button_wrapper}>
+        <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
+          취소
+        </Button>
+        <Button>전시하기</Button>
+      </div>
     </div>
   );
 };
