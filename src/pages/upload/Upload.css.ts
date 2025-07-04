@@ -4,12 +4,13 @@ import { fonts } from './../../styles/font.css';
 import { MOBILE_MEDIA_QUERY } from '@/styles/mediaQuery';
 
 export const container = style({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '9rem 15.5rem',
+
   '@media': {
     [MOBILE_MEDIA_QUERY]: {
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '3.2rem 6rem',
-      margin: '0 auto',
+      padding: '6rem 3.2rem',
     },
   },
 });
@@ -17,6 +18,31 @@ export const container = style({
 export const title = style({
   ...fonts.font.title_28_B,
   whiteSpace: 'pre-wrap',
+});
+
+export const header = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+});
+
+export const desktopOnly = style({
+  display: 'block',
+
+  '@media': {
+    [MOBILE_MEDIA_QUERY]: {
+      display: 'none',
+    },
+  },
+});
+
+export const mobileOnly = style({
+  display: 'none',
+
+  '@media': {
+    [MOBILE_MEDIA_QUERY]: {
+      display: 'block',
+    },
+  },
 });
 
 export const description = style({

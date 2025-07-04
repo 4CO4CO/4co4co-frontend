@@ -6,6 +6,6 @@ import './styles/global.css.ts';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />,
+    <App />
   </StrictMode>,
 );
