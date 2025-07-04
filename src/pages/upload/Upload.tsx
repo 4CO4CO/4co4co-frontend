@@ -1,3 +1,4 @@
+import UploadImage from './components/uploadImage';
 import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
 import Spacing from '@/components/spacing';
@@ -17,6 +18,7 @@ const Upload = () => {
         <UploadTip className={styles.desktopOnly} />
       </section>
       <Spacing size={4} />
+      <UploadImage />
       <UploadTip className={styles.mobileOnly} />
     </div>
   );
