@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import Toggle from './components/toggle';
 import UploadImage from './components/uploadImage';
 import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
@@ -6,6 +8,11 @@ import TextField from '@/components/input/textfield';
 import Spacing from '@/components/spacing';
 
 const Upload = () => {
+  const [isOn, setIsOn] = useState(false);
+
+  const handleToggle = () => {
+    setIsOn((prev) => !prev);
+  };
   return (
     <div className={styles.container}>
       <section className={styles.header}>
@@ -28,6 +35,7 @@ const Upload = () => {
       <TextField onChange={() => {}} placeholder="풍등에 적을 이름을 작성해주세요." />
       <label className={styles.label}>상세 설명</label>
       <TextField onChange={() => {}} placeholder="사진에 대해 설명해주세요." />
+      <Toggle isOn={isOn} onToggle={handleToggle} />{' '}
       <div className={styles.button_wrapper}>
         <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
           취소
