@@ -15,6 +15,7 @@ export const input = style({
   display: 'flex',
   alignItems: 'center',
   padding: '1.8rem 1.2rem',
+  resize: 'none',
 
   '::placeholder': {
     color: colors.color.gray200,
