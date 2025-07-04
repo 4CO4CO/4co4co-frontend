@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import * as styles from './index.css';
 import UploadIcon from '@/assets/upload.svg?react';
+import TextArea from '@/components/input/textarea';
 
 interface UploadedImage {
   src: string;
@@ -43,7 +44,7 @@ const UploadPhoto = () => {
       {images.map((img, index) => (
         <div key={index}>
           <img src={img.src} alt={`업로드 ${index + 1}`} className={styles.previewImage} />
-          <textarea
+          <TextArea
             className={styles.textarea}
             placeholder="이 사진에 담긴 기억하고 싶은 순간을 설명해주세요."
             value={img.description}

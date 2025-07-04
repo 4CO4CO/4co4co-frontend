@@ -1,16 +1,15 @@
 import React, { InputHTMLAttributes } from 'react';
 import * as style from './index.css';
 
-interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> {
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   maxLength?: number;
   placeholder: string;
 }
 
-const TextField = ({ onChange, value, maxLength, placeholder }: TextFieldProps) => {
+const TextArea = ({ onChange, value, maxLength, placeholder }: TextAreaProps) => {
   return (
-    <input
-      type="text"
+    <textarea
       value={value}
       className={style.input}
       onChange={onChange}
@@ -20,4 +19,4 @@ const TextField = ({ onChange, value, maxLength, placeholder }: TextFieldProps) 
   );
 };
 
-export default TextField;
+export default TextArea;

@@ -2,6 +2,7 @@ import UploadImage from './components/uploadImage';
 import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
 import Button from '@/components/button';
+import TextField from '@/components/input/textfield';
 import Spacing from '@/components/spacing';
 
 const Upload = () => {
@@ -23,6 +24,7 @@ const Upload = () => {
       <Spacing size={1.8} />
       <UploadTip className={styles.mobileOnly} />
       <Spacing size={2.5} />
+      <TextField onChange={() => {}} placeholder="입력해주세요" />
       <div className={styles.button_wrapper}>
         <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
           취소

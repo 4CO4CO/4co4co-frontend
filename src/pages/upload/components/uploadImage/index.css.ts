@@ -9,12 +9,10 @@ export const container = style({
   display: 'flex',
   gap: '0.8rem',
 
-  selectors: {
-    '&::-webkit-scrollbar-track': {
-      background: 'transparent',
-      marginLeft: '3.2rem',
-      marginRight: '3.2rem',
-    },
+  '::-webkit-scrollbar-track': {
+    background: 'transparent',
+    marginLeft: '3.2rem',
+    marginRight: '3.2rem',
   },
 
   '@media': {
