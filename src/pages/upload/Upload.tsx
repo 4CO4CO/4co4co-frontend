@@ -24,7 +24,10 @@ const Upload = () => {
       <Spacing size={1.8} />
       <UploadTip className={styles.mobileOnly} />
       <Spacing size={2.5} />
-      <TextField onChange={() => {}} placeholder="입력해주세요" />
+      <label className={styles.label}>이름</label>
+      <TextField onChange={() => {}} placeholder="풍등에 적을 이름을 작성해주세요." />
+      <label className={styles.label}>상세 설명</label>
+      <TextField onChange={() => {}} placeholder="사진에 대해 설명해주세요." />
       <div className={styles.button_wrapper}>
         <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
           취소

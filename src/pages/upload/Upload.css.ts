@@ -53,6 +53,11 @@ export const description = style({
   },
 });
 
+export const label = style({
+  ...fonts.font.body_18_B,
+  marginBottom: '0.8rem',
+});
+
 export const button_wrapper = style({
   width: '100%',
   maxWidth: '31.1rem',
