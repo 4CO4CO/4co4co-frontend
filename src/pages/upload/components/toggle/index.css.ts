@@ -9,6 +9,7 @@ export const toggleContainer = style({
   position: 'relative',
   cursor: 'pointer',
   transition: 'background-color 0.2s',
+  display: 'inline-block',
 });
 
 export const toggleContainerOn = style({

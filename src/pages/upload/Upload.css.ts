@@ -58,6 +58,11 @@ export const label = style({
   marginBottom: '0.8rem',
 });
 
+export const inline_label = style({
+  ...fonts.font.body_10_B,
+  color: colors.color.gray300,
+});
+
 export const button_wrapper = style({
   width: '100%',
   maxWidth: '31.1rem',

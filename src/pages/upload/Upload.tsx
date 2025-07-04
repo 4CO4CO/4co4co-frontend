@@ -35,7 +35,10 @@ const Upload = () => {
       <TextField onChange={() => {}} placeholder="풍등에 적을 이름을 작성해주세요." />
       <label className={styles.label}>상세 설명</label>
       <TextField onChange={() => {}} placeholder="사진에 대해 설명해주세요." />
-      <Toggle isOn={isOn} onToggle={handleToggle} />{' '}
+      <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', margin: '2.5rem 0' }}>
+        <span className={styles.inline_label}>해당 사진의 전시를 공개하시나요?</span>
+        <Toggle isOn={isOn} onToggle={handleToggle} />
+      </div>
       <div className={styles.button_wrapper}>
         <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
           취소
