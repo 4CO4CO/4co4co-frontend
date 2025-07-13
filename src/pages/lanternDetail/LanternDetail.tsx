@@ -13,6 +13,7 @@ const LanternDetail = () => {
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<number | null>(null);
   const [lanternData, setLanternData] = useState<LanternData>();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const hasNavigatedRef = useRef(false);
@@ -71,10 +72,16 @@ const LanternDetail = () => {
   useEffect(() => {
     if (!lanternData?.background_sounds) return;
 
+    const handleAudioEnded = () => {
+      const nextIndex = (currentMusicIndex + 1) % lanternData.background_sounds.length;
+      setCurrentMusicIndex(nextIndex);
+    };
+
     const playMusic = async () => {
       try {
         if (audioRef.current) {
           audioRef.current.pause();
+          audioRef.current.removeEventListener('ended', handleAudioEnded);
           audioRef.current.src = '';
           audioRef.current = null;
         }
@@ -82,17 +89,15 @@ const LanternDetail = () => {
         const audio = new Audio(lanternData.background_sounds[currentMusicIndex]);
         audioRef.current = audio;
 
-        audio.addEventListener('ended', () => {
-          const nextIndex = (currentMusicIndex + 1) % 3;
-          setCurrentMusicIndex(nextIndex);
-        });
+        audio.addEventListener('ended', handleAudioEnded);
         console.log('음악 재생:', currentMusicIndex);
         await audio.play();
       } catch (error) {
         console.error('오디오 재생 실패:', error);
         if (!isUserInteracted) {
           setShowInteractionMessage(true);
-          setTimeout(() => {
+
+          timeoutRef.current = setTimeout(() => {
             if (isUserInteracted) {
               playMusic();
             }
@@ -101,14 +106,21 @@ const LanternDetail = () => {
       }
     };
 
-    if (isUserInteracted || currentMusicIndex === 1) {
+    if (isUserInteracted) {
       playMusic();
     }
 
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.removeEventListener('ended', handleAudioEnded);
+        audioRef.current.src = '';
         audioRef.current = null;
+      }
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
   }, [currentMusicIndex, lanternData?.background_sounds, isUserInteracted]);
@@ -131,12 +143,12 @@ const LanternDetail = () => {
 
     if (fist && isInCloseArea && !hasNavigatedRef.current) {
       hasNavigatedRef.current = true;
-      navigate('/lanterns');
+      navigate(-1);
     }
   }, [marks, handedness, navigate]);
 
   const handleCloseClick = () => {
-    navigate('/lanterns');
+    navigate(-1);
   };
 
   if (!lanternData) return null;
