@@ -4,6 +4,7 @@ import { CloseButton } from './components/CloseButton/CloseButton';
 import { createMockData } from './constants/mockData';
 import { useCloseGesture } from './hooks/useCloseGesture';
 import * as styles from './LanternDetail.css';
+import { Toast } from '@/components/common/Toast';
 import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
@@ -19,6 +20,7 @@ const LanternDetail = () => {
   const [currentMusicIndex, setCurrentMusicIndex] = useState(1);
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const { handCenter } = useHandMark();
   useCloseGesture(closeButtonRef);
@@ -36,6 +38,7 @@ const LanternDetail = () => {
         setLanternData(mockData);
       } catch (error) {
         console.error(error);
+        setToast({ message: '풍등 데이터를 불러오는데 실패했습니다.', type: 'error' });
         navigate(-1);
       }
     };
@@ -94,6 +97,7 @@ const LanternDetail = () => {
         await audio.play();
       } catch (error) {
         console.error('오디오 재생 실패:', error);
+        setToast({ message: '음악 재생에 실패했습니다.', type: 'error' });
         if (!isUserInteracted) {
           setShowInteractionMessage(true);
 
@@ -160,6 +164,14 @@ const LanternDetail = () => {
         <div className={styles.interactionMessage}>
           화면을 클릭하면 음악이 재생됩니다
         </div>
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );
