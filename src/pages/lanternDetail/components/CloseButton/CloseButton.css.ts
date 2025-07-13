@@ -1,10 +1,11 @@
 import { style } from '@vanilla-extract/css';
+import { Z_INDEX } from '../../constants/zIndex';
 
 export const closeButton = style({
   position: 'absolute',
   top: 12,
   left: 12,
-  zIndex: 1000,
+  zIndex: Z_INDEX.CLOSE_BUTTON,
   borderRadius: 10,
   backgroundColor: '#FF0F0F',
   border: 'none',

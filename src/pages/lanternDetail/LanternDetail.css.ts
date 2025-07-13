@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+import { Z_INDEX } from './constants/zIndex';
 
 export const overlay = style({
   position: 'fixed',
@@ -7,7 +8,7 @@ export const overlay = style({
   width: '100vw',
   height: '100vh',
   backgroundColor: 'black',
-  zIndex: 0,
+  zIndex: Z_INDEX.OVERLAY,
   overflow: 'hidden',
 });
 
@@ -19,7 +20,7 @@ export const scrollContainer = style({
   height: '100vh',
   overflowX: 'scroll',
   overflowY: 'hidden',
-  zIndex: 1,
+  zIndex: Z_INDEX.SCROLL_CONTAINER,
   '::-webkit-scrollbar': {
     height: '8px',
   },
@@ -52,7 +53,7 @@ export const handPointer = style({
   borderRadius: '50%',
   backgroundColor: 'lime',
   transform: 'translate(-50%, -50%)',
-  zIndex: 2000,
+  zIndex: Z_INDEX.HAND_POINTER,
   pointerEvents: 'none',
 });
 
@@ -67,5 +68,5 @@ export const interactionMessage = style({
   borderRadius: '10px',
   fontSize: '18px',
   textAlign: 'center',
-  zIndex: 3000,
+  zIndex: Z_INDEX.INTERACTION_MESSAGE,
 });

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CloseButton } from './components/CloseButton/CloseButton';
 import { createMockData } from './constants/mockData';
+import { useCloseGesture } from './hooks/useCloseGesture';
 import * as styles from './LanternDetail.css';
 import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
-import { isFist } from '@/components/lantern/utils';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
 
 const LanternDetail = () => {
@@ -16,12 +16,12 @@ const LanternDetail = () => {
   const timeoutRef = useRef<number | null>(null);
   const [lanternData, setLanternData] = useState<LanternData>();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const hasNavigatedRef = useRef(false);
   const [currentMusicIndex, setCurrentMusicIndex] = useState(1);
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
 
-  const { handCenter, marks, handedness } = useHandMark();
+  const { handCenter } = useHandMark();
+  useCloseGesture(closeButtonRef);
 
   useEffect(() => {
     if (!lanternId) {
@@ -124,28 +124,6 @@ const LanternDetail = () => {
       }
     };
   }, [currentMusicIndex, lanternData?.background_sounds, isUserInteracted]);
-
-  // 풍등 닫기 버튼 주먹 제스처 인식
-  useEffect(() => {
-    if (!marks || !handedness || !closeButtonRef.current) return;
-
-    const rect = closeButtonRef.current.getBoundingClientRect();
-    const indexTip = marks.find((k) => k.name === 'index_finger_tip');
-    if (!indexTip) return;
-
-    const isInCloseArea =
-      indexTip.x >= rect.left &&
-      indexTip.x <= rect.right &&
-      indexTip.y >= rect.top &&
-      indexTip.y <= rect.bottom;
-
-    const fist = isFist(marks, handedness);
-
-    if (fist && isInCloseArea && !hasNavigatedRef.current) {
-      hasNavigatedRef.current = true;
-      navigate(-1);
-    }
-  }, [marks, handedness, navigate]);
 
   const handleCloseClick = () => {
     navigate(-1);
