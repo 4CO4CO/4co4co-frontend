@@ -5,4 +5,4 @@ export const FormPage = lazy(() => import('@/pages/form/Form'));
 export const EntryPage = lazy(() => import('@/pages/entry/Entry'));
 export const LoadingPage = lazy(() => import('@/pages/loading/Loading'));
 export const LanternPage = lazy(() => import('@/pages/lantern/Lantern'));
-export const LanternDetailPage = lazy(() => import('@/pages/lantern/LanternDetail'));
+export const LanternDetailPage = lazy(() => import('@/pages/lanternDetail/LanternDetail'));

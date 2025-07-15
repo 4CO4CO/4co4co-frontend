@@ -4,6 +4,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import { queryClient } from './queries/queryClient.ts';
+import './styles/reset.css.ts';
+import './styles/global.css.ts';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
