@@ -52,27 +52,9 @@ export const ticketIcon = style({
   }
 });
 
-export const startButton = style({
+export const startButtonCustom = style({
   alignSelf: 'center',
-  borderRadius: '1rem',
-  background: colors.color.goldenMemories,
-  padding: '1.8rem 6.5rem',
-  cursor: 'pointer',
-  border: 'none',
   marginBottom: '3.2rem',
-
-  color: colors.color.black,
-  textAlign: 'center',
-  ...fonts.font.body_16_B,
-
-  ':hover': {
-    background: colors.color.sunsetGlow,
-    transform: 'translateY(-1px)',
-  },
-
-  ':active': {
-    transform: 'translateY(0)',
-  },
 });
 
 export const option = style({

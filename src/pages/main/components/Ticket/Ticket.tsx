@@ -1,5 +1,6 @@
 import * as styles from './Ticket.css';
 import TicketIcon from '@/assets/TicketIcon.svg?react';
+import { Button } from '@/components/common/Button/Button';
 
 const Ticket = () => {
   return (
@@ -15,9 +16,13 @@ const Ticket = () => {
           <TicketIcon className={styles.ticketIcon} role="img" aria-label="Ticket" />
         </div>
 
-        <button className={styles.startButton}>
+        <Button
+          variant="primary"
+          size="lg"
+          className={styles.startButtonCustom}
+        >
           지금 바로 나만의 전시 만들기
-        </button>
+        </Button>
 
         <div className={styles.option}>
           <span className={styles.optionText}>이미 전시를 만들었다면? </span>
