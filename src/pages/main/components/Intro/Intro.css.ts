@@ -1,10 +1,12 @@
 import { style } from '@vanilla-extract/css';
+import { colors } from '@/styles/color.css';
+import { fonts } from '@/styles/font.css';
 
 export const container = style({
   position: 'relative',
   width: '100vw',
   height: '100dvh',
-  backgroundColor: '#f9f6ef',
+  backgroundColor: colors.color.white200,
   overflow: 'hidden',
   margin: 0,
   padding: 0,
@@ -83,34 +85,26 @@ export const textWrapper = style({
 });
 
 export const subTitle = style({
-  color: '#000',
+  color: colors.color.black,
   textAlign: 'center',
-  fontFamily: 'Pretendard',
-  fontSize: '20px',
-  fontStyle: 'normal',
-  fontWeight: 600,
-  letterSpacing: '2px',
+  ...fonts.font.title_18_B,
 
   '@media': {
     '(max-width: 798px)': {
-      fontSize: '12px',
+      ...fonts.font.body_14_B,
     },
   },
 });
 
 export const mainTitle = style({
-  color: '#000',
+  color: colors.color.black,
   textAlign: 'center',
-  fontFamily: 'Pretendard',
-  fontSize: '60px',
-  fontWeight: 700,
-  lineHeight: 'normal',
-  letterSpacing: '6px',
-  marginTop: '18px',
+  ...fonts.font.title_60_B,
+  marginTop: '1.8rem',
 
   '@media': {
     '(max-width: 798px)': {
-      fontSize: '40px',
+      ...fonts.font.title_40_B,
     },
   },
 });
