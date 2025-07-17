@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CloseButton } from './components/CloseButton/CloseButton';
-import { createMockData } from './constants/mockData';
 import { useCloseGesture } from './hooks/useCloseGesture';
+import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
 import { Toast } from '@/components/common/Toast';
-import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
 
@@ -15,8 +14,9 @@ const LanternDetail = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<number | null>(null);
-  const [lanternData, setLanternData] = useState<LanternData>();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
   const [currentMusicIndex, setCurrentMusicIndex] = useState(1);
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
@@ -26,24 +26,16 @@ const LanternDetail = () => {
   useCloseGesture(closeButtonRef);
 
   useEffect(() => {
+    if (error) {
+      setToast({ message: error, type: 'error' });
+      // setTimeout(() => navigate(-1), 2000);
+    }
+  }, [error, navigate]);
+
+  useEffect(() => {
     if (!lanternId) {
       navigate('/');
-      return;
     }
-
-    // 임시용 목 데이터 사용
-    const fetchDetail = async () => {
-      try {
-        const mockData = createMockData(lanternId);
-        setLanternData(mockData);
-      } catch (error) {
-        console.error(error);
-        setToast({ message: '풍등 데이터를 불러오는데 실패했습니다.', type: 'error' });
-        navigate(-1);
-      }
-    };
-
-    fetchDetail();
   }, [lanternId, navigate]);
 
   // 가운데 이미지로 스크롤 위치 고정
@@ -82,19 +74,36 @@ const LanternDetail = () => {
 
     const playMusic = async () => {
       try {
+        const handleAudioError = (e: Event) => {
+          console.error('오디오 로드/재생 에러:', e);
+          setToast({ message: '음악 파일을 불러올 수 없습니다.', type: 'error' });
+        };
+
+        // 기존 오디오 정리
         if (audioRef.current) {
           audioRef.current.pause();
           audioRef.current.removeEventListener('ended', handleAudioEnded);
+          audioRef.current.removeEventListener('error', handleAudioError);
+          audioRef.current.removeEventListener('loadstart', () => {});
+          audioRef.current.removeEventListener('canplay', () => {});
           audioRef.current.src = '';
           audioRef.current = null;
         }
 
-        const audio = new Audio(lanternData.background_sounds[currentMusicIndex]);
+        const audioUrl = lanternData.background_sounds[currentMusicIndex];
+
+        const audio = new Audio();
+
+        audio.addEventListener('loadstart', () => {});
+        audio.addEventListener('canplay', () => {});
+        audio.addEventListener('error', handleAudioError);
+        audio.addEventListener('ended', handleAudioEnded);
+
         audioRef.current = audio;
 
-        audio.addEventListener('ended', handleAudioEnded);
-        console.log('음악 재생:', currentMusicIndex);
+        audio.src = audioUrl;
         await audio.play();
+
       } catch (error) {
         console.error('오디오 재생 실패:', error);
         setToast({ message: '음악 재생에 실패했습니다.', type: 'error' });
@@ -112,12 +121,17 @@ const LanternDetail = () => {
 
     if (isUserInteracted) {
       playMusic();
+    } else {
+      console.warn('사용자 상호작용이 필요합니다. 화면을 클릭해주세요.');
     }
 
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.removeEventListener('ended', handleAudioEnded);
+        audioRef.current.removeEventListener('error', () => { });
+        audioRef.current.removeEventListener('loadstart', () => { });
+        audioRef.current.removeEventListener('canplay', () => { });
         audioRef.current.src = '';
         audioRef.current = null;
       }
@@ -133,37 +147,54 @@ const LanternDetail = () => {
     navigate(-1);
   };
 
-  if (!lanternData) return null;
+  // 로딩 상태 Toast로 표시
+  useEffect(() => {
+    if (isLoading) {
+      setToast({ message: '풍등을 불러오는 중입니다.', type: 'info' });
+    } else {
+      if (!error) {
+        setToast(null);
+        if (lanternData && !isUserInteracted) {
+          setShowInteractionMessage(true);
+        }
+      }
+    }
+  }, [isLoading, error, lanternData, isUserInteracted]);
+
 
   return (
     <div className={styles.overlay}>
       <VideoFeed />
       <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
 
-      <div ref={scrollContainerRef} className={styles.scrollContainer}>
-        <div className={styles.panoramaWrapper}>
-          {lanternData.images.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              className={styles.panoramaImage}
-              alt={`풍등 이미지 ${index + 1}`}
+      {!isLoading && lanternData && (
+        <>
+          <div ref={scrollContainerRef} className={styles.scrollContainer}>
+            <div className={styles.panoramaWrapper}>
+              {lanternData.images.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  className={styles.panoramaImage}
+                  alt={`풍등 이미지 ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {handCenter && (
+            <div
+              className={styles.handPointer}
+              style={{ top: handCenter.y, left: handCenter.x }}
             />
-          ))}
-        </div>
-      </div>
+          )}
 
-      {handCenter && (
-        <div
-          className={styles.handPointer}
-          style={{ top: handCenter.y, left: handCenter.x }}
-        />
-      )}
-
-      {showInteractionMessage && (
-        <div className={styles.interactionMessage}>
-          화면을 클릭하면 음악이 재생됩니다
-        </div>
+          {showInteractionMessage && (
+            <div className={styles.interactionMessage}>
+              화면을 클릭하면 음악이 재생됩니다
+            </div>
+          )}
+        </>
       )}
 
       {toast && (
