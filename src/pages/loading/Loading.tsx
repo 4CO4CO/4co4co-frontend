@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
@@ -15,6 +16,7 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
   const [dots, setDots] = useState('');
   const [showCompletionAlert, setShowCompletionAlert] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -64,13 +66,15 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
     }
   };
 
-  const handleEnterLanternFestival = () => {
-    console.log('풍등 축제 미리 입장하기 클릭');
+  const handleEnterLanternFestival = async () => {
+    await navigator.clipboard.writeText(entryCode);
+    navigate('/lanterns');
   };
 
-  const handleEnterExhibition = () => {
-    console.log('전시 입장하기 클릭');
+  const handleEnterExhibition = async () => {
+    await navigator.clipboard.writeText(entryCode);
     setShowCompletionAlert(false);
+    navigate('/lanterns');
   };
 
   const handleCancelAlert = () => {

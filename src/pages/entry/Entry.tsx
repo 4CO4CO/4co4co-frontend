@@ -32,7 +32,7 @@ const Entry = () => {
     }
 
     setErrorMessage('');
-    console.log('입장 코드:', entryCode.trim());
+    navigate('/lanterns');
   };
 
   const handleCancel = () => {
@@ -52,7 +52,7 @@ const Entry = () => {
   return (
     <div className={styles.container}>
       <div className={styles.backgroundLanternContainer}>
-      {/* 왼쪽 섹션 */}
+        {/* 왼쪽 섹션 */}
         <Lantern className={styles.leftLantern1} role="img" aria-label="Left Big Lantern 1" />
         <RoundLantern className={styles.leftLantern2} role="img" aria-label="Left Big Lantern 2" />
 
@@ -72,11 +72,11 @@ const Entry = () => {
       {/* 메인 콘텐츠 */}
       <div className={styles.contentWrapper}>
         <h1 className={styles.mainTitle}>
-        {`당신을 위한,\n추억의 시간을\n찾아왔어요!`}
+          {`당신을 위한,\n추억의 시간을\n찾아왔어요!`}
         </h1>
 
         <p className={styles.subTitle}>
-        {`추억에 젖을 준비가 끝났다면\n아래에 입장코드를 작성해주세요.`}
+          {`추억에 젖을 준비가 끝났다면\n아래에 입장코드를 작성해주세요.`}
         </p>
 
         <TextField
