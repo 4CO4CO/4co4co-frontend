@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import CompletionModal from './components/completionModal/CompletionModal';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
+import { Alert } from '@/components/common/Alert/Alert';
+import { Button } from '@/components/common/Button/Button';
 
 interface LoadingProps {
   entryCode?: string;
@@ -12,7 +13,18 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
   const [isCopied, setIsCopied] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [dots, setDots] = useState('');
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showCompletionAlert, setShowCompletionAlert] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 798);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // ... 추가 애니메이션
   useEffect(() => {
@@ -33,7 +45,7 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
 
     // 16초 후 완성 모달 표시 (테스트용)
     const completionTimer = setTimeout(() => {
-      setShowCompletionModal(true);
+      setShowCompletionAlert(true);
     }, 16000);
 
     return () => {
@@ -58,11 +70,11 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
 
   const handleEnterExhibition = () => {
     console.log('전시 입장하기 클릭');
-    setShowCompletionModal(false);
+    setShowCompletionAlert(false);
   };
 
-  const handleCancelModal = () => {
-    setShowCompletionModal(false);
+  const handleCancelAlert = () => {
+    setShowCompletionAlert(false);
   };
 
   return (
@@ -104,20 +116,27 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
             혹시 기다리기 지루하신가요?{'\n'}다른 사람들의 풍등을 구경하면서 기다릴 수 있어요!
           </div>
 
-          <button
+          <Button
+            variant="primary"
+            size="lg"
             className={styles.enterButton}
             onClick={handleEnterLanternFestival}
             type="button"
           >
             미리 풍등 축제 입장하기
-          </button>
+          </Button>
         </div>
       </div>
 
-      <CompletionModal
-        isOpen={showCompletionModal}
-        onEnter={handleEnterExhibition}
-        onCancel={handleCancelModal}
+      <Alert
+        isOpen={showCompletionAlert}
+        title="생성 완료!"
+        message={`기다려주셔서 감사합니다.\n지금 바로 입장이 가능합니다.`}
+        size={isMobile ? "sm" : "lg"}
+        confirmText="입장할래요"
+        cancelText="취소"
+        onConfirm={handleEnterExhibition}
+        onCancel={handleCancelAlert}
       />
     </>
   );
