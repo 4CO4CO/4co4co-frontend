@@ -4,129 +4,214 @@ interface UseAudioPlayerProps {
   audioUrls: string[];
   isUserInteracted: boolean;
   startIndex?: number;
+  fadeInDuration?: number;
+  fadeOutDuration?: number;
 }
 
 export const useAudioPlayer = ({
   audioUrls,
   isUserInteracted,
-  startIndex = 0
+  startIndex = 0,
+  fadeInDuration = 2,
+  fadeOutDuration = 2
 }: UseAudioPlayerProps) => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const fadeTimeoutRef = useRef<number | null>(null);
+  const isCleaningUpRef = useRef<boolean>(false);
+
   const [currentIndex, setCurrentIndex] = useState(startIndex);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // 오디오 정리 함수
-  const cleanupAudio = (audio: HTMLAudioElement) => {
-    audio.pause();
-    audio.src = '';
-    audio.onended = null;
-    audio.onerror = null;
-    audio.onplay = null;
-    audio.onpause = null;
+  // AudioContext 초기화
+  const getAudioContext = () => {
+    if (!audioContextRef.current) {
+      const AudioContextClass = window.AudioContext ||
+        (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+      if (!AudioContextClass) {
+        const errorMsg = '이 브라우저는 AudioContext를 지원하지 않습니다';
+        console.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      audioContextRef.current = new AudioContextClass();
+    }
+    return audioContextRef.current;
   };
 
-  // 다음 곡으로 넘어가기
+  // 오디오 리소스 정리 (메모리 누수 방지)
+  const cleanup = () => {
+    if (isCleaningUpRef.current) {
+      return;
+    }
+
+    isCleaningUpRef.current = true;
+
+    // 페이드 타이머 정리
+    if (fadeTimeoutRef.current) {
+      clearTimeout(fadeTimeoutRef.current);
+      fadeTimeoutRef.current = null;
+    }
+
+    // 현재 재생 중인 소스가 있다면 정지 및 해제
+    if (currentSourceRef.current) {
+      try {
+        currentSourceRef.current.stop();
+        currentSourceRef.current.disconnect();
+      } catch (error) {
+        console.warn('오디오 소스 정지 실패:', error instanceof Error ? error.message : String(error));
+      }
+      currentSourceRef.current = null;
+    }
+
+    if (gainNodeRef.current) {
+      gainNodeRef.current.disconnect();
+      gainNodeRef.current = null;
+    }
+
+    // 정리 완료 후 플래그 리셋
+    setTimeout(() => {
+      isCleaningUpRef.current = false;
+    }, 100);
+  };
+
+  // 페이드인 효과 (0에서 1까지 부드럽게)
+  const fadeIn = (gainNode: GainNode, duration: number) => {
+    const currentTime = gainNode.context.currentTime;
+    gainNode.gain.cancelScheduledValues(currentTime);
+    gainNode.gain.setValueAtTime(0, currentTime);
+    gainNode.gain.linearRampToValueAtTime(1, currentTime + duration);
+  };
+
+  // 페이드아웃 효과 (현재 볼륨에서 0까지 부드럽게)
+  const fadeOut = (gainNode: GainNode, duration: number): Promise<void> => {
+    return new Promise((resolve) => {
+      const currentTime = gainNode.context.currentTime;
+      const currentVolume = gainNode.gain.value;
+
+      gainNode.gain.cancelScheduledValues(currentTime);
+      gainNode.gain.setValueAtTime(currentVolume, currentTime);
+      gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
+
+      fadeTimeoutRef.current = window.setTimeout(() => {
+        resolve();
+      }, duration * 1000);
+    });
+  };
+
+  // 다음 곡으로 넘어가기 (순환 재생)
   const playNext = () => {
     const nextIndex = (currentIndex + 1) % audioUrls.length;
     setCurrentIndex(nextIndex);
   };
 
-  // 이전 곡으로 넘어가기
-  const playPrevious = () => {
-    const prevIndex = currentIndex === 0 ? audioUrls.length - 1 : currentIndex - 1;
-    setCurrentIndex(prevIndex);
-  };
+  // 메인 오디오 재생 함수
+  const playAudio = async (audioUrl: string) => {
+    try {
+      const audioContext = getAudioContext();
 
-  // 특정 인덱스 재생
-  const playTrack = (index: number) => {
-    if (index >= 0 && index < audioUrls.length) {
-      setCurrentIndex(index);
-    }
-  };
+      // 브라우저 정책으로 인한 일시정지 상태 해제
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
 
-  // 재생/일시정지 토글
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
+      // 이전 곡이 재생 중이면 페이드아웃 후 정리
+      if (currentSourceRef.current && gainNodeRef.current && !isCleaningUpRef.current) {
+        await fadeOut(gainNodeRef.current, fadeOutDuration);
+        cleanup();
       } else {
-        audioRef.current.play();
+        // 정리 중이 아닐 때만 cleanup 호출
+        if (!isCleaningUpRef.current) {
+          cleanup();
+        }
       }
+
+      // 새로운 오디오 파일 로드 및 디코딩
+      const response = await fetch(audioUrl);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // 오디오 그래프 생성: Source → GainNode → Destination
+      const source = audioContext.createBufferSource();
+      const gainNode = audioContext.createGain();
+
+      source.buffer = audioBuffer;
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // 참조 저장 (나중에 제어하기 위해)
+      currentSourceRef.current = source;
+      gainNodeRef.current = gainNode;
+
+      // 곡이 자연스럽게 끝나면 다음 곡으로
+      source.onended = () => {
+        setIsPlaying(false);
+
+        // 즉시 정리하여 이중 페이드아웃 방지
+        cleanup();
+
+        // 약간의 지연 후 다음 곡 재생 (race condition 방지)
+        setTimeout(() => {
+          playNext();
+        }, 50);
+      };
+
+      // 재생 시작과 동시에 페이드인 효과 적용
+      setIsPlaying(true);
+      source.start(0);
+      fadeIn(gainNode, fadeInDuration);
+
+      // 곡이 끝나기 전에 미리 페이드아웃 시작 (자연스러운 전환)
+      const fadeOutStartTime = Math.max(0, audioBuffer.duration - fadeOutDuration - 0.5);
+
+      setTimeout(() => {
+        if (gainNodeRef.current && currentSourceRef.current) {
+          fadeOut(gainNodeRef.current, fadeOutDuration).catch(() => {
+            console.error('페이드아웃 중 오류 발생');
+          });
+        }
+      }, fadeOutStartTime * 1000);
+
+    } catch (error) {
+      console.error('오디오 재생 실패:', error instanceof Error ? error.message : String(error));
+      setIsPlaying(false);
+      playNext(); // 실패하면 다음 곡 시도
     }
   };
 
-  // 음악 재생 메인 로직
+  // 사용자가 상호작용하면 음악 재생 시작
   useEffect(() => {
-    if (!audioUrls.length || !isUserInteracted) return;
+    // 사용자 상호작용이 없으면 재생하지 않음
+    if (!audioUrls.length || !isUserInteracted) {
+      return;
+    }
 
-    let currentAudio: HTMLAudioElement | null = null;
-
-    const playMusic = async () => {
-      try {
-        // 이전 오디오 정리
-        if (currentAudio) {
-          cleanupAudio(currentAudio);
-          currentAudio = null;
-        }
-
-        if (audioRef.current) {
-          cleanupAudio(audioRef.current);
-          audioRef.current = null;
-        }
-
-        // 새 오디오 생성
-        const audio = new Audio(audioUrls[currentIndex]);
-        currentAudio = audio;
-        audioRef.current = audio;
-
-        // 이벤트 핸들러 설정
-        audio.onended = () => {
-          setIsPlaying(false);
-          playNext();
-        };
-
-        audio.onplay = () => setIsPlaying(true);
-        audio.onpause = () => setIsPlaying(false);
-
-        audio.onerror = () => {
-          console.warn(`음악 파일 로드 실패: ${audioUrls[currentIndex]}`);
-          setIsPlaying(false);
-          playNext();
-        };
-
-        await audio.play();
-        // console.log(`음악 재생 중: ${currentIndex + 1}/${audioUrls.length}`);
-      } catch (error) {
-        console.warn('음악 재생 실패, 다음 곡 시도:', error);
-        setIsPlaying(false);
-        playNext();
-      }
-    };
-
-    playMusic();
-
-    // 정리 함수
-    return () => {
-      if (currentAudio) {
-        cleanupAudio(currentAudio);
-        currentAudio = null;
-      }
-      if (audioRef.current) {
-        cleanupAudio(audioRef.current);
-        audioRef.current = null;
-      }
-      setIsPlaying(false);
-    };
+    const audioUrl = audioUrls[currentIndex];
+    playAudio(audioUrl);
   }, [currentIndex, audioUrls, isUserInteracted]);
+
+  // 컴포넌트 언마운트 시 모든 리소스 정리
+  useEffect(() => {
+    return () => {
+      cleanup();
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
 
   return {
     currentIndex,
     isPlaying,
     currentTrack: audioUrls[currentIndex] || null,
     playNext,
-    playPrevious,
-    playTrack,
-    togglePlay,
     totalTracks: audioUrls.length
   };
 };
