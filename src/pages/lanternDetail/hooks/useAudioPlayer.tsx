@@ -18,6 +18,7 @@ export const useAudioPlayer = ({
   const audioContextRef = useRef<AudioContext | null>(null);
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
   const fadeTimeoutRef = useRef<number | null>(null);
   const isCleaningUpRef = useRef<boolean>(false);
 
@@ -85,7 +86,7 @@ export const useAudioPlayer = ({
     gainNode.gain.linearRampToValueAtTime(1, currentTime + duration);
   };
 
-  // 페이드아웃 효과 (현재 볼륨에서 0까지 부드럽게)
+  // 페이드아웃 효과 (1에서 0까지 부드럽게)
   const fadeOut = (gainNode: GainNode, duration: number): Promise<void> => {
     return new Promise((resolve) => {
       const currentTime = gainNode.context.currentTime;
@@ -101,7 +102,7 @@ export const useAudioPlayer = ({
     });
   };
 
-  // 다음 곡으로 넘어가기 (순환 재생)
+  // 다음 곡으로 넘어가기
   const playNext = () => {
     const nextIndex = (currentIndex + 1) % audioUrls.length;
     setCurrentIndex(nextIndex);
@@ -138,26 +139,28 @@ export const useAudioPlayer = ({
       const arrayBuffer = await response.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-      // 오디오 그래프 생성: Source → GainNode → Destination
+      // 오디오 그래프 생성: Source → GainNode → AnalyserNode → Destination
       const source = audioContext.createBufferSource();
       const gainNode = audioContext.createGain();
 
+      if (!analyserRef.current) {
+        analyserRef.current = audioContext.createAnalyser();
+        analyserRef.current.fftSize = 256;
+      }
+
       source.buffer = audioBuffer;
       source.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      gainNode.connect(analyserRef.current);
+      analyserRef.current.connect(audioContext.destination);
 
-      // 참조 저장 (나중에 제어하기 위해)
       currentSourceRef.current = source;
       gainNodeRef.current = gainNode;
 
       // 곡이 자연스럽게 끝나면 다음 곡으로
       source.onended = () => {
         setIsPlaying(false);
-
-        // 즉시 정리하여 이중 페이드아웃 방지
         cleanup();
-
-        // 약간의 지연 후 다음 곡 재생 (race condition 방지)
+        // race condition 방지용 지연
         setTimeout(() => {
           playNext();
         }, 50);
@@ -168,7 +171,7 @@ export const useAudioPlayer = ({
       source.start(0);
       fadeIn(gainNode, fadeInDuration);
 
-      // 곡이 끝나기 전에 미리 페이드아웃 시작 (자연스러운 전환)
+      // 곡이 끝나기 전에 미리 페이드아웃 시작
       const fadeOutStartTime = Math.max(0, audioBuffer.duration - fadeOutDuration - 0.5);
 
       setTimeout(() => {
@@ -188,7 +191,6 @@ export const useAudioPlayer = ({
 
   // 사용자가 상호작용하면 음악 재생 시작
   useEffect(() => {
-    // 사용자 상호작용이 없으면 재생하지 않음
     if (!audioUrls.length || !isUserInteracted) {
       return;
     }
@@ -197,10 +199,12 @@ export const useAudioPlayer = ({
     playAudio(audioUrl);
   }, [currentIndex, audioUrls, isUserInteracted]);
 
-  // 컴포넌트 언마운트 시 모든 리소스 정리
   useEffect(() => {
     return () => {
       cleanup();
+      if (analyserRef.current) {
+        analyserRef.current.disconnect();
+      }
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
@@ -212,6 +216,7 @@ export const useAudioPlayer = ({
     isPlaying,
     currentTrack: audioUrls[currentIndex] || null,
     playNext,
-    totalTracks: audioUrls.length
+    totalTracks: audioUrls.length,
+    analyser: analyserRef.current
   };
 };

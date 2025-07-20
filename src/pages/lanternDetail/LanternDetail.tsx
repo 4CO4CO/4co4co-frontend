@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { AudioVisualizer } from './components/AudioVisualizer/AudioVisualizer';
 import { CloseButton } from './components/CloseButton/CloseButton';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
@@ -23,8 +24,8 @@ const LanternDetail = () => {
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  // 🎵 오디오 플레이어 (모든 음악 로직이 여기서 처리됨!)
-  useAudioPlayer({
+  // 오디오 플레이어 (analyser 추가된 버전)
+  const audioPlayer = useAudioPlayer({
     audioUrls: lanternData?.background_sounds || [],
     isUserInteracted,
     startIndex: 1
@@ -121,6 +122,14 @@ const LanternDetail = () => {
               화면을 클릭하면 음악이 재생됩니다
             </div>
           )}
+
+          {/* 간단한 오디오 시각화 추가 */}
+          <AudioVisualizer
+            currentIndex={audioPlayer.currentIndex}
+            totalTracks={audioPlayer.totalTracks}
+            isPlaying={audioPlayer.isPlaying}
+            analyser={audioPlayer.analyser}
+          />
         </>
       )}
 
