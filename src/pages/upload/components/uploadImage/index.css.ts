@@ -41,7 +41,7 @@ export const upload_button = style({
 
 export const previewImage = style({
   width: '31.5rem',
-  height: '15rem',
+  height: '26.8rem',
   objectFit: 'cover',
   borderRadius: '12px',
 
