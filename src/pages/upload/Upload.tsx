@@ -1,17 +1,49 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Toggle from './components/toggle';
 import UploadImage from './components/uploadImage';
 import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
+import { CreateLanternRequestBody } from '@/apis/lantern';
 import Button from '@/components/button';
 import TextField from '@/components/input/textfield';
 import Spacing from '@/components/spacing';
+import { usePostLantern } from '@/queries/lantern/postLantern';
 
 const Upload = () => {
   const [isOn, setIsOn] = useState(false);
+  const [name, setName] = useState<string>('');
+  const [images, setImages] = useState<File[]>([]);
+  const { mutate, isPending } = usePostLantern();
 
   const handleToggle = () => {
     setIsOn((prev) => !prev);
+  };
+
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleImagesChange = (uploadedFiles: File[]) => {
+    setImages(uploadedFiles);
+  };
+
+  const handleSubmit = () => {
+    if (!name.trim()) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+    if (images.length === 0) {
+      alert('사진을 최소 1장 이상 업로드해주세요.');
+      return;
+    }
+
+    const requestBody: CreateLanternRequestBody = {
+      name: name,
+      images: images,
+      is_public: isOn,
+    };
+
+    mutate(requestBody);
   };
 
   return (
@@ -28,12 +60,12 @@ const Upload = () => {
         <UploadTip className={styles.desktopOnly} />
       </section>
       <Spacing size={4} />
-      <UploadImage />
+      <UploadImage onImagesChange={handleImagesChange} uploadedImages={images} />
       <Spacing size={1.8} />
       <UploadTip className={styles.mobileOnly} />
       <Spacing size={2.5} />
       <label className={styles.label}>이름</label>
-      <TextField onChange={() => {}} placeholder="풍등에 적을 이름을 작성해주세요." />
+      <TextField onChange={handleNameChange} placeholder="풍등에 적을 이름을 작성해주세요." />
       <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', margin: '2.5rem 0' }}>
         <span className={styles.inline_label}>해당 사진의 전시를 공개하시나요?</span>
         <Toggle isOn={isOn} onToggle={handleToggle} />
@@ -42,7 +74,9 @@ const Upload = () => {
         <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
           취소
         </Button>
-        <Button>전시하기</Button>
+        <Button onClick={handleSubmit} disabled={isPending}>
+          전시하기
+        </Button>
       </div>
     </div>
   );
