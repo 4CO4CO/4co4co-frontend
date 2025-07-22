@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import CompletionModal from './components/completionModal/CompletionModal';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
 
-interface LoadingProps {
-  entryCode?: string;
+interface LocationState {
+  lantern_id: string;
 }
 
-const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
+const Loading = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [dots, setDots] = useState('');
@@ -42,6 +43,23 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
     };
   }, []);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const entryCode = (location.state as LocationState)?.lantern_id;
+  const hasRedirected = useRef(false);
+
+  useEffect(() => {
+    if (!entryCode && !hasRedirected.current) {
+      alert('잘못된 접근입니다.');
+      hasRedirected.current = true;
+      navigate(-1);
+    }
+  }, [entryCode, navigate]);
+
+  if (!entryCode) {
+    return null;
+  }
+
   const handleCopyCode = async () => {
     try {
       await navigator.clipboard.writeText(entryCode);
@@ -70,7 +88,8 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
       <div className={styles.container}>
         <div className={styles.contentWrapper}>
           <h1 className={styles.mainTitle}>
-            {LOADING_TEXTS[currentTextIndex]}{dots}
+            {LOADING_TEXTS[currentTextIndex]}
+            {dots}
           </h1>
 
           <div className={styles.loadingIconContainer}>
@@ -84,19 +103,15 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
               <div className={styles.entryCodeLine}>
                 <span className={styles.entryCodeBadge}>입장코드</span>
                 <span className={styles.entryCodeValue}>{entryCode}</span>
-                <button
-                  className={styles.copyLink}
-                  onClick={handleCopyCode}
-                  type="button"
-                >
+                <button className={styles.copyLink} onClick={handleCopyCode} type="button">
                   {isCopied ? '복사됨!' : '복사'}
                 </button>
               </div>
             </div>
 
             <div className={styles.warningMessage}>
-              꼭! 입장코드를 저장해주세요.{'\n'}
-              이 화면을 나간 후에는 <span className={styles.warningEmphasis}>입장코드가 없으면 풍등 전시를 볼 수 없어요.</span>
+              꼭! 입장코드를 저장해주세요.{'\n'}이 화면을 나간 후에는{' '}
+              <span className={styles.warningEmphasis}>입장코드가 없으면 풍등 전시를 볼 수 없어요.</span>
             </div>
           </div>
 
@@ -104,21 +119,13 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = "홍길동-1234" }) => {
             혹시 기다리기 지루하신가요?{'\n'}다른 사람들의 풍등을 구경하면서 기다릴 수 있어요!
           </div>
 
-          <button
-            className={styles.enterButton}
-            onClick={handleEnterLanternFestival}
-            type="button"
-          >
+          <button className={styles.enterButton} onClick={handleEnterLanternFestival} type="button">
             미리 풍등 축제 입장하기
           </button>
         </div>
       </div>
 
-      <CompletionModal
-        isOpen={showCompletionModal}
-        onEnter={handleEnterExhibition}
-        onCancel={handleCancelModal}
-      />
+      <CompletionModal isOpen={showCompletionModal} onEnter={handleEnterExhibition} onCancel={handleCancelModal} />
     </>
   );
 };
