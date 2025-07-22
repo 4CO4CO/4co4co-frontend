@@ -12,7 +12,6 @@ export type LanternWithRect = {
 export type LanternData = {
   lantern_id: string;
   owner_name: string;
-  panorama: string;
-  background_sound: string;
-  is_current_lantern: boolean;
+  images: string[];
+  background_sounds: string[];
 };

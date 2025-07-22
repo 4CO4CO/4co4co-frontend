@@ -31,7 +31,6 @@ globalStyle('article, aside, details, figcaption, figure, footer, header, hgroup
 /* Body styles */
 globalStyle('body', {
   lineHeight: '1.5',
-  fontFamily: 'Arial, sans-serif',
   textRendering: 'optimizeLegibility',
   WebkitFontSmoothing: 'antialiased',
   MozOsxFontSmoothing: 'grayscale',
