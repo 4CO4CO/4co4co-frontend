@@ -93,7 +93,7 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = '홍길동1234' }) => {
             </div>
 
             <div className={styles.warningMessage}>
-              꼭! 입장코드를 저장해주세요.{'\n'}이 화면을 나간 후에는
+              꼭! 입장코드를 저장해주세요.{'\n'}이 화면을 나간 후에는{' '}
               <span className={styles.warningEmphasis}>입장코드가 없으면 풍등 전시를 볼 수 없어요.</span>
             </div>
           </div>

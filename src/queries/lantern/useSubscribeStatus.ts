@@ -17,7 +17,6 @@ export const useSubscribeStatus = ({ lanternId, onPartial, onDone, onError }: Us
 
   const handlePartialMessage = useCallback(
     (data: MusicStatusData) => {
-      queryClient.setQueryData(progressQueryKey, data);
       onPartial?.(data);
     },
     [onPartial, queryClient, progressQueryKey],
@@ -55,6 +54,15 @@ export const useSubscribeStatus = ({ lanternId, onPartial, onDone, onError }: Us
       return;
     }
 
+    const cachedProgress = queryClient.getQueryData<MusicStatusData | MusicStatusData[]>(progressQueryKey);
+    const isAlreadyCompleted = Array.isArray(cachedProgress) || cachedProgress?.status === 'success';
+
+    if (isAlreadyCompleted) {
+      console.log(`[SSE] lanternId ${lanternId}는 이미 완료 상태로 판단되어 SSE 연결 생략`);
+      onDone?.();
+      return;
+    }
+
     const unsubscribe = subscribeStatus({
       lanternId,
       onPartialMessage: handlePartialMessage,
@@ -63,11 +71,8 @@ export const useSubscribeStatus = ({ lanternId, onPartial, onDone, onError }: Us
     });
 
     return () => {
-      const currentProgress = queryClient.getQueryData<MusicStatusData>(progressQueryKey);
-      if (currentProgress && currentProgress.status !== 'success') {
-        queryClient.removeQueries({ queryKey: progressQueryKey });
-      }
       unsubscribe();
+      console.log(`[SSE] lanternId ${lanternId}에 대한 SSE 연결 클린업`);
     };
   }, [lanternId, handlePartialMessage, handleAllDone, handleSseError, queryClient, progressQueryKey]);
 };
