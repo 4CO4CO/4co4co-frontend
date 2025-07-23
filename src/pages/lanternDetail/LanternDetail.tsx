@@ -6,7 +6,8 @@ import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
 import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
-import { Toast } from '@/components/common/Toast';
+import { Toast } from '@/components/common/Toast/Toast';
+import { LanternData } from '@/components/lantern/constants';
 import { useHandMark } from '@/components/lantern/hooks/useHandMark';
 import { VideoFeed } from '@/components/lantern/VideoFeed';
 
