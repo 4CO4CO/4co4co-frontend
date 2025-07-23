@@ -1,5 +1,7 @@
 import { style } from '@vanilla-extract/css';
 import { Z_INDEX } from './constants/zIndex';
+import { colors } from '@/styles/color.css';
+import { fonts } from '@/styles/font.css';
 
 export const overlay = style({
   position: 'fixed',
@@ -7,9 +9,15 @@ export const overlay = style({
   left: 0,
   width: '100vw',
   height: '100vh',
-  backgroundColor: 'black',
+  backgroundColor: colors.color.black,
   zIndex: Z_INDEX.OVERLAY,
   overflow: 'hidden',
+});
+
+export const closeButton = style({
+  top: '1.2rem',
+  left: '1.2rem',
+  zIndex: Z_INDEX.CLOSE_BUTTON,
 });
 
 export const scrollContainer = style({
@@ -21,15 +29,18 @@ export const scrollContainer = style({
   overflowX: 'scroll',
   overflowY: 'hidden',
   zIndex: Z_INDEX.SCROLL_CONTAINER,
-  '::-webkit-scrollbar': {
-    height: '8px',
-  },
-  '::-webkit-scrollbar-track': {
-    backgroundColor: '#333',
-  },
-  '::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-    borderRadius: '4px',
+
+  selectors: {
+    '&::-webkit-scrollbar': {
+      height: '8px',
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: '#333',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: '#888',
+      borderRadius: '4px',
+    },
   },
 });
 
@@ -48,8 +59,8 @@ export const panoramaImage = style({
 
 export const handPointer = style({
   position: 'fixed',
-  width: 20,
-  height: 20,
+  width: '2rem',
+  height: '2rem',
   borderRadius: '50%',
   backgroundColor: 'lime',
   transform: 'translate(-50%, -50%)',
@@ -62,11 +73,11 @@ export const interactionMessage = style({
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  background: 'rgba(0, 0, 0, 0.8)',
-  color: 'white',
-  padding: '20px 30px',
-  borderRadius: '10px',
-  fontSize: '18px',
+  background: colors.color.blackDimmed,
+  color: colors.color.white,
+  padding: '2rem 3rem',
+  borderRadius: '1rem',
+  ...fonts.font.body_18_B,
   textAlign: 'center',
   zIndex: Z_INDEX.INTERACTION_MESSAGE,
 });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useHandMark } from './useHandMark';
 import { LanternWithRect } from '../constants';
-import { isFist, isInside } from '@/components/lantern/utils';
+import { isFist, isInside } from '@/components/common/lantern/utils';
 
 export const useLanternHit = (lanterns: LanternWithRect[]) => {
   const [hitLanternId, setHitLanternId] = useState<string | null>(null);

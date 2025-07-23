@@ -1,34 +1,36 @@
 import { style } from '@vanilla-extract/css';
+import { colors } from '@/styles/color.css';
+import { fonts } from '@/styles/font.css';
 
 export const container = style({
   display: 'flex',
   flexDirection: 'column',
-  padding: '30px',
-  backgroundColor: '#fff',
-  borderRadius: '20px',
-  width: '300px',
-  height: '321px',
+  padding: '3rem',
+  backgroundColor: colors.color.white,
+  borderRadius: '2rem',
+  width: '30rem',
   position: 'relative',
   boxSizing: 'border-box',
 
   '@media': {
     '(max-width: 798px)': {
-      padding: '20px 14px',
-      width: '140px',
-      height: '215px',
+      padding: '2rem 1.4rem',
+      width: '14rem',
     }
   }
 });
 
 export const title = style({
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '28px',
-  fontWeight: 700,
-  lineHeight: 'normal',
-  letterSpacing: '2.8px',
+  color: colors.color.black,
+  ...fonts.font.title_28_B,
   margin: 0,
   textAlign: 'left',
+
+  '@media': {
+    '(max-width: 798px)': {
+      ...fonts.font.title_18_B,
+    }
+  }
 });
 
 export const iconWrapper = style({
@@ -46,32 +48,30 @@ export const iconWrapper = style({
 });
 
 export const icon = style({
-  width: '135px',
-  height: '135px',
+  width: '13.5rem',
+  height: '13.5rem',
   objectFit: 'contain',
+  margin: '1.5rem 0',
 
   '@media': {
     '(max-width: 798px)': {
-      width: '75px',
-      height: '75px',
+      width: '7.5rem',
+      height: '7.5rem',
       flexShrink: 0,
     }
   }
 });
 
 export const description = style({
-  color: '#626262',
-  fontFamily: 'Pretendard',
-  fontSize: '18px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
+  color: colors.color.gray300,
+  ...fonts.font.body_18_B,
   margin: 0,
   textAlign: 'left',
 
   '@media': {
     '(max-width: 798px)': {
-      fontSize: '10px',
+      ...fonts.font.body_10_R,
+      fontWeight: 700,
       textAlign: 'left',
     }
   }

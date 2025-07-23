@@ -1,8 +1,10 @@
 import { style } from '@vanilla-extract/css';
+import { colors } from '@/styles/color.css';
+import { fonts } from '@/styles/font.css';
 
 export const container = style({
   minHeight: '100vh',
-  backgroundColor: '#f9f6ef',
+  backgroundColor: colors.color.white200,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -29,20 +31,16 @@ export const contentWrapper = style({
 });
 
 export const title = style({
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '28px',
-  fontWeight: 700,
-  lineHeight: 'normal',
-  letterSpacing: '2.8px',
-  marginBottom: '36px',
+  color: colors.color.black,
+  ...fonts.font.title_28_B,
+  marginBottom: '3.6rem',
   textAlign: 'left',
 });
 
 export const processGrid = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '35px',
+  gap: '3.5rem',
   width: '100%',
   alignItems: 'start',
 });
@@ -62,7 +60,7 @@ export const mobileContainer = style({
     '(max-width: 425px)': {
       display: 'block',
       overflow: 'hidden',
-      width: 'calc(140px * 2 + 35px)',
+      width: 'calc(14rem * 2 + 3.5rem)',
       margin: '0 auto',
     }
   }
@@ -73,11 +71,11 @@ export const mobileSlider = style({
     '(max-width: 798px)': {
       display: 'flex',
       flexDirection: 'row',
-      gap: '35px',
+      gap: '3.5rem',
       width: 'fit-content',
     },
     '(max-width: 425px)': {
-      gap: '20px',
+      gap: '2rem',
     }
   }
 });

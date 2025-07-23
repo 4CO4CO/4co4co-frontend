@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as styles from './Entry.css';
 import Lantern from '@/assets/Lantern.svg?react';
 import RoundLantern from '@/assets/RoundLantern.svg?react';
+import Button from '@/components/common/button';
+import TextField from '@/components/common/input/textfield';
 import { validateEntryCode } from '@/utils/validation';
 
 const Entry = () => {
   const [entryCode, setEntryCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 798);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSubmit = () => {
     const error = validateEntryCode(entryCode);
@@ -19,7 +32,7 @@ const Entry = () => {
     }
 
     setErrorMessage('');
-    console.log('입장 코드:', entryCode.trim());
+    navigate('/lanterns');
   };
 
   const handleCancel = () => {
@@ -58,44 +71,35 @@ const Entry = () => {
 
       {/* 메인 콘텐츠 */}
       <div className={styles.contentWrapper}>
-        <h1 className={styles.mainTitle}>
-          {`당신을 위한,\n추억의 시간을\n찾아왔어요!`}
-        </h1>
+        <h1 className={styles.mainTitle}>{`당신을 위한,\n추억의 시간을\n찾아왔어요!`}</h1>
 
-        <p className={styles.subTitle}>
-          {`추억에 젖을 준비가 끝났다면\n아래에 입장코드를 작성해주세요.`}
-        </p>
+        <p className={styles.subTitle}>{`추억에 젖을 준비가 끝났다면\n아래에 입장코드를 작성해주세요.`}</p>
 
-        <input
-          type="text"
+        <TextField
           className={styles.inputField}
           placeholder="받으신 입장코드를 입력해주세요."
           value={entryCode}
           onChange={handleInputChange}
         />
 
-        {errorMessage && (
-          <div className={styles.errorMessage}>
-            {errorMessage}
-          </div>
-        )}
+        {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
 
         <div className={styles.buttonContainer}>
-          <button
-            className={styles.cancelButton}
-            onClick={handleCancel}
-            type="button"
-          >
-            취소
-          </button>
+          {isMobile && (
+            <Button variant="secondary" size="sm" className={styles.cancelButton} onClick={handleCancel} type="button">
+              취소
+            </Button>
+          )}
 
-          <button
+          <Button
+            variant="primary"
+            size={isMobile ? 'sm' : 'lg'}
             className={styles.enterButton}
             onClick={handleSubmit}
             type="button"
           >
             지금 바로 입장하기
-          </button>
+          </Button>
         </div>
       </div>
 

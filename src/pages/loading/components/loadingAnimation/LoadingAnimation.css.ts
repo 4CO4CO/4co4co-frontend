@@ -7,47 +7,47 @@ const mountainCycle = keyframes({
   // 올라가기
   '0%': {
     fill: '#D9E9C6',
-    transform: 'translateY(-10px)'
+    transform: 'translateY(-1rem)'
   },
   '18%': {
     fill: '#405D1D',
-    transform: 'translateY(-40px)'
+    transform: 'translateY(-4rem)'
   },
 
   // 정지
   '40%': {
     fill: '#405D1D',
-    transform: 'translateY(-40px)'
+    transform: 'translateY(-4rem)'
   },
 
   // 내려가기
   '46%': {
     fill: '#D9E9C6',
-    transform: 'translateY(-10px)'
+    transform: 'translateY(-1rem)'
   },
 
   // 정지
   '65%': {
     fill: '#D9E9C6',
-    transform: 'translateY(-10px)'
+    transform: 'translateY(-1rem)'
   },
 
   // 올라가기
   '73%': {
     fill: '#405D1D',
-    transform: 'translateY(-40px)'
+    transform: 'translateY(-4rem)'
   },
 
   // 정지
   '88%': {
     fill: '#405D1D',
-    transform: 'translateY(-40px)'
+    transform: 'translateY(-4rem)'
   },
 
   // 내려가기
   '100%': {
     fill: '#D9E9C6',
-    transform: 'translateY(-10px)'
+    transform: 'translateY(-1rem)'
   }
 });
 
@@ -55,35 +55,35 @@ const mountainCycle = keyframes({
 const sunCycle = keyframes({
   // 숨김
   '0%': {
-    transform: 'translate(-20px, 40px)',
+    transform: 'translate(-2rem, 4rem)',
     opacity: '0'
   },
   '16%': {
-    transform: 'translate(-20px, 40px)',
+    transform: 'translate(-2rem, 4rem)',
     opacity: '0'
   },
 
   // 떠오르기
   '25%': {
-    transform: 'translate(30px, -10px)',
+    transform: 'translate(3rem, -1rem)',
     opacity: '1'
   },
 
   // 정지
   '33%': {
-    transform: 'translate(30px, -10px)',
+    transform: 'translate(3rem, -1rem)',
     opacity: '1'
   },
 
   // 내려가기
   '40%': {
-    transform: 'translate(80px, 40px)',
+    transform: 'translate(8rem, 4rem)',
     opacity: '0'
   },
 
   // 숨김
   '100%': {
-    transform: 'translate(-40px, 40px)',
+    transform: 'translate(-4rem, 4rem)',
     opacity: '0'
   }
 });
@@ -92,44 +92,44 @@ const sunCycle = keyframes({
 const moonCycle = keyframes({
   // 숨김
   '0%': {
-    transform: 'translate(0px, 30px)',
+    transform: 'translate(0rem, 3rem)',
     opacity: '0'
   },
   '71%': {
-    transform: 'translate(0px, 30px)',
+    transform: 'translate(0rem, 3rem)',
     opacity: '0'
   },
 
   // 떠오르기
   '80%': {
-    transform: 'translate(70px, -10px)',
+    transform: 'translate(7rem, -1rem)',
     opacity: '1'
   },
 
   // 정지
   '83%': {
-    transform: 'translate(70px, -10px)',
+    transform: 'translate(7rem, -1rem)',
     opacity: '1'
   },
 
   // 내려가기
   '88%': {
-    transform: 'translate(140px, 30px)',
+    transform: 'translate(14rem, 3rem)',
     opacity: '0'
   },
 
   // 숨김
   '100%': {
-    transform: 'translate(0px, 30px)',
+    transform: 'translate(0rem, 3rem)',
     opacity: '0'
   }
 });
 
 export const container = style({
-  width: '170px',
-  height: '170px',
+  width: '17rem',
+  height: '17rem',
   backgroundColor: 'white',
-  borderRadius: '10px',
+  borderRadius: '1rem',
   overflow: 'hidden',
   display: 'flex',
   alignItems: 'center',

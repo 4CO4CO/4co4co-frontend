@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import CompletionModal from './components/completionModal/CompletionModal';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
+import { Alert } from '@/components/common/alert';
+import Button from '@/components/common/button';
 import { useSubscribeStatus } from '@/queries/lantern/useSubscribeStatus';
 
-interface LoadingProps {
-  entryCode: string;
+interface LocationState {
+  lantern_id: string;
 }
 
-const Loading: React.FC<LoadingProps> = ({ entryCode = '홍길동1234' }) => {
+const Loading = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [dots, setDots] = useState('');
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
-  useSubscribeStatus({
-    lanternId: entryCode,
-    onDone: () => {
-      setShowCompletionModal(true);
-    },
-  });
+  const [showCompletionAlert, setShowCompletionAlert] = useState(false);
+  const navigate = useNavigate();
 
   // ... 추가 애니메이션
   useEffect(() => {
@@ -43,6 +40,29 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = '홍길동1234' }) => {
     };
   }, []);
 
+  const location = useLocation();
+  const entryCode = (location.state as LocationState)?.lantern_id;
+  const hasRedirected = useRef(false);
+
+  useSubscribeStatus({
+    lanternId: entryCode,
+    onDone: () => {
+      setShowCompletionAlert(true);
+    },
+  });
+
+  useEffect(() => {
+    if (!entryCode && !hasRedirected.current) {
+      alert('잘못된 접근입니다.');
+      hasRedirected.current = true;
+      navigate(-1);
+    }
+  }, [entryCode, navigate]);
+
+  if (!entryCode) {
+    return null;
+  }
+
   const handleCopyCode = async () => {
     try {
       await navigator.clipboard.writeText(entryCode);
@@ -53,17 +73,19 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = '홍길동1234' }) => {
     }
   };
 
-  const handleEnterLanternFestival = () => {
-    console.log('풍등 축제 미리 입장하기 클릭');
+  const handleEnterLanternFestival = async () => {
+    await navigator.clipboard.writeText(entryCode);
+    navigate('/lanterns');
   };
 
-  const handleEnterExhibition = () => {
-    console.log('전시 입장하기 클릭');
-    setShowCompletionModal(false);
+  const handleEnterExhibition = async () => {
+    await navigator.clipboard.writeText(entryCode);
+    setShowCompletionAlert(false);
+    navigate('/lanterns');
   };
 
-  const handleCancelModal = () => {
-    setShowCompletionModal(false);
+  const handleCancelAlert = () => {
+    setShowCompletionAlert(false);
   };
 
   return (
@@ -101,14 +123,26 @@ const Loading: React.FC<LoadingProps> = ({ entryCode = '홍길동1234' }) => {
           <div className={styles.waitingMessage}>
             혹시 기다리기 지루하신가요?{'\n'}다른 사람들의 풍등을 구경하면서 기다릴 수 있어요!
           </div>
-
-          <button className={styles.enterButton} onClick={handleEnterLanternFestival} type="button">
+          <Button
+            variant="primary"
+            size="lg"
+            className={styles.enterButton}
+            onClick={handleEnterLanternFestival}
+            type="button"
+          >
             미리 풍등 축제 입장하기
-          </button>
+          </Button>
         </div>
       </div>
-
-      <CompletionModal isOpen={showCompletionModal} onEnter={handleEnterExhibition} onCancel={handleCancelModal} />
+      <Alert
+        isOpen={showCompletionAlert}
+        title="생성 완료!"
+        message={`기다려주셔서 감사합니다.\n지금 바로 입장이 가능합니다.`}
+        confirmText="입장할래요"
+        cancelText="취소"
+        onConfirm={handleEnterExhibition}
+        onCancel={handleCancelAlert}
+      />
     </>
   );
 };
