@@ -78,11 +78,11 @@ export const Alert = ({
         <pre className={styles.messageSize[alertSize]}>{message}</pre>
 
         <div className={styles.buttonContainer[alertSize]}>
-          <Button variant="secondary" size={size} onClick={onCancel}>
+          <Button variant="secondary" size={alertSize} onClick={onCancel}>
             {cancelText}
           </Button>
 
-          <Button variant="primary" size={size} onClick={onConfirm} disabled={disabled}>
+          <Button variant="primary" size={alertSize} onClick={onConfirm} disabled={disabled}>
             {confirmText}
           </Button>
         </div>
