@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import * as styles from './Toast.css.ts';
+import * as styles from './index.css';
 
 interface ToastProps {
   message: string;
@@ -13,9 +13,5 @@ export const Toast = ({ message, type = 'info', onClose }: ToastProps) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  return (
-    <div className={`${styles.toast} ${styles[type]}`}>
-      {message}
-    </div>
-  );
+  return <div className={`${styles.toast} ${styles[type]}`}>{message}</div>;
 };

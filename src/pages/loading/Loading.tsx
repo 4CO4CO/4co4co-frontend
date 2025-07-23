@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import LoadingAnimation from './components/loadingAnimation/LoadingAnimation';
 import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
-import { Alert } from '@/components/common/Alert/Alert';
-import { Button } from '@/components/common/Button/Button';
+import { Alert } from '@/components/common/alert';
+import Button from '@/components/common/button';
 
 interface LocationState {
   lantern_id: string;
@@ -15,18 +15,7 @@ const Loading = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [dots, setDots] = useState('');
   const [showCompletionAlert, setShowCompletionAlert] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 798);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // ... 추가 애니메이션
   useEffect(() => {
@@ -64,12 +53,12 @@ const Loading = () => {
     if (!entryCode && !hasRedirected.current) {
       alert('잘못된 접근입니다.');
       hasRedirected.current = true;
-      navigate(-1);
+      // navigate(-1);
     }
   }, [entryCode, navigate]);
 
   if (!entryCode) {
-    return null;
+    // return null;
   }
 
   const handleCopyCode = async () => {
@@ -147,7 +136,6 @@ const Loading = () => {
         isOpen={showCompletionAlert}
         title="생성 완료!"
         message={`기다려주셔서 감사합니다.\n지금 바로 입장이 가능합니다.`}
-        size={isMobile ? 'sm' : 'lg'}
         confirmText="입장할래요"
         cancelText="취소"
         onConfirm={handleEnterExhibition}

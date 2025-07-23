@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
-import { colors } from './../../styles/color.css';
-import { fonts } from './../../styles/font.css';
+import { colors } from '@/styles/color.css';
+import { fonts } from '@/styles/font.css';
 import { MOBILE_MEDIA_QUERY } from '@/styles/mediaQuery';
 
 export const container = style({

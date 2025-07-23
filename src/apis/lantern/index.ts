@@ -8,7 +8,11 @@ export interface CreateLanternRequestBody {
 }
 
 export interface CreateLanternResponse {
-  lantern_id: string;
+  status: string;
+  message: string;
+  data: {
+    lantern_id: string;
+  };
 }
 
 export const createLantern = async (data: CreateLanternRequestBody): Promise<CreateLanternResponse> => {

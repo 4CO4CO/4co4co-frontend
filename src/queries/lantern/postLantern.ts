@@ -7,8 +7,7 @@ export const usePostLantern = () => {
   return useMutation<CreateLanternResponse, Error, CreateLanternRequestBody, unknown>({
     mutationFn: createLantern,
     onSuccess: (data) => {
-      console.log('랜턴 생성 성공:', data);
-      navigate('/loading', { state: { lantern_id: data.lantern_id } });
+      navigate('/loading', { state: { lantern_id: data.data.lantern_id } });
     },
     onError: (error) => {
       console.error('랜턴 생성 실패:', error);

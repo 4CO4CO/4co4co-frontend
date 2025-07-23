@@ -31,6 +31,7 @@ export const variantStyles = styleVariants({
     color: colors.color.black,
     ':hover': {
       backgroundColor: colors.color.sunsetGlow,
+      transform: 'translateY(-1px)',
     },
     ':disabled': {
       backgroundColor: colors.color.morningGold,
@@ -42,6 +43,7 @@ export const variantStyles = styleVariants({
     color: colors.color.white,
     ':hover': {
       backgroundColor: colors.color.gray200,
+      transform: 'translateY(-1px)',
     },
   },
   dangerous: {

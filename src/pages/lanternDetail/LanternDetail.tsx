@@ -6,9 +6,9 @@ import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
 import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
-import { Toast } from '@/components/common/Toast/Toast';
-import { useHandMark } from '@/components/lantern/hooks/useHandMark';
-import { VideoFeed } from '@/components/lantern/VideoFeed';
+import { useHandMark } from '@/components/common/lantern/hooks/useHandMark';
+import { VideoFeed } from '@/components/common/lantern/VideoFeed';
+import { Toast } from '@/components/common/toast';
 
 const LanternDetail = () => {
   const { lanternId } = useParams();

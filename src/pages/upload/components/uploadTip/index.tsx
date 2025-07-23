@@ -1,7 +1,7 @@
 import * as styles from './index.css';
 import { UPLOAD_TIPS } from '../../constants';
-import Chip from '@/components/chip';
-import Spacing from '@/components/spacing';
+import Chip from '@/components/common/chip';
+import Spacing from '@/components/common/spacing';
 
 interface UploadTipProps {
   className?: string;

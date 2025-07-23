@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
-import { useHandMark } from '../../components/lantern/hooks/useHandMark';
-import { VideoFeed } from '../../components/lantern/VideoFeed';
+import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
+import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { get } from '@/apis';
-import { LanternWithRect } from '@/components/lantern/constants';
-import { useLanternHit } from '@/components/lantern/hooks/useLanternHit';
+import { LanternWithRect } from '@/components/common/lantern/constants';
+import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
 
 const Lantern = () => {
   const { handCenter } = useHandMark();
@@ -76,12 +76,7 @@ const Lantern = () => {
           {lantern.owner_name}
         </div>
       ))}
-      {handCenter && (
-        <div
-          className={styles.handPointer}
-          style={{ top: handCenter.y, left: handCenter.x }}
-        />
-      )}
+      {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
     </>
   );
 };

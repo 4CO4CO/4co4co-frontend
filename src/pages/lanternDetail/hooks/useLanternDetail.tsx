@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { get, ApiError } from '@/apis';
-import { LanternData } from '@/components/lantern/constants';
+import { LanternData } from '@/components/common/lantern/constants';
 
 interface LanternDetailApiResponse {
   status: 'success';
@@ -13,16 +13,10 @@ interface LanternDetailApiResponse {
   };
 }
 
-const fetchLanternDetail = async (
-  lanternId: string,
-  currentLanternId?: string
-): Promise<LanternData> => {
+const fetchLanternDetail = async (lanternId: string, currentLanternId?: string): Promise<LanternData> => {
   const params = currentLanternId ? { current_lantern_id: currentLanternId } : {};
 
-  const response = await get<LanternDetailApiResponse>(
-    `/lanterns/${lanternId}`,
-    { params }
-  );
+  const response = await get<LanternDetailApiResponse>(`/lanterns/${lanternId}`, { params });
 
   return {
     lantern_id: response.data.lantern_id,
@@ -64,9 +58,7 @@ export const useLanternDetail = (lanternId: string | undefined) => {
     } catch (err) {
       console.error('풍등 데이터 조회 실패:', err);
 
-      const errorMessage = err instanceof ApiError
-        ? getErrorMessage(err)
-        : '풍등 데이터를 불러오는데 실패했습니다.';
+      const errorMessage = err instanceof ApiError ? getErrorMessage(err) : '풍등 데이터를 불러오는데 실패했습니다.';
 
       setError(errorMessage);
     } finally {
@@ -86,6 +78,6 @@ export const useLanternDetail = (lanternId: string | undefined) => {
     data,
     isLoading,
     error,
-    retry
+    retry,
   };
 };

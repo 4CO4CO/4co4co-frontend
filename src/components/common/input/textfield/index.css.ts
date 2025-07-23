@@ -5,7 +5,6 @@ import { fonts } from '@/styles/font.css';
 export const input = style({
   border: 'none',
   borderRadius: '7px',
-  cursor: 'pointer',
   width: '100%',
   height: '5.3rem',
 
