@@ -1,8 +1,10 @@
 import { style } from '@vanilla-extract/css';
+import { colors } from '@/styles/color.css';
+import { fonts } from '@/styles/font.css';
 
 export const container = style({
   height: '100vh',
-  backgroundColor: '#f9f6ef',
+  backgroundColor: colors.color.white200,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -24,13 +26,9 @@ export const contentWrapper = style({
 });
 
 export const title = style({
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '28px',
-  fontWeight: 700,
-  lineHeight: 'normal',
-  letterSpacing: '2.8px',
-  marginBottom: '36px',
+  color: colors.color.black,
+  ...fonts.font.title_28_B,
+  marginBottom: '3.6rem',
   textAlign: 'left',
 });
 
@@ -38,37 +36,25 @@ export const ticketWrapper = style({
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
-  marginBottom: '44px',
+  marginBottom: '4.4rem',
 });
 
 export const ticketIcon = style({
-  width: '310px',
-  height: '222px',
+  width: '31rem',
+  height: '22.2rem',
   objectFit: 'contain',
 
   '@media': {
     '(max-width: 798px)': {
-      width: '210px',
-      height: '150px',
+      width: '21rem',
+      height: '15rem',
     }
   }
 });
 
-export const startButton = style({
+export const startButtonCustom = style({
   alignSelf: 'center',
-  borderRadius: '10px',
-  background: '#FCBC42',
-  padding: '18px 65px',
-  cursor: 'pointer',
-  border: 'none',
-  marginBottom: '32px',
-
-  color: '#000',
-  textAlign: 'center',
-  fontFamily: 'Pretendard',
-  fontSize: '16px',
-  fontWeight: 700,
-  lineHeight: 'normal',
+  marginBottom: '3.2rem',
 });
 
 export const option = style({
@@ -76,24 +62,18 @@ export const option = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '4px',
+  gap: '0.4rem',
 });
 
 export const optionText = style({
-  color: '#000',
+  color: colors.color.black,
   textAlign: 'center',
-  fontFamily: 'Pretendard',
-  fontSize: '16px',
-  fontWeight: 400,
-  lineHeight: 'normal',
+  ...fonts.font.body_16_R,
 });
 
 export const linkButton = style({
-  color: '#1C4EFF',
-  fontFamily: 'Pretendard',
-  fontSize: '16px',
-  fontWeight: 400,
-  lineHeight: 'normal',
+  color: colors.color.hyperBlue,
+  ...fonts.font.body_16_R,
   textDecoration: 'underline',
   background: 'none',
   border: 'none',

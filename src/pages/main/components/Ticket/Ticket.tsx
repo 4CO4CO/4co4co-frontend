@@ -1,7 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import * as styles from './Ticket.css';
 import TicketIcon from '@/assets/TicketIcon.svg?react';
+import { Button } from '@/components/common/Button/Button';
 
 const Ticket = () => {
+  const navigate = useNavigate();
+
+  const handleStartExhibition = () => {
+    navigate('/upload');
+  };
+
+  const handleEntryExhibition = () => {
+    navigate('/entry');
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.contentWrapper}>
@@ -15,13 +27,18 @@ const Ticket = () => {
           <TicketIcon className={styles.ticketIcon} role="img" aria-label="Ticket" />
         </div>
 
-        <button className={styles.startButton}>
+        <Button
+          variant="primary"
+          size="lg"
+          className={styles.startButtonCustom}
+          onClick={handleStartExhibition}
+        >
           지금 바로 나만의 전시 만들기
-        </button>
+        </Button>
 
         <div className={styles.option}>
           <span className={styles.optionText}>이미 전시를 만들었다면? </span>
-          <button className={styles.linkButton}>전시회 입장하기</button>
+          <button className={styles.linkButton} onClick={handleEntryExhibition}>전시회 입장하기</button>
         </div>
       </div>
     </div>
