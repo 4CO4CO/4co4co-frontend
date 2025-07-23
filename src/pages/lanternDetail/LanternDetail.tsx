@@ -6,10 +6,9 @@ import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
 import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
-import { Toast } from '@/components/common/Toast/Toast';
-import { LanternData } from '@/components/lantern/constants';
-import { useHandMark } from '@/components/lantern/hooks/useHandMark';
-import { VideoFeed } from '@/components/lantern/VideoFeed';
+import { useHandMark } from '@/components/common/lantern/hooks/useHandMark';
+import { VideoFeed } from '@/components/common/lantern/VideoFeed';
+import { Toast } from '@/components/common/toast';
 
 const LanternDetail = () => {
   const { lanternId } = useParams();
@@ -29,7 +28,7 @@ const LanternDetail = () => {
   const audioPlayer = useAudioPlayer({
     audioUrls: lanternData?.background_sounds || [],
     isUserInteracted,
-    startIndex: 1
+    startIndex: 1,
   });
 
   // 손동작 인식
@@ -101,28 +100,14 @@ const LanternDetail = () => {
           <div ref={scrollContainerRef} className={styles.scrollContainer}>
             <div className={styles.panoramaWrapper}>
               {lanternData.images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  className={styles.panoramaImage}
-                  alt={`풍등 이미지 ${index + 1}`}
-                />
+                <img key={index} src={image} className={styles.panoramaImage} alt={`풍등 이미지 ${index + 1}`} />
               ))}
             </div>
           </div>
 
-          {handCenter && (
-            <div
-              className={styles.handPointer}
-              style={{ top: handCenter.y, left: handCenter.x }}
-            />
-          )}
+          {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
 
-          {showInteractionMessage && (
-            <div className={styles.interactionMessage}>
-              화면을 클릭하면 음악이 재생됩니다
-            </div>
-          )}
+          {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}
 
           {/* 간단한 오디오 시각화 추가 */}
           <AudioVisualizer
@@ -134,13 +119,7 @@ const LanternDetail = () => {
         </>
       )}
 
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 };
