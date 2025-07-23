@@ -30,7 +30,7 @@ interface SSEOptions {
 }
 
 export const subscribeStatus = ({ lanternId, onPartialMessage, onAllDone, onDone, onError }: SSEOptions) => {
-  const url = new URL(`/lanterns/${lanternId}/music-status`, instance.defaults.baseURL);
+  const url = new URL(`/api/v1/lanterns/${encodeURIComponent(lanternId)}/music-status`, instance.defaults.baseURL);
   url.searchParams.set('resume', 'true');
 
   const eventSource = new EventSource(url.toString());
