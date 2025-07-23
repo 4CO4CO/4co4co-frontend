@@ -45,6 +45,7 @@ export const variantStyles = styleVariants({
       backgroundColor: colors.color.gray200,
       transform: 'translateY(-1px)',
     },
+    width: '9.4rem',
   },
   dangerous: {
     backgroundColor: colors.color.dangerous,

@@ -8,14 +8,16 @@ import { Alert } from '@/components/common/alert';
 import Button from '@/components/common/button';
 import TextField from '@/components/common/input/textfield';
 import Spacing from '@/components/common/spacing';
+import { Toast } from '@/components/common/toast';
 import { usePostLantern } from '@/queries/lantern/postLantern';
 
 const Upload = () => {
-  const [isOn, setIsOn] = useState(false);
+  const [isOn, setIsOn] = useState(true);
   const [name, setName] = useState<string>('');
   const [images, setImages] = useState<File[]>([]);
   const { mutate, isPending } = usePostLantern();
   const [showCompletionAlert, setShowCompletionAlert] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const handleToggle = () => {
     setIsOn((prev) => !prev);
@@ -29,16 +31,19 @@ const Upload = () => {
     setImages(uploadedFiles);
   };
 
-  const handleSubmit = () => {
+  const handleShowAlert = () => {
     if (!name.trim()) {
-      alert('이름을 입력해주세요.');
+      setToast({ message: '이름을 입력해주세요.', type: 'error' });
       return;
     }
-    if (images.length === 0) {
-      alert('사진을 최소 1장 이상 업로드해주세요.');
+    if (images.length !== 3) {
+      setToast({ message: '사진을 3장 업로드해주세요.', type: 'error' });
       return;
     }
+    setShowCompletionAlert(true);
+  };
 
+  const handleSubmit = () => {
     const requestBody: CreateLanternRequestBody = {
       name: name,
       images: images,
@@ -74,10 +79,10 @@ const Upload = () => {
           <Toggle isOn={isOn} onToggle={handleToggle} />
         </div>
         <div className={styles.button_wrapper}>
-          <Button className={styles.mobileOnly} variant="secondary" style={{ width: '9.4rem' }}>
+          <Button className={styles.mobileOnly} variant="secondary">
             취소
           </Button>
-          <Button onClick={() => setShowCompletionAlert(true)}>전시하기</Button>
+          <Button onClick={handleShowAlert}>전시하기</Button>
         </div>
       </div>
       <Alert
@@ -86,12 +91,13 @@ const Upload = () => {
         message={`전시를 업로드하면 수정 및 삭제가 불가능합니다.\n${name}님의 사진을 "${
           isOn ? '공개' : '비공개'
         }" 전시로 업로드하시나요?`}
-        confirmText="입장할래요"
+        confirmText="확인했어요"
         cancelText="취소"
         onConfirm={handleSubmit}
         onCancel={() => setShowCompletionAlert(false)}
         disabled={isPending}
       />
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
 };

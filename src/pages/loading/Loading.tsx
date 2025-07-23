@@ -53,12 +53,12 @@ const Loading = () => {
     if (!entryCode && !hasRedirected.current) {
       alert('잘못된 접근입니다.');
       hasRedirected.current = true;
-      // navigate(-1);
+      navigate(-1);
     }
   }, [entryCode, navigate]);
 
   if (!entryCode) {
-    // return null;
+    return null;
   }
 
   const handleCopyCode = async () => {
