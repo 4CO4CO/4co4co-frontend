@@ -5,7 +5,6 @@ import { LOADING_TEXTS } from './constants/loadingTexts';
 import * as styles from './Loading.css';
 import { Alert } from '@/components/common/alert';
 import Button from '@/components/common/button';
-import { useSubscribeStatus } from '@/queries/lantern/useSubscribeStatus';
 
 interface LocationState {
   lantern_id: string;
@@ -43,13 +42,6 @@ const Loading = () => {
   const location = useLocation();
   const entryCode = (location.state as LocationState)?.lantern_id;
   const hasRedirected = useRef(false);
-
-  useSubscribeStatus({
-    lanternId: entryCode,
-    onDone: () => {
-      setShowCompletionAlert(true);
-    },
-  });
 
   useEffect(() => {
     if (!entryCode && !hasRedirected.current) {
