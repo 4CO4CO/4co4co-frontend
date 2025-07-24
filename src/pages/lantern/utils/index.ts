@@ -23,8 +23,17 @@ const isRectOverlapping = (
   );
 };
 
-export const generateNonOverlappingPositions = (ids: string[], boxSize = 100) => {
+export const generateNonOverlappingPositions = (
+  ids: string[],
+  boxSize = 100,
+  viewportWidth: number,
+  viewportHeight: number,
+) => {
   const sortedIds = [...ids].sort();
+  const padding = 12;
+
+  const maxX = viewportWidth - boxSize - padding;
+  const maxY = viewportHeight - boxSize - padding;
   // 각 풍등의 위치 저장
   const placed: {
     [id: string]: { x: number; y: number; width: number; height: number };
@@ -33,8 +42,8 @@ export const generateNonOverlappingPositions = (ids: string[], boxSize = 100) =>
   sortedIds.forEach((id) => {
     let tries = 0;
     let position = {
-      x: seededRandom(id + 'x') * 600,
-      y: seededRandom(id + 'y') * 400,
+      x: padding + seededRandom(id + 'x') * maxX,
+      y: padding + seededRandom(id + 'y') * maxY,
       width: boxSize,
       height: boxSize,
     };
@@ -42,8 +51,8 @@ export const generateNonOverlappingPositions = (ids: string[], boxSize = 100) =>
     while (Object.values(placed).some((other) => isRectOverlapping(position, other, 12))) {
       tries++;
       position = {
-        x: seededRandom(id + 'x' + tries) * 600,
-        y: seededRandom(id + 'y' + tries) * 400,
+        x: padding + seededRandom(id + 'x' + tries) * maxX,
+        y: padding + seededRandom(id + 'y' + tries) * maxY,
         width: boxSize,
         height: boxSize,
       };

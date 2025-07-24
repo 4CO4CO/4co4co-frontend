@@ -17,7 +17,7 @@ const Lantern = () => {
 
   const lanterns = useMemo(() => {
     const ids = (data?.data ?? []).map((l) => l.lantern_id);
-    const positionMap = generateNonOverlappingPositions(ids);
+    const positionMap = generateNonOverlappingPositions(ids, 100, window.innerWidth, window.innerHeight);
 
     return (data?.data ?? []).map((lantern) => ({
       ...lantern,
