@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainPage, LanternPage, UploadPage, EntryPage, LanternDetailPage, LoadingPage } from './lazy';
+import { SSELayout } from './SSELayout';
 
 const router = createBrowserRouter([
   {
@@ -15,12 +16,11 @@ const router = createBrowserRouter([
     element: <EntryPage />,
   },
   {
-    path: '/loading',
-    element: <LoadingPage />,
-  },
-  {
-    path: '/lanterns',
-    element: <LanternPage />,
+    element: <SSELayout />,
+    children: [
+      { path: '/loading', element: <LoadingPage /> },
+      { path: '/lanterns', element: <LanternPage /> },
+    ],
   },
   {
     path: '/lanterns/:lanternId',
