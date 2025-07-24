@@ -34,14 +34,8 @@ const Loading = () => {
       setDots('.'.repeat(dotCount));
     }, 1000);
 
-    // 16초 후 완성 모달 표시 (테스트용)
-    const completionTimer = setTimeout(() => {
-      setShowCompletionAlert(true);
-    }, 16000);
-
     return () => {
       clearInterval(interval);
-      clearTimeout(completionTimer);
     };
   }, []);
 
