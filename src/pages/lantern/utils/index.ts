@@ -24,12 +24,13 @@ const isRectOverlapping = (
 };
 
 export const generateNonOverlappingPositions = (ids: string[], boxSize = 100) => {
+  const sortedIds = [...ids].sort();
   // 각 풍등의 위치 저장
   const placed: {
     [id: string]: { x: number; y: number; width: number; height: number };
   } = {};
 
-  ids.forEach((id) => {
+  sortedIds.forEach((id) => {
     let tries = 0;
     let position = {
       x: seededRandom(id + 'x') * 600,
