@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
+import { generateNonOverlappingPositions } from './utils';
 import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { LanternWithRect } from '@/components/common/lantern/constants';
@@ -15,11 +16,13 @@ const Lantern = () => {
   const navigate = useNavigate();
 
   const lanterns = useMemo(() => {
+    const ids = (data?.data ?? []).map((l) => l.lantern_id);
+    const positionMap = generateNonOverlappingPositions(ids);
+
     return (data?.data ?? []).map((lantern) => ({
       ...lantern,
       rect: {
-        x: Math.random() * 600,
-        y: Math.random() * 400,
+        ...positionMap[lantern.lantern_id],
         width: 100,
         height: 100,
       },
