@@ -53,7 +53,13 @@ export const ticketIcon = style({
 });
 
 export const startButtonCustom = style({
-  alignSelf: 'center',
+  width: '30rem !important',
+});
+
+export const buttonContainer = style({
+  display: 'flex',
+  width: '100%',
+  justifyContent: 'center',
   marginBottom: '3.2rem',
 });
 

@@ -1,13 +1,17 @@
 import { style } from '@vanilla-extract/css';
 import { Z_INDEX } from '../../constants/zIndex';
-import { dangerousLg } from '@/components/common/Button/Button.css';
+import { variantStyles } from '@/components/common/button/index.css';
+import { fonts } from '@/styles/font.css';
 
 export const closeButton = style([
-  dangerousLg,
+  variantStyles.dangerous,
   {
     position: 'absolute',
     top: '1.2rem',
     left: '1.2rem',
     zIndex: Z_INDEX.CLOSE_BUTTON,
+    padding: '1.7rem 2.6rem',
+    borderRadius: '1rem',
+    ...fonts.font.body_16_R,
   }
 ]);
