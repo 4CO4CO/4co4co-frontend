@@ -28,11 +28,11 @@ const Ticket = () => {
         <div className={styles.ticketWrapper}>
           <TicketIcon className={styles.ticketIcon} role="img" aria-label="Ticket" />
         </div>
-
-        <Button variant="primary" size="lg" className={styles.startButtonCustom} onClick={handleStartExhibition}>
-          지금 바로 나만의 전시 만들기
-        </Button>
-
+        <div className={styles.buttonContainer}>
+          <Button variant="primary" size="lg" className={styles.startButtonCustom} onClick={handleStartExhibition}>
+            지금 바로 나만의 전시 만들기
+          </Button>
+        </div>
         <div className={styles.option}>
           <span className={styles.optionText}>이미 전시를 만들었다면? </span>
           <button className={styles.linkButton} onClick={handleEntryExhibition}>

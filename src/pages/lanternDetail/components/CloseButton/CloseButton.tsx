@@ -13,7 +13,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         className={styles.closeButton}
         onClick={onClick}
       >
-        닫기
+        나가기
       </button>
     );
   }
