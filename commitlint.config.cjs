@@ -7,7 +7,7 @@ module.exports = {
       [
         'feat', // 새로운 기능
         'fix', // 버그 수정
-        '!hotfix', // 핫픽스
+        'hotfix', // 핫픽스
         'docs', // 문서
         'refactor', // 리팩토링
         'test', // 테스트 코드
