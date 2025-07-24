@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css';
 import { clearLanternCustom } from '../entry/Entry.css';
+import { colors } from '@/styles/color.css';
 import { fonts } from '@/styles/font.css';
 
 export const container = style({
@@ -27,6 +28,7 @@ export const lanternImg = style([
 
 export const lanternName = style({
   ...fonts.font.body_10_B,
+  color: colors.color.white,
 });
 
 export const handPointer = style({

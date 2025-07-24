@@ -65,7 +65,7 @@ const Lantern = () => {
               }}
             />
           )}
-          <span className={styles.lanternImg}>{lantern.owner_name}</span>
+          <span className={styles.lanternName}>{lantern.owner_name}</span>
         </div>
       ))}
       {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
