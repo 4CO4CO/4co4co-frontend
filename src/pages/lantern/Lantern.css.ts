@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { keyframes, style } from '@vanilla-extract/css';
 import { clearLanternCustom } from '../entry/Entry.css';
 import { colors } from '@/styles/color.css';
 import { fonts } from '@/styles/font.css';
@@ -39,4 +39,15 @@ export const handPointer = style({
   backgroundColor: 'lime',
   pointerEvents: 'none',
   zIndex: 100,
+});
+
+export const fadeInUp = keyframes({
+  '0%': {
+    opacity: 0,
+    transform: 'translateY(50px)',
+  },
+  '100%': {
+    opacity: 1,
+    transform: 'translateY(0)',
+  },
 });
