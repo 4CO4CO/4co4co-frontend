@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { post } from '..';
+import { get, post } from '..';
 
 export interface CreateLanternRequestBody {
   name: string;
@@ -40,4 +40,20 @@ export const createLantern = async (data: CreateLanternRequestBody): Promise<Cre
     }
     throw error;
   }
+};
+
+export interface LanternListResponse {
+  status: string;
+  message: string;
+  data: {
+    lantern_id: string;
+    owner_name: string;
+    emotion: string;
+    is_current_lantern: boolean;
+  }[];
+}
+
+export const getLanternList = (currentLanternId: string | null) => {
+  if (currentLanternId) return get<LanternListResponse>(`/lanterns?current_lantern_id=${currentLanternId}`);
+  return get<LanternListResponse>(`/lanterns`);
 };
