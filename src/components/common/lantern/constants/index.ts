@@ -1,3 +1,5 @@
+import { ComponentType, SVGProps } from 'react';
+
 // 사각형
 export type Rect = { x: number; y: number; width: number; height: number };
 
@@ -6,6 +8,9 @@ export type LanternWithRect = {
   owner_name: string;
   emotion: string;
   rect: Rect;
+  ImageComponent?: ComponentType<SVGProps<SVGSVGElement>> | string;
+  rotation?: number;
+  isFlipped?: boolean;
 };
 
 // 풍등 상세 데이터

@@ -1,10 +1,11 @@
 import { style } from '@vanilla-extract/css';
+import { clearLanternCustom } from '../entry/Entry.css';
+import { fonts } from '@/styles/font.css';
 
-export const lanternImg = style({
-  position: 'absolute',
-  transition: 'all 0.2s ease',
+export const container = style({
   width: '100vw',
   height: '100vh',
+  background: 'linear-gradient(180deg, #000 0%, #185393 100%)',
 });
 
 export const lanternBox = style({
@@ -12,9 +13,20 @@ export const lanternBox = style({
   borderRadius: 8,
   transition: 'all 0.2s ease',
   display: 'flex',
-  alignItems: 'center',
+  flexDirection: 'column',
   justifyContent: 'center',
-  backgroundColor: 'orange',
+  alignItems: 'center',
+});
+
+export const lanternImg = style([
+  clearLanternCustom,
+  {
+    position: 'relative',
+  },
+]);
+
+export const lanternName = style({
+  ...fonts.font.body_10_B,
 });
 
 export const handPointer = style({
