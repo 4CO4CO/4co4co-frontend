@@ -36,7 +36,14 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       <button className={styles.upload_button} onClick={handleUploadClick}>
         <UploadIcon />
       </button>
-      <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
       {uploadedImages.map((img, index) => (
         <div key={index}>
           <img src={URL.createObjectURL(img)} alt={`업로드 ${index + 1}`} className={styles.previewImage} />
