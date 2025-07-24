@@ -7,6 +7,7 @@ import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
 import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
+import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
 import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
 import { useLanternList } from '@/queries/lantern/getLanternList';
@@ -47,7 +48,19 @@ const Lantern = () => {
   const currentLanternId = searchParams.get('currentLanternId');
   const { data } = useLanternList(currentLanternId);
   const navigate = useNavigate();
-  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(true);
+  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+  // 풍등 정보 없을 경우 리다이렉트
+  useEffect(() => {
+    if (!currentLanternId) {
+      setShowAlert(true);
+    }
+  }, [currentLanternId]);
+
+  const handleAlertConfirm = () => {
+    navigate('/upload');
+  };
 
   const lanterns = useMemo(() => {
     const ids = (data?.data ?? []).map((l) => l.lantern_id);
@@ -103,6 +116,13 @@ const Lantern = () => {
       ))}
       {isMyLanternCompleted && myLantern && <LanternItem key={myLantern.lantern_id} lantern={myLantern} isDelayed />}
       {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
+      <Alert
+        isOpen={showAlert}
+        title="입장 코드 없음"
+        message={`풍등 생성 후에 입장하실 수 있어요.`}
+        confirmText="전시 업로드 하러 가기"
+        onConfirm={handleAlertConfirm}
+      />
     </div>
   );
 };
