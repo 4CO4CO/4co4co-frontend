@@ -13,6 +13,14 @@ interface LanternDetailApiResponse {
   };
 }
 
+// 이미지 URL 변환
+const getFullImageUrl = (imagePath: string): string => {
+  const s3BaseUrl = import.meta.env.VITE_S3_BASE_URL;
+  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+
+  return `${s3BaseUrl}${normalizedPath}`;
+};
+
 const fetchLanternDetail = async (lanternId: string, currentLanternId?: string): Promise<LanternData> => {
   const params = currentLanternId ? { current_lantern_id: currentLanternId } : {};
 
@@ -21,7 +29,7 @@ const fetchLanternDetail = async (lanternId: string, currentLanternId?: string):
   return {
     lantern_id: response.data.lantern_id,
     owner_name: response.data.owner_name,
-    images: response.data.images,
+    images: response.data.images.map(getFullImageUrl), // S3 URL로 변환
     background_sounds: response.data.background_sounds,
   };
 };
