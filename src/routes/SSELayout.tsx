@@ -9,7 +9,7 @@ export const SSELayout = () => {
   useSubscribeStatus({
     lanternId: entryCode ?? '',
     onDone: () => {
-      navigate(`/lanterns?current_lantern_id=${entryCode}`);
+      navigate(`/lanterns?currentLanternId=${entryCode}`);
     },
   });
 
