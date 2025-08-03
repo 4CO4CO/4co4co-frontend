@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 
 import { colors } from '@/styles/color.css';
 import { fonts } from '@/styles/font.css';
@@ -39,9 +39,22 @@ export const upload_button = style({
   flexShrink: '0',
 });
 
-export const previewImage = style({
+export const preview_wrapper = style({
   width: '31.5rem',
   height: '26.8rem',
+  position: 'relative',
+  flexShrink: '0',
+});
+
+globalStyle(`${preview_wrapper} svg`, {
+  position: 'absolute',
+  right: '1rem',
+  top: '1rem',
+});
+
+export const previewImage = style({
+  width: '100%',
+  height: '100%',
   objectFit: 'cover',
   borderRadius: '12px',
 

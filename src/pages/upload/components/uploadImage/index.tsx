@@ -1,10 +1,11 @@
 import React, { useRef } from 'react';
 import * as styles from './index.css';
+import CloseButtonIcon from '@/assets/CloseBtnIcon.svg?react';
 import UploadIcon from '@/assets/upload.svg?react';
 
 interface UploadImageProps {
   onImagesChange: (files: File[]) => void;
-  uploadedImages: File[]; // 부모로부터 현재 업로드된 파일 목록을 받아서 표시
+  uploadedImages: File[];
 }
 
 const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
@@ -31,6 +32,11 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
     }
   };
 
+  const handleRemoveImage = (indexToRemove: number) => {
+    const updatedImages = uploadedImages.filter((_, index) => index !== indexToRemove);
+    onImagesChange(updatedImages);
+  };
+
   return (
     <div className={styles.container}>
       <button className={styles.upload_button} onClick={handleUploadClick}>
@@ -45,8 +51,9 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
         onChange={handleFileChange}
       />
       {uploadedImages.map((img, index) => (
-        <div key={index}>
+        <div key={index} className={styles.preview_wrapper}>
           <img src={URL.createObjectURL(img)} alt={`업로드 ${index + 1}`} className={styles.previewImage} />
+          <CloseButtonIcon onClick={() => handleRemoveImage(index)} />
         </div>
       ))}
     </div>
