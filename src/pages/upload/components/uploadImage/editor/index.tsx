@@ -25,9 +25,8 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
         {
           unit: '%', // 크롭 단위
           width: 100, // 크롭 영역 너비
-          height: 90,
         },
-        width / height,
+        aspectRatio,
         width,
         height,
       ),
