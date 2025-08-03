@@ -13,14 +13,17 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
+  const [originalFiles, setOriginalFiles] = useState<File[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const currentFilesCount = uploadedImages.length;
 
     if (files.length > 0 && currentFilesCount + files.length <= 3) {
+      const newFiles = [...files];
       const newIndex = uploadedImages.length;
       onImagesChange([...uploadedImages, ...files]);
+      setOriginalFiles([...originalFiles, ...newFiles]);
       setEditingImageIndex(newIndex);
       setIsEditorOpen(true);
     } else if (currentFilesCount + files.length > 3) {
@@ -40,7 +43,9 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
 
   const handleRemoveImage = (indexToRemove: number) => {
     const updatedImages = uploadedImages.filter((_, index) => index !== indexToRemove);
+    const updatedOriginalFiles = originalFiles.filter((_, index) => index !== indexToRemove);
     onImagesChange(updatedImages);
+    setOriginalFiles(updatedOriginalFiles);
   };
 
   const handleOpenEditor = (index: number) => {
@@ -82,7 +87,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       ))}
       {isEditorOpen && editingImageIndex !== null && (
         <ImageEditor
-          file={URL.createObjectURL(uploadedImages[editingImageIndex])}
+          file={URL.createObjectURL(originalFiles[editingImageIndex])}
           aspectRatio={10 / 9}
           onCropped={handleCroppedImage}
         />
