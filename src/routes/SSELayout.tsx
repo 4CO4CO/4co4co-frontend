@@ -9,6 +9,10 @@ export const SSELayout = () => {
   useSubscribeStatus({
     lanternId: entryCode ?? '',
     onDone: () => {
+      const existingCodes = JSON.parse(localStorage.getItem('successLanterns') || '[]');
+      existingCodes.push(entryCode);
+      localStorage.setItem('successLanterns', JSON.stringify(existingCodes));
+
       navigate(`/lanterns?currentLanternId=${entryCode}`);
     },
   });

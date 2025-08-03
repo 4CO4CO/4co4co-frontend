@@ -25,7 +25,9 @@ const LanternItem = ({ lantern, isDelayed = false }: { lantern: LanternWithRect;
         height: lantern.rect.height,
         transform: `rotate(${lantern.rotation}deg)`,
         opacity: isDelayed ? 0 : 1,
-        animation: isDelayed ? `${styles.fadeInUp} 1s ease-out forwards` : undefined,
+        animation: isDelayed
+          ? `${styles.fadeInUp} 1s ease-out forwards, ${styles.neonBlink} 1.5s infinite forwards`
+          : undefined,
         animationDelay: isDelayed ? '1s' : undefined,
       }}
     >
@@ -86,9 +88,11 @@ const Lantern = () => {
     const cachedProgress = queryClient.getQueryData<MusicStatusData | MusicStatusData[]>(
       lanternKeys.progress(currentLanternId),
     );
-
+    const successLanterns = JSON.parse(localStorage.getItem('successLanterns') || '[]');
     const isCompleted =
-      Array.isArray(cachedProgress) || (cachedProgress && (cachedProgress as MusicStatusData)?.status === 'success');
+      Array.isArray(cachedProgress) ||
+      (cachedProgress && (cachedProgress as MusicStatusData)?.status === 'success') ||
+      successLanterns.includes(currentLanternId);
 
     if (isCompleted) {
       setTimeout(() => {
