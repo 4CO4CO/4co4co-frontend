@@ -15,9 +15,17 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>(); // 완료된 크롭
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null); // 생성한 이미지 주소
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const [imageOrientation, setImageOrientation] = useState<'portrait' | 'landscape'>('landscape');
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
+
+    // 이미지 방향 판단
+    if (height > width) {
+      setImageOrientation('portrait');
+    } else {
+      setImageOrientation('landscape');
+    }
 
     const newCrop = centerCrop(
       makeAspectCrop(
@@ -93,7 +101,7 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
   return (
     <div className={styles.modalContainer}>
       <ReactCrop
-        className={styles.customReactCrop}
+        className={`${styles.customReactCrop} ${styles.customReactCropVariants[imageOrientation]}`}
         crop={crop}
         onChange={(_, percentCrop) => setCrop(percentCrop)}
         onComplete={(c) => setCompletedCrop(c)}
