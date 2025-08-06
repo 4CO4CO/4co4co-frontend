@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useState } from 'react';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
 
 export const useCropImage = (imageRef: RefObject<HTMLImageElement | null>, completedCrop: PixelCrop | null) => {
@@ -35,7 +35,16 @@ export const useCropImage = (imageRef: RefObject<HTMLImageElement | null>, compl
     const blob = await offscreen.convertToBlob({ type: 'image/jpeg' });
     const fileUrl = URL.createObjectURL(blob);
     setCroppedImageUrl(fileUrl);
-  }, [imageRef, completedCrop]);
+  }, [imageRef, completedCrop, croppedImageUrl]);
+
+  // croppedImageUrl이 바뀌거나 언마운트될 때 이전 URL 클린업
+  useEffect(() => {
+    return () => {
+      if (croppedImageUrl) {
+        URL.revokeObjectURL(croppedImageUrl);
+      }
+    };
+  }, [croppedImageUrl]);
 
   return { croppedImageUrl, makeCroppedImage };
 };
