@@ -72,6 +72,12 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
     setEditingImageIndex(null);
   };
 
+  const handleEditorClose = (index: number) => {
+    setIsEditorOpen(false);
+    setEditingImageIndex(null);
+    handleRemoveImage(index);
+  };
+
   return (
     <div className={styles.container}>
       <button className={styles.upload_button} onClick={handleUploadClick}>
@@ -94,6 +100,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
           file={URL.createObjectURL(originalFiles[editingImageIndex])}
           aspectRatio={10 / 9}
           onCropped={handleCroppedImage}
+          onClose={() => handleEditorClose(editingImageIndex)}
         />
       )}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

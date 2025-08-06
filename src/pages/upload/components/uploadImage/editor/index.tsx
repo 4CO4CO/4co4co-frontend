@@ -9,9 +9,10 @@ interface ImageEditorProps {
   file: string;
   aspectRatio: number;
   onCropped: (croppedImageUrl: string) => void;
+  onClose: () => void;
 }
 
-const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps) => {
+const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped, onClose }: ImageEditorProps) => {
   const [crop, setCrop] = useState<Crop>(); // 크롭되는 영역
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>(); // 완료된 크롭
   const imageRef = useRef<HTMLImageElement>(null);
@@ -74,7 +75,12 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
           ref={imageRef}
         />
       </ReactCrop>
-      <Button onClick={handleComplete}>감상할 영역 선택하기</Button>
+      <section className={styles.button_wrapper}>
+        <Button onClick={onClose} variant="secondary">
+          다시 선택하기
+        </Button>
+        <Button onClick={handleComplete}>감상할 영역 선택하기</Button>
+      </section>
     </div>
   );
 };

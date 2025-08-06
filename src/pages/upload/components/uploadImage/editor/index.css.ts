@@ -44,3 +44,10 @@ globalStyle(`${customReactCrop} .ReactCrop__drag-handle`, {
   backgroundColor: colors.color.sunsetGlow,
   border: 'none',
 });
+
+export const button_wrapper = style({
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '0.6rem',
+});
