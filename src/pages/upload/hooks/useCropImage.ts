@@ -3,6 +3,7 @@ import { PixelCrop } from 'react-image-crop';
 
 export const useCropImage = (imageRef: RefObject<HTMLImageElement | null>, completedCrop: PixelCrop | null) => {
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>();
+  const MAX_SIZE_MB = 5 * 1024 * 1024; // 5MB를 바이트로 변환
 
   const makeCroppedImage = useCallback(async () => {
     const image = imageRef?.current;
@@ -32,7 +33,22 @@ export const useCropImage = (imageRef: RefObject<HTMLImageElement | null>, compl
       crop.height * scaleY, //  캔버스에서 이미지의 세로 길이
     );
 
-    const blob = await offscreen.convertToBlob({ type: 'image/jpeg' });
+    // 이미지 용량 체크
+    let quality = 1.0;
+    let blob;
+
+    while (true) {
+      blob = await offscreen.convertToBlob({
+        type: 'image/jpeg',
+        quality: quality,
+      });
+
+      if (blob.size <= MAX_SIZE_MB || quality <= 0.1) {
+        break;
+      }
+      quality -= 0.1; //
+    }
+
     const fileUrl = URL.createObjectURL(blob);
     setCroppedImageUrl(fileUrl);
   }, [imageRef, completedCrop]);

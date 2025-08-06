@@ -18,6 +18,7 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped, onClose }: ImageEd
   const imageRef = useRef<HTMLImageElement>(null);
   const [imageOrientation, setImageOrientation] = useState<'portrait' | 'landscape'>('landscape');
   const { croppedImageUrl, makeCroppedImage } = useCropImage(imageRef, completedCrop || null);
+
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
 
