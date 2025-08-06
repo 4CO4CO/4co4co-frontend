@@ -13,6 +13,7 @@ import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
 import { useLanternList } from '@/queries/lantern/getLanternList';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
+import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
 const LanternItem = ({ lantern, isDelayed = false }: { lantern: LanternWithRect; isDelayed?: boolean }) => {
   return (
@@ -66,7 +67,12 @@ const Lantern = () => {
 
   const lanterns = useMemo(() => {
     const ids = (data?.data ?? []).map((l) => l.lantern_id);
-    const positionMap = generateNonOverlappingPositions(ids, 100, window.innerWidth, window.innerHeight);
+    const positionMap = generateNonOverlappingPositions(
+      ids,
+      window.innerWidth <= MOBILE_MIN_WIDTH ? 60 : 100,
+      window.innerWidth <= MOBILE_MIN_WIDTH ? window.innerHeight : window.innerWidth,
+      window.innerWidth <= MOBILE_MIN_WIDTH ? window.innerWidth : window.innerHeight,
+    );
     const lanternImages = [LanternImg1, LanternImg2];
 
     return (data?.data ?? []).map((lantern) => ({
@@ -79,7 +85,7 @@ const Lantern = () => {
       rotation: seededRandom((lantern as { lantern_id: string }).lantern_id + 'rotation') * 20 - 10, // -10도에서 +10도 사이의 각도
       isFlipped: seededRandom((lantern as { lantern_id: string }).lantern_id + 'flip') > 0.5,
     })) as LanternWithRect[];
-  }, [data]);
+  }, [data, window.innerWidth]);
 
   // 내 풍등 완료 여부 확인
   useEffect(() => {
