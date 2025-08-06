@@ -20,23 +20,22 @@ globalStyle(`${modalContainer} button`, {
 
 export const customReactCropVariants = styleVariants({
   landscape: {
-    maxWidth: '70vw',
+    width: '70vw',
     height: 'auto',
+    maxWidth: '70vw',
+    maxHeight: '70vh',
   },
   portrait: {
     width: 'auto',
+    height: '70vh',
+    maxWidth: '70vw',
     maxHeight: '70vh',
   },
 });
 
 export const customReactCrop = style({
   position: 'relative',
-  display: 'block',
-});
-
-export const originImage = style({
-  width: '100%',
-  height: 'auto',
+  display: 'inline-block',
 });
 
 globalStyle(`${customReactCrop} .ReactCrop__drag-handle`, {

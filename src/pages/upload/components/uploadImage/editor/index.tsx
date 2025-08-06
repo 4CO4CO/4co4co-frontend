@@ -66,7 +66,13 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
         onComplete={(c) => setCompletedCrop(c)}
         aspect={aspectRatio}
       >
-        <img className={styles.originImage} src={file} alt="원본" onLoad={onImageLoad} ref={imageRef} />
+        <img
+          className={styles.customReactCropVariants[imageOrientation]}
+          src={file}
+          alt="원본"
+          onLoad={onImageLoad}
+          ref={imageRef}
+        />
       </ReactCrop>
       <Button onClick={handleComplete}>감상할 영역 선택하기</Button>
     </div>

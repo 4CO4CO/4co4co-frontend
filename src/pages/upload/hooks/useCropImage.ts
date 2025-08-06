@@ -17,6 +17,7 @@ export const useCropImage = (imageRef: RefObject<HTMLImageElement | null>, compl
     const ctx = offscreen.getContext('2d');
     if (!ctx) return;
 
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(
       // 원본 이미지 영역
       image,
@@ -30,12 +31,11 @@ export const useCropImage = (imageRef: RefObject<HTMLImageElement | null>, compl
       crop.width * scaleX, // 캔버스에서 이미지의 가로 길이
       crop.height * scaleY, //  캔버스에서 이미지의 세로 길이
     );
-    ctx.imageSmoothingQuality = 'high';
 
     const blob = await offscreen.convertToBlob({ type: 'image/jpeg' });
     const fileUrl = URL.createObjectURL(blob);
     setCroppedImageUrl(fileUrl);
-  }, [imageRef, completedCrop, croppedImageUrl]);
+  }, [imageRef, completedCrop]);
 
   // croppedImageUrl이 바뀌거나 언마운트될 때 이전 URL 클린업
   useEffect(() => {
