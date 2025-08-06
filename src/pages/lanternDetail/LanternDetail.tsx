@@ -47,10 +47,22 @@ const LanternDetail = () => {
     }
   }, [error, lanternId, navigate]);
 
-  // 가운데 이미지로 스크롤 위치 고정
+  // 가운데 이미지(2번째 이미지)가 화면 중앙에 오도록 스크롤 위치 설정
   useEffect(() => {
     if (lanternData && scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = window.innerWidth;
+      // 약간의 지연을 두고 실행하여 이미지가 완전히 로드된 후 스크롤
+      setTimeout(() => {
+        if (scrollContainerRef.current) {
+          // 전체 스크롤 가능 너비
+          const scrollWidth = scrollContainerRef.current.scrollWidth;
+          const containerWidth = scrollContainerRef.current.clientWidth;
+
+          // 가운데 이미지로 스크롤 (3개 이미지 중 2번째이므로 1/3 지점)
+          const centerPosition = (scrollWidth - containerWidth) / 2;
+
+          scrollContainerRef.current.scrollLeft = centerPosition;
+        }
+      }, 100);
     }
   }, [lanternData]);
 
