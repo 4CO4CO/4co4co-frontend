@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import * as styles from './index.css';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -45,13 +45,7 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
     setCrop(newCrop); // 계산된 초기 크롭 영역을 crop 상태에 반영
   };
 
-  useEffect(() => {
-    if (completedCrop?.width && completedCrop?.height && imageRef.current) {
-      makeCroppedImage();
-    }
-  }, [completedCrop]);
-
-  const makeCroppedImage = async () => {
+  const makeCroppedImage = useCallback(async () => {
     const image = imageRef.current;
     const crop = completedCrop;
 
@@ -90,7 +84,13 @@ const ImageEditor = ({ file, aspectRatio = 10 / 9, onCropped }: ImageEditorProps
 
     const fileUrl = URL.createObjectURL(blob);
     setCroppedImageUrl(fileUrl);
-  };
+  }, [completedCrop]);
+
+  useEffect(() => {
+    if (completedCrop?.width && completedCrop?.height && imageRef.current) {
+      makeCroppedImage();
+    }
+  }, [completedCrop, makeCroppedImage]);
 
   const handleComplete = () => {
     if (croppedImageUrl) {

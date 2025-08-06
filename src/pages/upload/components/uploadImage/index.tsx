@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import ImageEditor from './editor';
-import * as styles from './index.css'; // 바닐라 익스트랙트 스타일
+import * as styles from './index.css';
 import CloseButtonIcon from '@/assets/CloseBtnIcon.svg?react';
 import UploadIcon from '@/assets/upload.svg?react';
+import { Toast } from '@/components/common/toast';
 
 interface UploadImageProps {
   onImagesChange: (files: File[]) => void;
@@ -14,6 +15,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
   const [originalFiles, setOriginalFiles] = useState<File[]>([]);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -27,7 +29,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       setEditingImageIndex(newIndex);
       setIsEditorOpen(true);
     } else if (currentFilesCount + files.length > 3) {
-      alert('사진은 최대 3장까지 업로드할 수 있습니다.');
+      setToast({ message: '사진은 최대 3장까지 업로드할 수 있습니다.', type: 'error' });
     }
 
     if (fileInputRef.current) {
@@ -38,6 +40,8 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
   const handleUploadClick = () => {
     if (uploadedImages.length < 3) {
       fileInputRef.current?.click();
+    } else {
+      setToast({ message: '사진은 최대 3장까지 업로드할 수 있습니다.', type: 'error' });
     }
   };
 
@@ -73,7 +77,13 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       <button className={styles.upload_button} onClick={handleUploadClick}>
         <UploadIcon />
       </button>
-      <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png, image/jpg, image/jpeg, image/webp"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
       {uploadedImages.map((img, index) => (
         <div key={index} className={styles.preview_wrapper} onClick={() => handleOpenEditor(index)}>
           <img src={URL.createObjectURL(img)} alt={`업로드 ${index + 1}`} className={styles.previewImage} />
@@ -92,6 +102,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
           onCropped={handleCroppedImage}
         />
       )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 };
