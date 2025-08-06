@@ -44,10 +44,27 @@ export const handPointer = style({
 export const fadeInUp = keyframes({
   '0%': {
     opacity: 0,
-    transform: 'translateY(50px)',
+    transform: 'translateY(5rem)',
   },
   '100%': {
     opacity: 1,
     transform: 'translateY(0)',
+  },
+});
+
+export const neonBlink = keyframes({
+  '0%, 100%': {
+    filter:
+      'drop-shadow(0 0 0.5rem rgba(233, 210, 119, 0.8)) ' +
+      'drop-shadow(0 0 1rem rgba(255, 204, 0, 0.7)) ' +
+      'drop-shadow(0 0 3rem rgba(255, 204, 0, 0.6)) ' +
+      'drop-shadow(0 0 5rem rgba(255, 204, 0, 0.4))',
+  },
+  '50%': {
+    filter:
+      'drop-shadow(0 0 0.2rem rgba(254, 244, 226, 0.6)) ' +
+      'drop-shadow(0 0 1rem rgba(255, 204, 0, 0.5)) ' +
+      'drop-shadow(0 0 2rem rgba(255, 204, 0, 0.4)) ' +
+      'drop-shadow(0 0 4rem rgba(255, 204, 0, 0.3))',
   },
 });

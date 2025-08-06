@@ -96,7 +96,10 @@ export const useHandMark = () => {
             const tip = hand.keypoints.find((k) => k.name === 'middle_finger_mcp');
             if (tip) {
               // 위치 변화 체크
-              const newPos = { x: tip.x, y: tip.y };
+              const newPos = {
+                x: (tip.x / video.videoWidth) * window.innerWidth,
+                y: (tip.y / video.videoHeight) * window.innerHeight,
+              };
               const isChanged =
                 !prevPosRef.current ||
                 Math.abs(newPos.x - prevPosRef.current.x) > video.width * POSITION_THRESHOLD ||

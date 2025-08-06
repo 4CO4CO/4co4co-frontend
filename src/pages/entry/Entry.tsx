@@ -32,7 +32,7 @@ const Entry = () => {
     }
 
     setErrorMessage('');
-    navigate('/lanterns');
+    navigate(`/lanterns?currentLanternId=${entryCode}`);
   };
 
   const handleCancel = () => {
