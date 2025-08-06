@@ -1,21 +1,27 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSubscribeStatus } from '@/queries/lantern/useSubscribeStatus';
 
 export const SSELayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const entryCode = (location.state as { lantern_id?: string })?.lantern_id;
+  const [searchParams] = useSearchParams();
+  const currentLanternId = searchParams.get('currentLanternId');
+  const entryCode = currentLanternId ?? (location.state as { lantern_id?: string })?.lantern_id;
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useSubscribeStatus({
     lanternId: entryCode ?? '',
     onDone: () => {
-      const existingCodes = JSON.parse(localStorage.getItem('successLanterns') || '[]');
-      existingCodes.push(entryCode);
-      localStorage.setItem('successLanterns', JSON.stringify(existingCodes));
-
-      navigate(`/lanterns?currentLanternId=${entryCode}`);
+      setIsCompleted(true);
     },
   });
+
+  useEffect(() => {
+    if (isCompleted) {
+      navigate(`/lanterns?currentLanternId=${entryCode}`);
+    }
+  }, [isCompleted, navigate, entryCode]);
 
   return <Outlet />;
 };

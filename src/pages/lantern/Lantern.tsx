@@ -13,8 +13,7 @@ import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
 import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
 import { useLanternList } from '@/queries/lantern/getLanternList';
-import { queryClient } from '@/queries/queryClient';
-import { lanternKeys } from '@/queries/queryKey';
+import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
 import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
 const LanternItem = ({
@@ -120,24 +119,19 @@ const Lantern = () => {
   }, [data, window.innerWidth, window.innerHeight, closeButtonRect]);
 
   // 내 풍등 완료 여부 확인
+  const { data: progressData } = useCachedLanternProgress(currentLanternId);
   useEffect(() => {
     if (!currentLanternId) return;
 
-    const cachedProgress = queryClient.getQueryData<MusicStatusData | MusicStatusData[]>(
-      lanternKeys.progress(currentLanternId),
-    );
-    const successLanterns = JSON.parse(localStorage.getItem('successLanterns') || '[]');
     const isCompleted =
-      Array.isArray(cachedProgress) ||
-      (cachedProgress && (cachedProgress as MusicStatusData)?.status === 'success') ||
-      successLanterns.includes(currentLanternId);
+      Array.isArray(progressData) || (progressData && (progressData as MusicStatusData)?.status === 'success');
 
     if (isCompleted) {
       setTimeout(() => {
         setIsMyLanternCompleted(true);
       }, 1000);
     }
-  }, [currentLanternId, queryClient]);
+  }, [currentLanternId, progressData]);
 
   const { hitLanternId } = useLanternHit(lanterns);
 
