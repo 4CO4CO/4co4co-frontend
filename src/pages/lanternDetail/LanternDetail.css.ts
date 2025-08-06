@@ -2,6 +2,7 @@ import { style } from '@vanilla-extract/css';
 import { Z_INDEX } from './constants/zIndex';
 import { colors } from '@/styles/color.css';
 import { fonts } from '@/styles/font.css';
+import { MOBILE_MIN_MEDIA_QUERY } from '@/styles/mediaQuery';
 
 export const overlay = style({
   position: 'fixed',
@@ -12,6 +13,18 @@ export const overlay = style({
   backgroundColor: colors.color.black,
   zIndex: Z_INDEX.OVERLAY,
   overflow: 'hidden',
+
+  '@media': {
+    [MOBILE_MIN_MEDIA_QUERY]: {
+      transform: 'rotate(90deg)',
+      transformOrigin: 'center center',
+      width: '100vh',
+      height: '100vw',
+      position: 'fixed',
+      top: 'calc((100vh - 100vw) / 2)',
+      left: 'calc((100vw - 100vh) / 2)',
+    },
+  },
 });
 
 export const closeButton = style({
