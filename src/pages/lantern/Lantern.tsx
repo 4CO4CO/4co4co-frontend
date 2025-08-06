@@ -65,6 +65,7 @@ const Lantern = () => {
   const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -73,17 +74,36 @@ const Lantern = () => {
     }
   }, [currentLanternId]);
 
+  useEffect(() => {
+    const updateCloseButtonRect = () => {
+      if (closeButtonRef.current) {
+        setCloseButtonRect(closeButtonRef.current.getBoundingClientRect());
+      }
+    };
+
+    // 컴포넌트 마운트 후 즉시 실행
+    updateCloseButtonRect();
+
+    window.addEventListener('resize', updateCloseButtonRect);
+    return () => {
+      window.removeEventListener('resize', updateCloseButtonRect);
+    };
+  }, []);
+
   const handleAlertConfirm = () => {
     navigate('/upload');
   };
 
   const lanterns = useMemo(() => {
+    if (!closeButtonRect || !data) return [];
+
     const ids = (data?.data ?? []).map((l) => l.lantern_id);
     const positionMap = generateNonOverlappingPositions(
       ids,
       window.innerWidth <= MOBILE_MIN_WIDTH ? 60 : 100,
       window.innerWidth <= MOBILE_MIN_WIDTH ? window.innerHeight : window.innerWidth,
       window.innerWidth <= MOBILE_MIN_WIDTH ? window.innerWidth : window.innerHeight,
+      closeButtonRect,
     );
     const lanternImages = [LanternImg1, LanternImg2];
 
@@ -97,7 +117,7 @@ const Lantern = () => {
       rotation: seededRandom((lantern as { lantern_id: string }).lantern_id + 'rotation') * 20 - 10, // -10도에서 +10도 사이의 각도
       isFlipped: seededRandom((lantern as { lantern_id: string }).lantern_id + 'flip') > 0.5,
     })) as LanternWithRect[];
-  }, [data, window.innerWidth]);
+  }, [data, window.innerWidth, window.innerHeight, closeButtonRect]);
 
   // 내 풍등 완료 여부 확인
   useEffect(() => {
