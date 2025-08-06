@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
 import { generateNonOverlappingPositions, seededRandom } from './utils';
+import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton';
+import { useCloseGesture } from '../lanternDetail/hooks/useCloseGesture';
 import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
@@ -15,7 +17,15 @@ import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
 import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
-const LanternItem = ({ lantern, isDelayed = false }: { lantern: LanternWithRect; isDelayed?: boolean }) => {
+const LanternItem = ({
+  lantern,
+  isDelayed = false,
+  onClick,
+}: {
+  lantern: LanternWithRect;
+  isDelayed?: boolean;
+  onClick: () => void;
+}) => {
   return (
     <div
       className={styles.lanternBox}
@@ -31,6 +41,7 @@ const LanternItem = ({ lantern, isDelayed = false }: { lantern: LanternWithRect;
           : undefined,
         animationDelay: isDelayed ? '1s' : undefined,
       }}
+      onClick={onClick}
     >
       {lantern.ImageComponent && (
         <lantern.ImageComponent
@@ -53,6 +64,7 @@ const Lantern = () => {
   const navigate = useNavigate();
   const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -118,13 +130,30 @@ const Lantern = () => {
   const lanternsWithoutMine = lanterns.filter((l) => l.lantern_id !== currentLanternId);
   const myLantern = lanterns.find((l) => l.lantern_id === currentLanternId);
 
+  useCloseGesture(closeButtonRef);
+  const handleCloseClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className={styles.container}>
+      <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
       <VideoFeed />
       {lanternsWithoutMine.map((lantern) => (
-        <LanternItem key={lantern.lantern_id} lantern={lantern} />
+        <LanternItem
+          key={lantern.lantern_id}
+          lantern={lantern}
+          onClick={() => navigate(`/lanterns/${lantern.lantern_id}?currentLanternId=${currentLanternId}`)}
+        />
       ))}
-      {isMyLanternCompleted && myLantern && <LanternItem key={myLantern.lantern_id} lantern={myLantern} isDelayed />}
+      {isMyLanternCompleted && myLantern && (
+        <LanternItem
+          key={myLantern.lantern_id}
+          lantern={myLantern}
+          isDelayed
+          onClick={() => navigate(`/lanterns/${myLantern.lantern_id}?currentLanternId=${currentLanternId}`)}
+        />
+      )}
       {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
       <Alert
         isOpen={showAlert}
