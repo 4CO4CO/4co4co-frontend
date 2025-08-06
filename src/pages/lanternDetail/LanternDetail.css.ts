@@ -46,15 +46,18 @@ export const scrollContainer = style({
 
 export const panoramaWrapper = style({
   display: 'flex',
-  width: '300vw',
   height: '100vh',
+  backgroundColor: colors.color.black,
+  width: 'calc(100vh * 10 / 9 * 3)',
+  minWidth: '100vw',
 });
 
 export const panoramaImage = style({
-  width: '100vw',
   height: '100vh',
+  width: 'calc(100vh * 10 / 9)',
   objectFit: 'cover',
   flexShrink: 0,
+  backgroundColor: colors.color.black,
 });
 
 export const handPointer = style({
