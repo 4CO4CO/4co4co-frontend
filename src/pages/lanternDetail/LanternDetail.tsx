@@ -47,10 +47,29 @@ const LanternDetail = () => {
     }
   }, [error, lanternId, navigate]);
 
-  // 가운데 이미지로 스크롤 위치 고정
+  // 가운데 이미지(2번째 이미지)가 화면 중앙에 오도록 스크롤 위치 설정
   useEffect(() => {
     if (lanternData && scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = window.innerWidth;
+      const adjustScrollPosition = () => {
+        if (scrollContainerRef.current) {
+          const scrollWidth = scrollContainerRef.current.scrollWidth;
+          const containerWidth = scrollContainerRef.current.clientWidth;
+
+          // 가운데 이미지로 스크롤 위치 조정
+          const centerPosition = (scrollWidth - containerWidth) / 2;
+          scrollContainerRef.current.scrollLeft = centerPosition;
+        }
+      };
+
+      // 첫 번째 이미지의 로드를 기준으로 스크롤 조정
+      const firstImage = scrollContainerRef.current.querySelector('img');
+      if (firstImage) {
+        if (firstImage.complete) {
+          adjustScrollPosition();
+        } else {
+          firstImage.addEventListener('load', adjustScrollPosition, { once: true });
+        }
+      }
     }
   }, [lanternData]);
 
