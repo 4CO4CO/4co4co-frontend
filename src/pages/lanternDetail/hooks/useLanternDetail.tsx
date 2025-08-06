@@ -21,6 +21,17 @@ const getFullImageUrl = (imagePath: string): string => {
   return `${s3BaseUrl}${normalizedPath}`;
 };
 
+// 오디오 URL 변환 (새로 추가)
+const getFullAudioUrl = (audioPath: string): string => {
+  if (audioPath.startsWith('http://') || audioPath.startsWith('https://')) {
+    return audioPath;
+  }
+
+  const s3BaseUrl = import.meta.env.VITE_S3_BASE_URL;
+  const normalizedPath = audioPath.startsWith('/') ? audioPath : `/${audioPath}`;
+  return `${s3BaseUrl}${normalizedPath}`;
+};
+
 const fetchLanternDetail = async (lanternId: string, currentLanternId?: string): Promise<LanternData> => {
   const params = currentLanternId ? { current_lantern_id: currentLanternId } : {};
 
@@ -29,8 +40,8 @@ const fetchLanternDetail = async (lanternId: string, currentLanternId?: string):
   return {
     lantern_id: response.data.lantern_id,
     owner_name: response.data.owner_name,
-    images: response.data.images.map(getFullImageUrl), // S3 URL로 변환
-    background_sounds: response.data.background_sounds,
+    images: response.data.images.map(getFullImageUrl),
+    background_sounds: response.data.background_sounds.map(getFullAudioUrl),
   };
 };
 
