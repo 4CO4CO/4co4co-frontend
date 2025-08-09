@@ -28,6 +28,7 @@ export const generateNonOverlappingPositions = (
   boxSize = 100,
   viewportWidth: number,
   viewportHeight: number,
+  excludeRect: DOMRect | null = null,
 ) => {
   const sortedIds = [...ids].sort();
   const padding = 12;
@@ -48,7 +49,10 @@ export const generateNonOverlappingPositions = (
       height: boxSize,
     };
 
-    while (Object.values(placed).some((other) => isRectOverlapping(position, other, 12))) {
+    while (
+      Object.values(placed).some((other) => isRectOverlapping(position, other, 12)) ||
+      (excludeRect && isRectOverlapping(position, excludeRect, 50))
+    ) {
       tries++;
       position = {
         x: padding + seededRandom(id + 'x' + tries) * maxX,

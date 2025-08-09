@@ -19,7 +19,7 @@ export const useSubscribeStatus = ({ lanternId, onPartial, onDone, onError }: Us
     (data: MusicStatusData) => {
       onPartial?.(data);
     },
-    [onPartial, queryClient, progressQueryKey],
+    [onPartial],
   );
 
   const handleAllDone = useCallback(
@@ -30,7 +30,7 @@ export const useSubscribeStatus = ({ lanternId, onPartial, onDone, onError }: Us
 
       onDone?.();
     },
-    [lanternId, onDone, queryClient, progressQueryKey],
+    [onDone, queryClient, progressQueryKey],
   );
 
   const handleSseError = useCallback(

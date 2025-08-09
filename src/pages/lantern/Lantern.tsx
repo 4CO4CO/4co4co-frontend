@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
 import { generateNonOverlappingPositions, seededRandom } from './utils';
+import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton';
+import { useCloseGesture } from '../lanternDetail/hooks/useCloseGesture';
 import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
@@ -11,10 +13,18 @@ import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
 import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
 import { useLanternList } from '@/queries/lantern/getLanternList';
-import { queryClient } from '@/queries/queryClient';
-import { lanternKeys } from '@/queries/queryKey';
+import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
+import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
-const LanternItem = ({ lantern, isDelayed = false }: { lantern: LanternWithRect; isDelayed?: boolean }) => {
+const LanternItem = ({
+  lantern,
+  isDelayed = false,
+  onClick,
+}: {
+  lantern: LanternWithRect;
+  isDelayed?: boolean;
+  onClick: () => void;
+}) => {
   return (
     <div
       className={styles.lanternBox}
@@ -30,6 +40,7 @@ const LanternItem = ({ lantern, isDelayed = false }: { lantern: LanternWithRect;
           : undefined,
         animationDelay: isDelayed ? '1s' : undefined,
       }}
+      onClick={onClick}
     >
       {lantern.ImageComponent && (
         <lantern.ImageComponent
@@ -52,6 +63,8 @@ const Lantern = () => {
   const navigate = useNavigate();
   const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -60,13 +73,37 @@ const Lantern = () => {
     }
   }, [currentLanternId]);
 
+  useEffect(() => {
+    const updateCloseButtonRect = () => {
+      if (closeButtonRef.current) {
+        setCloseButtonRect(closeButtonRef.current.getBoundingClientRect());
+      }
+    };
+
+    // 컴포넌트 마운트 후 즉시 실행
+    updateCloseButtonRect();
+
+    window.addEventListener('resize', updateCloseButtonRect);
+    return () => {
+      window.removeEventListener('resize', updateCloseButtonRect);
+    };
+  }, []);
+
   const handleAlertConfirm = () => {
     navigate('/upload');
   };
 
   const lanterns = useMemo(() => {
+    if (!closeButtonRect || !data) return [];
+
     const ids = (data?.data ?? []).map((l) => l.lantern_id);
-    const positionMap = generateNonOverlappingPositions(ids, 100, window.innerWidth, window.innerHeight);
+    const positionMap = generateNonOverlappingPositions(
+      ids,
+      window.innerWidth <= MOBILE_MIN_WIDTH ? 60 : 100,
+      window.innerWidth <= MOBILE_MIN_WIDTH ? window.innerHeight : window.innerWidth,
+      window.innerWidth <= MOBILE_MIN_WIDTH ? window.innerWidth : window.innerHeight,
+      closeButtonRect,
+    );
     const lanternImages = [LanternImg1, LanternImg2];
 
     return (data?.data ?? []).map((lantern) => ({
@@ -79,27 +116,22 @@ const Lantern = () => {
       rotation: seededRandom((lantern as { lantern_id: string }).lantern_id + 'rotation') * 20 - 10, // -10도에서 +10도 사이의 각도
       isFlipped: seededRandom((lantern as { lantern_id: string }).lantern_id + 'flip') > 0.5,
     })) as LanternWithRect[];
-  }, [data]);
+  }, [data, window.innerWidth, window.innerHeight, closeButtonRect]);
 
   // 내 풍등 완료 여부 확인
+  const { data: progressData } = useCachedLanternProgress(currentLanternId);
   useEffect(() => {
     if (!currentLanternId) return;
 
-    const cachedProgress = queryClient.getQueryData<MusicStatusData | MusicStatusData[]>(
-      lanternKeys.progress(currentLanternId),
-    );
-    const successLanterns = JSON.parse(localStorage.getItem('successLanterns') || '[]');
     const isCompleted =
-      Array.isArray(cachedProgress) ||
-      (cachedProgress && (cachedProgress as MusicStatusData)?.status === 'success') ||
-      successLanterns.includes(currentLanternId);
+      Array.isArray(progressData) || (progressData && (progressData as MusicStatusData)?.status === 'success');
 
     if (isCompleted) {
       setTimeout(() => {
         setIsMyLanternCompleted(true);
       }, 1000);
     }
-  }, [currentLanternId, queryClient]);
+  }, [currentLanternId, progressData]);
 
   const { hitLanternId } = useLanternHit(lanterns);
 
@@ -112,13 +144,30 @@ const Lantern = () => {
   const lanternsWithoutMine = lanterns.filter((l) => l.lantern_id !== currentLanternId);
   const myLantern = lanterns.find((l) => l.lantern_id === currentLanternId);
 
+  useCloseGesture(closeButtonRef);
+  const handleCloseClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className={styles.container}>
+      <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
       <VideoFeed />
       {lanternsWithoutMine.map((lantern) => (
-        <LanternItem key={lantern.lantern_id} lantern={lantern} />
+        <LanternItem
+          key={lantern.lantern_id}
+          lantern={lantern}
+          onClick={() => navigate(`/lanterns/${lantern.lantern_id}?currentLanternId=${currentLanternId}`)}
+        />
       ))}
-      {isMyLanternCompleted && myLantern && <LanternItem key={myLantern.lantern_id} lantern={myLantern} isDelayed />}
+      {isMyLanternCompleted && myLantern && (
+        <LanternItem
+          key={myLantern.lantern_id}
+          lantern={myLantern}
+          isDelayed
+          onClick={() => navigate(`/lanterns/${myLantern.lantern_id}?currentLanternId=${currentLanternId}`)}
+        />
+      )}
       {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
       <Alert
         isOpen={showAlert}
