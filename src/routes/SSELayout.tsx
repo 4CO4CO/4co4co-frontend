@@ -18,7 +18,7 @@ export const SSELayout = () => {
   });
 
   useEffect(() => {
-    if (isCompleted) {
+    if (isCompleted && entryCode) {
       navigate(`/lanterns?currentLanternId=${entryCode}`);
     }
   }, [isCompleted, navigate, entryCode]);
