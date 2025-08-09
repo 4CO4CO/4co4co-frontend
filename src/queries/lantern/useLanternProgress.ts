@@ -6,9 +6,10 @@ export const useCachedLanternProgress = (lanternId: string | null) => {
   const queryClient = useQueryClient();
 
   return useQuery({
-    queryKey: lanternKeys.progress(lanternId!),
+    queryKey: lanternKeys.progress(lanternId ?? ''),
     queryFn: async () => {
-      const cached = queryClient.getQueryData<MusicStatusData | MusicStatusData[]>(lanternKeys.progress(lanternId!));
+      if (!lanternId) return null;
+      const cached = queryClient.getQueryData<MusicStatusData | MusicStatusData[]>(lanternKeys.progress(lanternId));
       return cached || null;
     },
     enabled: !!lanternId,
