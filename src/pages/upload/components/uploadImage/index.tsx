@@ -4,6 +4,7 @@ import * as styles from './index.css';
 import CloseButtonIcon from '@/assets/CloseBtnIcon.svg?react';
 import UploadIcon from '@/assets/upload.svg?react';
 import { Toast } from '@/components/common/toast';
+import { extractImageMetadata, formatDateToDate } from '@/utils/extractImageDate';
 
 interface UploadImageProps {
   onImagesChange: (files: File[]) => void;
@@ -17,7 +18,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
   const [originalFiles, setOriginalFiles] = useState<File[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const currentFilesCount = uploadedImages.length;
 
@@ -28,6 +29,19 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       setOriginalFiles([...originalFiles, ...newFiles]);
       setEditingImageIndex(newIndex);
       setIsEditorOpen(true);
+
+      // 이미지 메타데이터 추출
+      const metadataPromises = newFiles.map((file) => extractImageMetadata(file));
+      const allMetadata = await Promise.all(metadataPromises);
+
+      allMetadata.forEach((metadata, index) => {
+        console.log(`File: ${newFiles[index].name}, ALL Metadata:`, metadata);
+
+        const formattedDate = formatDateToDate(metadata);
+        console.log(`File: ${newFiles[index].name}, Formatted Date:`, formattedDate);
+      });
+
+
     } else if (currentFilesCount + files.length > 3) {
       setToast({ message: '사진은 최대 3장까지 업로드할 수 있습니다.', type: 'error' });
     }
