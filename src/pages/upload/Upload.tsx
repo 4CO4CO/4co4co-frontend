@@ -1,23 +1,25 @@
 import { ChangeEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Toggle from './components/toggle';
 import UploadImage from './components/uploadImage';
 import UploadTip from './components/uploadTip';
 import * as styles from './Upload.css';
-import { CreateLanternRequestBody } from '@/apis/lantern';
+// import { CreateLanternRequestBody } from '@/apis/lantern';
 import { Alert } from '@/components/common/alert';
 import Button from '@/components/common/button';
 import TextField from '@/components/common/input/textfield';
 import Spacing from '@/components/common/spacing';
 import { Toast } from '@/components/common/toast';
-import { usePostLantern } from '@/queries/lantern/postLantern';
+// import { usePostLantern } from '@/queries/lantern/postLantern';
 
 const Upload = () => {
   const [isOn, setIsOn] = useState(true);
   const [name, setName] = useState<string>('');
   const [images, setImages] = useState<File[]>([]);
-  const { mutate, isPending } = usePostLantern();
+  // const { mutate, isPending } = usePostLantern();
   const [showCompletionAlert, setShowCompletionAlert] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     setIsOn((prev) => !prev);
@@ -44,13 +46,24 @@ const Upload = () => {
   };
 
   const handleSubmit = () => {
-    const requestBody: CreateLanternRequestBody = {
-      name: name,
-      images: images,
-      is_public: isOn,
+    // const requestBody: CreateLanternRequestBody = {
+    //   name: name,
+    //   images: images,
+    //   is_public: isOn,
+    // };
+    // mutate(requestBody);
+
+    // 목 데이터 생성
+    const newLantern = {
+      lantern_id: `${name}-3897`,
+      owner_name: name,
+      emotion: '',
+      is_current_lantern: true,
     };
 
-    mutate(requestBody);
+    setTimeout(() => {
+      navigate('/loading', { state: { lantern_id: newLantern.lantern_id } });
+    }, 1000);
   };
 
   return (
@@ -95,7 +108,7 @@ const Upload = () => {
         cancelText="취소"
         onConfirm={handleSubmit}
         onCancel={() => setShowCompletionAlert(false)}
-        disabled={isPending}
+        // disabled={isPending}
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>

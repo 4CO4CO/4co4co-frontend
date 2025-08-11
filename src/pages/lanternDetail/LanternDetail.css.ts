@@ -45,6 +45,7 @@ export const scrollContainer = style({
 
   selectors: {
     '&::-webkit-scrollbar': {
+      display: 'none',
       height: '8px',
     },
     '&::-webkit-scrollbar-track': {

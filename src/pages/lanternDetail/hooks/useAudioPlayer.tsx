@@ -13,7 +13,7 @@ export const useAudioPlayer = ({
   isUserInteracted,
   startIndex = 0,
   fadeInDuration = 2,
-  fadeOutDuration = 2
+  fadeOutDuration = 2,
 }: UseAudioPlayerProps) => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
@@ -28,8 +28,8 @@ export const useAudioPlayer = ({
   // AudioContext 초기화
   const getAudioContext = () => {
     if (!audioContextRef.current) {
-      const AudioContextClass = window.AudioContext ||
-        (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
 
       if (!AudioContextClass) {
         const errorMsg = '이 브라우저는 AudioContext를 지원하지 않습니다';
@@ -181,7 +181,6 @@ export const useAudioPlayer = ({
           });
         }
       }, fadeOutStartTime * 1000);
-
     } catch (error) {
       console.error('오디오 재생 실패:', error instanceof Error ? error.message : String(error));
       setIsPlaying(false);
@@ -217,6 +216,6 @@ export const useAudioPlayer = ({
     currentTrack: audioUrls[currentIndex] || null,
     playNext,
     totalTracks: audioUrls.length,
-    analyser: analyserRef.current
+    analyser: analyserRef.current,
   };
 };

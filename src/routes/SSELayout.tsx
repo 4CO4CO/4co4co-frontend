@@ -1,27 +1,29 @@
-import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useSubscribeStatus } from '@/queries/lantern/useSubscribeStatus';
+// import { useEffect, useState } from 'react';
+// import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+// import { useSubscribeStatus } from '@/queries/lantern/useSubscribeStatus';
+
+import { Outlet } from 'react-router-dom';
 
 export const SSELayout = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const currentLanternId = searchParams.get('currentLanternId');
-  const entryCode = currentLanternId ?? (location.state as { lantern_id?: string })?.lantern_id;
-  const [isCompleted, setIsCompleted] = useState(false);
+  // const location = useLocation();
+  // const navigate = useNavigate();
+  // const [searchParams] = useSearchParams();
+  // const currentLanternId = searchParams.get('currentLanternId');
+  // const entryCode = currentLanternId ?? (location.state as { lantern_id?: string })?.lantern_id;
+  // const [isCompleted, setIsCompleted] = useState(false);
 
-  useSubscribeStatus({
-    lanternId: entryCode ?? '',
-    onDone: () => {
-      setIsCompleted(true);
-    },
-  });
+  // useSubscribeStatus({
+  //   lanternId: entryCode ?? '',
+  //   onDone: () => {
+  //     setIsCompleted(true);
+  //   },
+  // });
 
-  useEffect(() => {
-    if (isCompleted && entryCode) {
-      navigate(`/lanterns?currentLanternId=${entryCode}`);
-    }
-  }, [isCompleted, navigate, entryCode]);
+  // useEffect(() => {
+  //   if (isCompleted && entryCode) {
+  //     navigate(`/lanterns?currentLanternId=${entryCode}`);
+  //   }
+  // }, [isCompleted, navigate, entryCode]);
 
   return <Outlet />;
 };

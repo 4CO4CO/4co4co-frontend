@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { get, ApiError } from '@/apis';
 import { LanternData } from '@/components/common/lantern/constants';
 
-interface LanternDetailApiResponse {
+export interface LanternDetailApiResponse {
   status: 'success';
   message: string;
   data: {

@@ -6,24 +6,30 @@ import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton
 import { useCloseGesture } from '../lanternDetail/hooks/useCloseGesture';
 import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
+import { LanternListResponse } from '@/apis/lantern';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
 import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
 import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
 import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
-import { useLanternList } from '@/queries/lantern/getLanternList';
+// import { useLanternList } from '@/queries/lantern/getLanternList';
+import { lanternsDetail, lanternsList } from '@/mocks';
 import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
+import { queryClient } from '@/queries/queryClient';
+import { lanternKeys } from '@/queries/queryKey';
 import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
 const LanternItem = ({
   lantern,
   isDelayed = false,
   onClick,
+  isMine,
 }: {
   lantern: LanternWithRect;
   isDelayed?: boolean;
   onClick: () => void;
+  isMine?: boolean;
 }) => {
   return (
     <div
@@ -37,6 +43,8 @@ const LanternItem = ({
         opacity: isDelayed ? 0 : 1,
         animation: isDelayed
           ? `${styles.fadeInUp} 1s ease-out forwards, ${styles.neonBlink} 1.5s infinite forwards`
+          : isMine
+          ? `${styles.neonBlink} 1.5s infinite forwards`
           : undefined,
         animationDelay: isDelayed ? '1s' : undefined,
       }}
@@ -59,9 +67,11 @@ const Lantern = () => {
   const { handCenter } = useHandMark();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
-  const { data } = useLanternList(currentLanternId);
+  // const { data } = useLanternList(currentLanternId);
+  const data: LanternListResponse | undefined = queryClient.getQueryData(lanternKeys.list(currentLanternId ?? ''));
   const navigate = useNavigate();
-  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
+  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(true);
+  const hasMyLanternAppeared = sessionStorage.getItem('hasMyLanternAppeared') === 'true';
   const [showAlert, setShowAlert] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
@@ -87,6 +97,17 @@ const Lantern = () => {
     return () => {
       window.removeEventListener('resize', updateCloseButtonRect);
     };
+  }, []);
+
+  useEffect(() => {
+    queryClient.setQueryData(lanternKeys.list(currentLanternId ?? ''), {
+      status: 'success',
+      message: 'sucess',
+      data: lanternsList,
+    });
+    lanternsDetail.forEach((detail) => {
+      queryClient.setQueryData(lanternKeys.detail(detail.lantern_id), detail);
+    });
   }, []);
 
   const handleAlertConfirm = () => {
@@ -164,7 +185,8 @@ const Lantern = () => {
         <LanternItem
           key={myLantern.lantern_id}
           lantern={myLantern}
-          isDelayed
+          isDelayed={!hasMyLanternAppeared}
+          isMine
           onClick={() => navigate(`/lanterns/${myLantern.lantern_id}?currentLanternId=${currentLanternId}`)}
         />
       )}

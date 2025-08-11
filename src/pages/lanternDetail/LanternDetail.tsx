@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AudioVisualizer } from './components/AudioVisualizer/AudioVisualizer';
 import { CloseButton } from './components/CloseButton/CloseButton';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
-import { useLanternDetail } from './hooks/useLanternDetail';
+// import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
 import { useHandMark } from '@/components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
+import { lanternType } from '@/mocks';
+import { queryClient } from '@/queries/queryClient';
+import { lanternKeys } from '@/queries/queryKey';
 
 const LanternDetail = () => {
   const { lanternId } = useParams();
@@ -17,11 +20,15 @@ const LanternDetail = () => {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // API 데이터 가져오기
-  const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
+  // const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
+  const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
+  const isJumpingRef = useRef(false);
+  const visualIndexRef = useRef<number | null>(null);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   // 상태 관리
   const [isUserInteracted, setIsUserInteracted] = useState(false);
-  const [showInteractionMessage, setShowInteractionMessage] = useState(false);
+  const [showInteractionMessage, setShowInteractionMessage] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   // 오디오 플레이어 (analyser 추가된 버전)
@@ -42,10 +49,10 @@ const LanternDetail = () => {
       return;
     }
 
-    if (error) {
-      setToast({ message: error, type: 'error' });
-    }
-  }, [error, lanternId, navigate]);
+    // if (error) {
+    //   setToast({ message: error, type: 'error' });
+    // }
+  }, [lanternId, navigate]);
 
   // 가운데 이미지(2번째 이미지)가 화면 중앙에 오도록 스크롤 위치 설정
   useEffect(() => {
@@ -75,6 +82,8 @@ const LanternDetail = () => {
 
   // 사용자 상호작용 감지
   useEffect(() => {
+    sessionStorage.setItem('hasMyLanternAppeared', 'true');
+
     const handleUserInteraction = () => {
       setIsUserInteracted(true);
       setShowInteractionMessage(false);
@@ -91,34 +100,92 @@ const LanternDetail = () => {
     };
   }, []);
 
-  // 로딩 상태 Toast로 표시
-  useEffect(() => {
-    if (isLoading) {
-      setToast({ message: '풍등을 불러오는 중입니다.', type: 'info' });
-    } else {
-      if (!error) {
-        setToast(null);
-        if (lanternData && !isUserInteracted) {
-          setShowInteractionMessage(true);
-        }
-      }
-    }
-  }, [isLoading, error, lanternData, isUserInteracted]);
+  // // 로딩 상태 Toast로 표시
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     setToast({ message: '풍등을 불러오는 중입니다.', type: 'info' });
+  //   } else {
+  //     if (!error) {
+  //       setToast(null);
+  //       if (lanternData && !isUserInteracted) {
+  //         setShowInteractionMessage(true);
+  //       }
+  //     }
+  //   }
+  // }, [isLoading, error, lanternData, isUserInteracted]);
 
   const handleCloseClick = () => {
     navigate(-1);
   };
+
+  const carouselImages = useMemo(() => {
+    if (!lanternData?.images) return [];
+    return [...lanternData.images, ...lanternData.images];
+  }, [lanternData]);
+
+  useEffect(() => {
+    if (!scrollContainerRef.current || carouselImages.length === 0) return;
+
+    const container = scrollContainerRef.current;
+    const realCount = lanternData?.images?.length ?? 0;
+    if (realCount === 0) return;
+
+    const imageWidth = (container.clientHeight * 10) / 9;
+    const centerToLeft = (k: number) => (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2; // 음악 순서에 맞는 위치에 두고 가운데 정렬
+
+    if (isFirstRender) {
+      const initialScrollLeft = centerToLeft(audioPlayer.currentIndex + 1);
+      container.scrollTo({ left: initialScrollLeft, behavior: 'auto' });
+      visualIndexRef.current = audioPlayer.currentIndex;
+      setIsFirstRender(false);
+      return;
+    }
+
+    const nextVisualIndex = (visualIndexRef.current ?? 0) + 1;
+    const targetScrollLeft = centerToLeft(nextVisualIndex);
+
+    container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+    visualIndexRef.current = nextVisualIndex;
+
+    const reachedBoundary = (visualIndexRef.current ?? 0) >= realCount * 2 - 1;
+    if (reachedBoundary && !isJumpingRef.current) {
+      isJumpingRef.current = true;
+
+      let rafId: number;
+      const waitUntilArrived = () => {
+        if (Math.abs(container.scrollLeft - targetScrollLeft) < 1) {
+          const curr = visualIndexRef.current;
+          if (curr == null) {
+            isJumpingRef.current = false;
+            return;
+          }
+          const jumpedIndex = curr - realCount;
+
+          requestAnimationFrame(() => {
+            container.scrollTo({ left: centerToLeft(jumpedIndex), behavior: 'auto' });
+            visualIndexRef.current = jumpedIndex;
+            isJumpingRef.current = false;
+          });
+          return;
+        }
+        rafId = requestAnimationFrame(waitUntilArrived);
+      };
+      rafId = requestAnimationFrame(waitUntilArrived);
+
+      return () => cancelAnimationFrame(rafId);
+    }
+  }, [audioPlayer.currentIndex, carouselImages, lanternData?.images?.length, isFirstRender]);
 
   return (
     <div className={styles.overlay}>
       <VideoFeed />
       <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
 
-      {!isLoading && lanternData && (
+      {lanternData && (
         <>
           <div ref={scrollContainerRef} className={styles.scrollContainer}>
             <div className={styles.panoramaWrapper}>
-              {lanternData.images.map((image, index) => (
+              {carouselImages.map((image, index) => (
                 <img key={index} src={image} className={styles.panoramaImage} alt={`풍등 이미지 ${index + 1}`} />
               ))}
             </div>
