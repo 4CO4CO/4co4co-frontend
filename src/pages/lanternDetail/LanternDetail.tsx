@@ -130,7 +130,7 @@ const LanternDetail = () => {
     const realCount = lanternData?.images?.length ?? 0;
     if (realCount === 0) return;
 
-    const imageWidth = (container.clientHeight * 10) / 9;
+    const imageWidth = container.clientWidth / 3;
     const centerToLeft = (k: number) => (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2; // 음악 순서에 맞는 위치에 두고 가운데 정렬
 
     if (isFirstRender) {

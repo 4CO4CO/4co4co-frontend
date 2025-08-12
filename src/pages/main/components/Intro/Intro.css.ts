@@ -50,9 +50,9 @@ export const beamFront = style({
 
 export const cube = style({
   position: 'absolute',
-  top: '48vh',
+  top: '50vh',
   left: '50%',
-  width: '20vw',
+  width: '12vw',
   minWidth: '350px',
   height: 'auto',
   zIndex: 3,

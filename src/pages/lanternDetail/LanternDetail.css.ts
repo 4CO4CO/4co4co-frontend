@@ -68,7 +68,7 @@ export const panoramaWrapper = style({
 
 export const panoramaImage = style({
   height: '100vh',
-  width: 'calc(100vh * 10 / 9)',
+  width: 'calc(100vw / 3)',
   objectFit: 'cover',
   flexShrink: 0,
   backgroundColor: colors.color.black,
