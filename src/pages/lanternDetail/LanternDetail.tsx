@@ -55,30 +55,30 @@ const LanternDetail = () => {
   }, [lanternId, navigate]);
 
   // 가운데 이미지(2번째 이미지)가 화면 중앙에 오도록 스크롤 위치 설정
-  useEffect(() => {
-    if (lanternData && scrollContainerRef.current) {
-      const adjustScrollPosition = () => {
-        if (scrollContainerRef.current) {
-          const scrollWidth = scrollContainerRef.current.scrollWidth;
-          const containerWidth = scrollContainerRef.current.clientWidth;
+  // useEffect(() => {
+  //   if (lanternData && scrollContainerRef.current) {
+  //     const adjustScrollPosition = () => {
+  //       if (scrollContainerRef.current) {
+  //         const scrollWidth = scrollContainerRef.current.scrollWidth;
+  //         const containerWidth = scrollContainerRef.current.clientWidth;
 
-          // 가운데 이미지로 스크롤 위치 조정
-          const centerPosition = (scrollWidth - containerWidth) / 2;
-          scrollContainerRef.current.scrollLeft = centerPosition;
-        }
-      };
+  //         // 가운데 이미지로 스크롤 위치 조정
+  //         const centerPosition = (scrollWidth - containerWidth) / 2;
+  //         scrollContainerRef.current.scrollLeft = centerPosition;
+  //       }
+  //     };
 
-      // 첫 번째 이미지의 로드를 기준으로 스크롤 조정
-      const firstImage = scrollContainerRef.current.querySelector('img');
-      if (firstImage) {
-        if (firstImage.complete) {
-          adjustScrollPosition();
-        } else {
-          firstImage.addEventListener('load', adjustScrollPosition, { once: true });
-        }
-      }
-    }
-  }, [lanternData]);
+  //     // 첫 번째 이미지의 로드를 기준으로 스크롤 조정
+  //     const firstImage = scrollContainerRef.current.querySelector('img');
+  //     if (firstImage) {
+  //       if (firstImage.complete) {
+  //         adjustScrollPosition();
+  //       } else {
+  //         firstImage.addEventListener('load', adjustScrollPosition, { once: true });
+  //       }
+  //     }
+  //   }
+  // }, [lanternData]);
 
   // 사용자 상호작용 감지
   useEffect(() => {
@@ -132,6 +132,7 @@ const LanternDetail = () => {
 
     const imageWidth = container.clientWidth / 3;
     const centerToLeft = (k: number) => (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2; // 음악 순서에 맞는 위치에 두고 가운데 정렬
+    // const centerToSecond = (k: number) => (k-1) * imageWidth - (container.clientWidth - imageWidth) / 2; // 음악 순서에 맞는 위치에 두고 가운데 정렬
 
     if (isFirstRender) {
       const initialScrollLeft = centerToLeft(audioPlayer.currentIndex + 1);

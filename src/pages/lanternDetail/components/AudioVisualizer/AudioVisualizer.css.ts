@@ -7,8 +7,8 @@ const glow = keyframes({
 
 export const container = style({
   position: 'fixed',
-  top: '12px',
-  left: '120px',
+  top: '50px',
+  left: '180px',
   background: 'rgba(0, 0, 0, 0.9)',
   borderRadius: '12px',
   padding: '10px 16px',

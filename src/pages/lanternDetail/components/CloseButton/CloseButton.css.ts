@@ -7,8 +7,8 @@ export const closeButton = style([
   variantStyles.dangerous,
   {
     position: 'absolute',
-    top: '1.2rem',
-    left: '1.2rem',
+    top: '5rem',
+    left: '5rem',
     zIndex: Z_INDEX.CLOSE_BUTTON,
     padding: '1.7rem 2.6rem',
     borderRadius: '1rem',

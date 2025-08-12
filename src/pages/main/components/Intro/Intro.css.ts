@@ -16,7 +16,7 @@ export const container = style({
 export const beamBack = style({
   position: 'absolute',
   top: '45vh',
-  left: '47%',
+  left: '49%',
   transform: 'translate(-50%, -50%)',
   width: '450px',
   flexShrink: 0,
@@ -33,7 +33,7 @@ export const beamBack = style({
 export const beamFront = style({
   position: 'absolute',
   top: '55vh',
-  left: '55%',
+  left: '53%',
   transform: 'translate(-50%, -50%)',
   width: '400px',
   flexShrink: 0,
@@ -50,7 +50,7 @@ export const beamFront = style({
 
 export const cube = style({
   position: 'absolute',
-  top: '50vh',
+  top: '47vh',
   left: '50%',
   width: '12vw',
   minWidth: '350px',
