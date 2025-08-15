@@ -35,12 +35,11 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       const allMetadata = await Promise.all(metadataPromises);
 
       allMetadata.forEach((metadata, index) => {
-        console.log(`File: ${newFiles[index].name}, ALL Metadata:`, metadata);
-
-        const formattedDate = formatDateToDate(metadata);
-        console.log(`File: ${newFiles[index].name}, Formatted Date:`, formattedDate);
+        const file = newFiles[index];
+        // metadata와 file 객체를 함께 전달
+        const formattedDate = formatDateToDate(metadata, file);
+        console.log(`Formatted Date:`, formattedDate);
       });
-
 
     } else if (currentFilesCount + files.length > 3) {
       setToast({ message: '사진은 최대 3장까지 업로드할 수 있습니다.', type: 'error' });
