@@ -15,6 +15,7 @@ const Upload = () => {
   const [isOn, setIsOn] = useState(true);
   const [name, setName] = useState<string>('');
   const [images, setImages] = useState<File[]>([]);
+  const [extractedDate, setExtractedDate] = useState<string | null>(null);
   const { mutate, isPending } = usePostLantern();
   const [showCompletionAlert, setShowCompletionAlert] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -29,6 +30,10 @@ const Upload = () => {
 
   const handleImagesChange = (uploadedFiles: File[]) => {
     setImages(uploadedFiles);
+  };
+
+  const handleDateExtracted = (date: string | null) => {
+    setExtractedDate(date);
   };
 
   const handleShowAlert = () => {
@@ -48,6 +53,7 @@ const Upload = () => {
       name: name,
       images: images,
       is_public: isOn,
+      date: extractedDate || undefined,
     };
 
     mutate(requestBody);
@@ -68,7 +74,11 @@ const Upload = () => {
           <UploadTip className={styles.desktopOnly} />
         </section>
         <Spacing size={4} />
-        <UploadImage onImagesChange={handleImagesChange} uploadedImages={images} />
+        <UploadImage
+          onImagesChange={handleImagesChange}
+          uploadedImages={images}
+          onDateExtracted={handleDateExtracted}
+        />
         <Spacing size={1.8} />
         <UploadTip className={styles.mobileOnly} />
         <Spacing size={2.5} />
@@ -90,7 +100,7 @@ const Upload = () => {
         title="전시 업로드"
         message={`전시를 업로드하면 수정 및 삭제가 불가능합니다.\n${name}님의 사진을 "${
           isOn ? '공개' : '비공개'
-        }" 전시로 업로드하시나요?`}
+          }" 전시로 업로드하시나요?`}
         confirmText="확인했어요"
         cancelText="취소"
         onConfirm={handleSubmit}
