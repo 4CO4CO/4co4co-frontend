@@ -9,9 +9,10 @@ import { extractImageMetadata, formatDateToDate } from '@/utils/extractImageDate
 interface UploadImageProps {
   onImagesChange: (files: File[]) => void;
   uploadedImages: File[];
+  onDateExtracted?: (date: string | null) => void;
 }
 
-const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
+const UploadPhoto = ({ onImagesChange, uploadedImages, onDateExtracted }: UploadImageProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
@@ -34,12 +35,20 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       const metadataPromises = newFiles.map((file) => extractImageMetadata(file));
       const allMetadata = await Promise.all(metadataPromises);
 
+      let extractedDate: string | null = null;
+
       allMetadata.forEach((metadata, index) => {
         const file = newFiles[index];
-        // metadata와 file 객체를 함께 전달
         const formattedDate = formatDateToDate(metadata, file);
-        console.log(`Formatted Date:`, formattedDate);
+
+        if (!extractedDate && formattedDate) {
+          extractedDate = formattedDate;
+        }
       });
+
+      if (onDateExtracted) {
+        onDateExtracted(extractedDate);
+      }
 
     } else if (currentFilesCount + files.length > 3) {
       setToast({ message: '사진은 최대 3장까지 업로드할 수 있습니다.', type: 'error' });

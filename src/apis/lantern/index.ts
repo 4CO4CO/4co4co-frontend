@@ -5,6 +5,7 @@ export interface CreateLanternRequestBody {
   name: string;
   images: File[];
   is_public?: boolean;
+  date?: string;
 }
 
 export interface CreateLanternResponse {
@@ -24,6 +25,9 @@ export const createLantern = async (data: CreateLanternRequestBody): Promise<Cre
     });
     if (data.is_public !== undefined) {
       formData.append('is_public', String(data.is_public));
+    }
+    if (data.date) {
+      formData.append('date', data.date);
     }
 
     const response = post<CreateLanternResponse>('/lanterns', formData, {
