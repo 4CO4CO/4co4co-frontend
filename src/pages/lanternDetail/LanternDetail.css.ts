@@ -12,6 +12,7 @@ export const overlay = style({
   height: '100vh',
   zIndex: Z_INDEX.OVERLAY,
   overflow: 'hidden',
+  background: 'linear-gradient(180deg, #000 0%, #185393 100%)',
 
   '@media': {
     [MOBILE_MIN_MEDIA_QUERY]: {

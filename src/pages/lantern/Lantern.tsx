@@ -1,4 +1,3 @@
-import html2canvas from 'html2canvas';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
@@ -106,18 +105,6 @@ const Lantern = () => {
       queryClient.setQueryData(lanternKeys.detail(detail.lantern_id), detail);
     });
   }, []);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    requestAnimationFrame(() => {
-      const capture = async () => {
-        const canvas = await html2canvas(containerRef.current!);
-        const imgData = canvas.toDataURL('image/png');
-        sessionStorage.setItem('lanternListBg', imgData);
-      };
-      capture();
-    });
-  }, [data]);
 
   const handleAlertConfirm = () => {
     navigate('/upload');

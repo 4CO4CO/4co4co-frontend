@@ -147,57 +147,36 @@ const LanternDetail = () => {
     }
   }, [audioPlayer.currentIndex, carouselImages, lanternData?.images?.length, isFirstRender]);
 
-  const bgImg = sessionStorage.getItem('lanternListBg');
-
   return (
-    <div
-      style={
-        bgImg
-          ? {
-              backgroundImage: `url(${bgImg})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-            }
-          : {}
-      }
-    >
-      <div className={styles.overlay}>
-        <VideoFeed />
-        <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
+    <div className={styles.overlay}>
+      <VideoFeed />
+      <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
 
-        {lanternData && (
-          <>
-            <div ref={scrollContainerRef} className={styles.scrollContainer}>
-              <div className={styles.panoramaWrapper}>
-                {carouselImages.map((image, index) => (
-                  <img key={index} src={image} className={styles.panoramaImage} alt={`풍등 이미지 ${index + 1}`} />
-                ))}
-              </div>
+      {lanternData && (
+        <>
+          <div ref={scrollContainerRef} className={styles.scrollContainer}>
+            <div className={styles.panoramaWrapper}>
+              {carouselImages.map((image, index) => (
+                <img key={index} src={image} className={styles.panoramaImage} alt={`풍등 이미지 ${index + 1}`} />
+              ))}
             </div>
+          </div>
 
-            {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
+          {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
 
-            {showInteractionMessage && (
-              <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>
-            )}
+          {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}
 
-            {/* 간단한 오디오 시각화 추가 */}
-            <AudioVisualizer
-              currentIndex={audioPlayer.currentIndex}
-              totalTracks={audioPlayer.totalTracks}
-              isPlaying={audioPlayer.isPlaying}
-              analyser={audioPlayer.analyser}
-            />
-          </>
-        )}
+          {/* 간단한 오디오 시각화 추가 */}
+          <AudioVisualizer
+            currentIndex={audioPlayer.currentIndex}
+            totalTracks={audioPlayer.totalTracks}
+            isPlaying={audioPlayer.isPlaying}
+            analyser={audioPlayer.analyser}
+          />
+        </>
+      )}
 
-        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      </div>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 };
