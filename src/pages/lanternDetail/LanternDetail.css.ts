@@ -26,9 +26,6 @@ export const overlay = style({
   },
 
   selectors: {
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
     '&::before, &::after': {
       content: '',
       position: 'fixed',
@@ -37,12 +34,11 @@ export const overlay = style({
       width: '420%',
       height: '500%',
       borderRadius: '50%',
-      backgroundColor: colors.color.black,
       zIndex: 2,
       pointerEvents: 'none',
     },
-    '&::before': { top: '-480%' },
-    '&::after': { bottom: '-480%' },
+    '&::before': { top: '-480%', background: 'linear-gradient(180deg, #000 0%, #05121F 100%)' },
+    '&::after': { bottom: '-480%', background: 'linear-gradient(180deg, #14457A 0%, #185393 100%)' },
   },
 });
 
@@ -59,6 +55,12 @@ export const scrollContainer = style({
   zIndex: Z_INDEX.SCROLL_CONTAINER,
 
   perspective: '1000px',
+
+  selectors: {
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  },
 });
 
 export const panoramaWrapper = style({
