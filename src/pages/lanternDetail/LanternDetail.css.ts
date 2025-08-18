@@ -10,7 +10,6 @@ export const overlay = style({
   left: 0,
   width: '100vw',
   height: '100vh',
-  backgroundColor: colors.color.black,
   zIndex: Z_INDEX.OVERLAY,
   overflow: 'hidden',
 
@@ -25,6 +24,26 @@ export const overlay = style({
       left: 'calc((100vw - 100vh) / 2)',
     },
   },
+
+  selectors: {
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    '&::before, &::after': {
+      content: '',
+      position: 'fixed',
+      left: '50%',
+      translate: '-50% 0',
+      width: '420%',
+      height: '500%',
+      borderRadius: '50%',
+      backgroundColor: colors.color.black,
+      zIndex: 2,
+      pointerEvents: 'none',
+    },
+    '&::before': { top: '-480%' },
+    '&::after': { bottom: '-480%' },
+  },
 });
 
 export const closeButton = style({
@@ -34,43 +53,29 @@ export const closeButton = style({
 });
 
 export const scrollContainer = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
   width: '100vw',
   height: '100vh',
-  overflowX: 'scroll',
   overflowY: 'hidden',
   zIndex: Z_INDEX.SCROLL_CONTAINER,
 
-  selectors: {
-    '&::-webkit-scrollbar': {
-      height: '8px',
-    },
-    '&::-webkit-scrollbar-track': {
-      backgroundColor: '#333',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: '#888',
-      borderRadius: '4px',
-    },
-  },
+  perspective: '1000px',
 });
 
 export const panoramaWrapper = style({
+  position: 'absolute',
+  left: 0,
+  top: '50%',
   display: 'flex',
-  height: '100vh',
-  backgroundColor: colors.color.black,
   width: 'calc(100vh * 10 / 9 * 3)',
   minWidth: '100vw',
+  transform: 'translateY(-50%)',
+  transformStyle: 'preserve-3d',
 });
 
 export const panoramaImage = style({
-  height: '100vh',
-  width: 'calc(100vh * 10 / 9)',
+  width: 'calc(100vw / 3)',
   objectFit: 'cover',
   flexShrink: 0,
-  backgroundColor: colors.color.black,
 });
 
 export const handPointer = style({

@@ -1,3 +1,4 @@
+import html2canvas from 'html2canvas';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
@@ -6,14 +7,18 @@ import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton
 import { useCloseGesture } from '../lanternDetail/hooks/useCloseGesture';
 import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
+import { LanternListResponse } from '@/apis/lantern';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
 import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
 import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
 import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
-import { useLanternList } from '@/queries/lantern/getLanternList';
+import { lanternsDetail, lanternsList } from '@/mocks';
+// import { useLanternList } from '@/queries/lantern/getLanternList';
 import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
+import { queryClient } from '@/queries/queryClient';
+import { lanternKeys } from '@/queries/queryKey';
 import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
 const LanternItem = ({
@@ -59,12 +64,14 @@ const Lantern = () => {
   const { handCenter } = useHandMark();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
-  const { data } = useLanternList(currentLanternId);
+  // const { data } = useLanternList(currentLanternId);
+  const data: LanternListResponse | undefined = queryClient.getQueryData(lanternKeys.list(currentLanternId ?? ''));
   const navigate = useNavigate();
   const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -88,6 +95,29 @@ const Lantern = () => {
       window.removeEventListener('resize', updateCloseButtonRect);
     };
   }, []);
+
+  useEffect(() => {
+    queryClient.setQueryData(lanternKeys.list(currentLanternId ?? ''), {
+      status: 'success',
+      message: 'sucess',
+      data: lanternsList,
+    });
+    lanternsDetail.forEach((detail) => {
+      queryClient.setQueryData(lanternKeys.detail(detail.lantern_id), detail);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    requestAnimationFrame(() => {
+      const capture = async () => {
+        const canvas = await html2canvas(containerRef.current!);
+        const imgData = canvas.toDataURL('image/png');
+        sessionStorage.setItem('lanternListBg', imgData);
+      };
+      capture();
+    });
+  }, [data]);
 
   const handleAlertConfirm = () => {
     navigate('/upload');
@@ -150,7 +180,7 @@ const Lantern = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={containerRef}>
       <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
       <VideoFeed />
       {lanternsWithoutMine.map((lantern) => (
