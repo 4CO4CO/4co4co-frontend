@@ -8,6 +8,7 @@ import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { LanternListResponse } from '@/apis/lantern';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
+import hand from '@/assets/hand.png';
 import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
 import { Alert } from '@/components/common/alert';
@@ -185,7 +186,9 @@ const Lantern = () => {
           onClick={() => navigate(`/lanterns/${myLantern.lantern_id}?currentLanternId=${currentLanternId}`)}
         />
       )}
-      {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
+      {handCenter && (
+        <img className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} src={hand} />
+      )}
       <Alert
         isOpen={showAlert}
         title="입장 코드 없음"

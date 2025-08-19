@@ -95,9 +95,11 @@ export const useHandMark = () => {
           if (hand && isMounted) {
             const tip = hand.keypoints.find((k) => k.name === 'middle_finger_mcp');
             if (tip) {
+              // 사용자의 정면에 웹캠 위치하는 전시 시스템에 따라 좌우 반전 추가
+              const flippedX = video.videoWidth - tip.x;
               // 위치 변화 체크
               const newPos = {
-                x: (tip.x / video.videoWidth) * window.innerWidth,
+                x: (flippedX / video.videoWidth) * window.innerWidth,
                 y: (tip.y / video.videoHeight) * window.innerHeight,
               };
               const isChanged =

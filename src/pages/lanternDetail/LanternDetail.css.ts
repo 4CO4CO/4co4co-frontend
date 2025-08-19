@@ -83,10 +83,8 @@ export const panoramaImage = style({
 
 export const handPointer = style({
   position: 'fixed',
-  width: '2rem',
-  height: '2rem',
-  borderRadius: '50%',
-  backgroundColor: 'lime',
+  width: '4rem',
+  height: '4rem',
   transform: 'translate(-50%, -50%)',
   zIndex: Z_INDEX.HAND_POINTER,
   pointerEvents: 'none',

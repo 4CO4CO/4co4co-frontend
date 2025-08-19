@@ -6,6 +6,7 @@ import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
 // import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
+import hand from '@/assets/hand.png';
 import { useHandMark } from '@/components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
@@ -162,7 +163,9 @@ const LanternDetail = () => {
             </div>
           </div>
 
-          {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
+          {handCenter && (
+            <img className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} src={hand} />
+          )}
 
           {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}
 

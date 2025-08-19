@@ -46,10 +46,8 @@ export const lanternName = style({
 
 export const handPointer = style({
   position: 'absolute',
-  width: 20,
-  height: 20,
-  borderRadius: '50%',
-  backgroundColor: 'lime',
+  width: '4rem',
+  height: '4rem',
   pointerEvents: 'none',
   zIndex: 100,
 });
