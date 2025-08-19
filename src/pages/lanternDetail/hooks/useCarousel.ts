@@ -41,6 +41,21 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
     return candidates[0].k;
   };
 
+  const moveCarousel = (dir: 1 | -1) => {
+    if (skipCooldownRef.current) return;
+
+    lastDirectionRef.dir = dir;
+
+    if (dir === 1) {
+      audioPlayer.nextNow();
+    } else {
+      audioPlayer.prevNow();
+    }
+
+    skipCooldownRef.current = true;
+    window.setTimeout(() => (skipCooldownRef.current = false), COOLDOWN_MS);
+  };
+
   // 사용자 스크롤
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -58,14 +73,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
 
       // 방향 결정
       const dir: 1 | -1 = delta > 0 ? 1 : -1;
-      lastDirectionRef.dir = dir;
-
-      // 사용자 스크롤 시 오디오 즉시 전환
-      if (dir === 1) {
-        audioPlayer.nextNow();
-      } else {
-        audioPlayer.prevNow();
-      }
+      moveCarousel(dir);
 
       skipCooldownRef.current = true;
       window.setTimeout(() => (skipCooldownRef.current = false), COOLDOWN_MS);
@@ -133,5 +141,5 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
     };
   }, [audioPlayer.currentIndex, L, isFirstRender, lastDirectionRef]);
 
-  return { scrollContainerRef, carouselImages };
+  return { scrollContainerRef, carouselImages, moveCarousel };
 };

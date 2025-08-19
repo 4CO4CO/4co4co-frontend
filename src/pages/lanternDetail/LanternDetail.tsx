@@ -11,6 +11,7 @@ import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
 import { useHandMark } from '@/hooks/useHandMark';
+import { useHandGestureScroll } from '@/hooks/useScrollGesture';
 import { lanternType } from '@/mocks';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
@@ -34,12 +35,13 @@ const LanternDetail = () => {
   });
 
   // 캐러셀
-  const { scrollContainerRef, carouselImages } = useCarousel({
+  const { scrollContainerRef, carouselImages, moveCarousel } = useCarousel({
     audioPlayer,
     images: lanternData?.images ?? [],
   });
 
   // 손동작 인식
+  useHandGestureScroll({ moveCarousel });
   const { handCenter } = useHandMark();
   useCloseGesture(closeButtonRef);
 
