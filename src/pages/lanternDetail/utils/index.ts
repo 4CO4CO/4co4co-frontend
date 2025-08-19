@@ -30,3 +30,25 @@ export const pathCatmullRom = (ctx: CanvasRenderingContext2D, pts: { x: number; 
     ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
   }
 };
+
+export const clampMod = (i: number, L: number) => {
+  return ((i % L) + L) % L;
+};
+
+export const waitUntilSettled = (getter: () => number, target: number, eps = 1, stableFrames = 3) => {
+  return new Promise<void>((resolve) => {
+    let ok = 0;
+    const loop = () => {
+      const d = Math.abs(getter() - target);
+      ok = d < eps ? ok + 1 : 0;
+      if (ok >= stableFrames) return resolve();
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  });
+};
+
+export const centerToLeft = (container: HTMLDivElement, k: number) => {
+  const imageWidth = container.clientWidth / 3;
+  return (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2;
+};
