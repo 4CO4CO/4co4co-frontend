@@ -117,8 +117,20 @@ export const useAudioVisualizer = ({
     ctx.filter = 'blur(4px)';
     ctx.globalAlpha = 1.0;
     ctx.drawImage(off, 0, 0);
+    ctx.filter = 'blur(12px)';
+    ctx.globalAlpha = 0;
+    ctx.drawImage(off, 0, 0);
+    ctx.filter = 'blur(12px)';
+    ctx.globalAlpha = 1.0;
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.drawImage(off, 0, 0);
+    ctx.filter = 'blur(12px)';
+    ctx.globalAlpha = 1.0;
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.drawImage(off, 0, 0);
     ctx.filter = 'none';
     ctx.globalAlpha = 0;
+    ctx.globalCompositeOperation = 'overlay';
     ctx.drawImage(off, 0, 0);
 
     // 파형의 아랫부분이 점점 투명해지면서 사라지는 효과
