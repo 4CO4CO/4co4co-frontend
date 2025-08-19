@@ -15,6 +15,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
   const skipCooldownRef = useRef(false);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [lastDirectionRef] = useState<{ dir: 1 | -1 | 0 }>({ dir: 0 });
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const L = realImages.length;
 
@@ -68,6 +69,10 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
       const delta = curr - prev;
       lastScrollLeftRef.current = curr;
 
+      const imageWidth = container.clientWidth / 3;
+      const calculatedActiveIndex = Math.round(curr / imageWidth);
+      setActiveImageIndex(calculatedActiveIndex);
+
       if (skipCooldownRef.current) return;
       if (Math.abs(delta) < DELTA_TRIGGER) return;
 
@@ -97,6 +102,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
       const left = centerToLeft(container, kMiddle(idx));
       isProgrammaticRef.current = true;
       container.scrollTo({ left, behavior: 'auto' });
+      setActiveImageIndex(kMiddle(idx) - 1);
       setTimeout(() => {
         isProgrammaticRef.current = false;
         lastScrollLeftRef.current = container.scrollLeft;
@@ -115,6 +121,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
 
     isProgrammaticRef.current = true;
     container.scrollTo({ left: visibleLeft, behavior: 'smooth' });
+    setActiveImageIndex(visibleK - 1);
 
     // 정착 후 가운데 블록으로 이동
     (async () => {
@@ -127,6 +134,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
 
       const middleLeft = centerToLeft(container, kMiddle(idx));
       container.scrollTo({ left: middleLeft, behavior: 'auto' });
+      setActiveImageIndex(kMiddle(idx) - 1);
 
       requestAnimationFrame(() => {
         isProgrammaticRef.current = false;
@@ -141,5 +149,5 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
     };
   }, [audioPlayer.currentIndex, L, isFirstRender, lastDirectionRef]);
 
-  return { scrollContainerRef, carouselImages, moveCarousel };
+  return { scrollContainerRef, carouselImages, moveCarousel, activeImageIndex };
 };

@@ -35,7 +35,7 @@ const LanternDetail = () => {
   });
 
   // 캐러셀
-  const { scrollContainerRef, carouselImages, moveCarousel } = useCarousel({
+  const { scrollContainerRef, carouselImages, moveCarousel, activeImageIndex } = useCarousel({
     audioPlayer,
     images: lanternData?.images ?? [],
   });
@@ -98,7 +98,14 @@ const LanternDetail = () => {
           <div ref={scrollContainerRef} className={styles.scrollContainer}>
             <div className={styles.panoramaWrapper}>
               {carouselImages.map((image, index) => (
-                <img key={index} src={image} className={styles.panoramaImage} alt={`풍등 이미지 ${index + 1}`} />
+                <img
+                  key={index}
+                  src={image}
+                  className={`${styles.panoramaImage} ${
+                    audioPlayer.isPlaying && index === activeImageIndex ? styles.isActive : ''
+                  }`}
+                  alt={`풍등 이미지 ${index + 1}`}
+                />
               ))}
             </div>
           </div>

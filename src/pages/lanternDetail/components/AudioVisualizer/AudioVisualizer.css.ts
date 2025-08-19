@@ -1,10 +1,4 @@
 import { style } from '@vanilla-extract/css';
-// import { Z_INDEX } from '../../constants/zIndex';
-
-// const glow = keyframes({
-//   '0%, 100%': { boxShadow: '0 0 5px rgba(96, 165, 250, 0.3)' },
-//   '50%': { boxShadow: '0 0 20px rgba(96, 165, 250, 0.6)' },
-// });
 
 export const container = style({
   position: 'fixed',

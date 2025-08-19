@@ -72,13 +72,19 @@ export const panoramaWrapper = style({
   width: 'calc(100vh * 10 / 9 * 3)',
   minWidth: '100vw',
   transform: 'translateY(-50%)',
-  transformStyle: 'preserve-3d',
 });
 
 export const panoramaImage = style({
   width: 'calc(100vw / 3)',
   objectFit: 'cover',
   flexShrink: 0,
+  filter: 'brightness(50%) blur(1rem)',
+});
+
+export const isActive = style({
+  filter: 'brightness(1)',
+  transform: `scale(1.5) translateX(-${(100 / 3) * 0.25}vw)`,
+  width: 'calc(100vw / 3 * 1.5)',
 });
 
 export const handPointer = style({
