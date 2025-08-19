@@ -35,16 +35,50 @@ export const clampMod = (i: number, L: number) => {
   return ((i % L) + L) % L;
 };
 
-export const waitUntilSettled = (getter: () => number, target: number, eps = 1, stableFrames = 3) => {
-  return new Promise<void>((resolve) => {
+type WaitOpts = { eps?: number; stableFrames?: number; signal?: AbortSignal; timeoutMs?: number };
+
+export const waitUntilSettled = (getter: () => number, target: number, opts: WaitOpts = {}) => {
+  const { eps = 1, stableFrames = 3, signal, timeoutMs = 3000 } = opts;
+
+  return new Promise<void>((resolve, reject) => {
     let ok = 0;
+    let rafId = 0;
+    let toId: number | null = null;
+
+    const cancel = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      if (toId != null) clearTimeout(toId);
+    };
+
+    const onAbort = () => {
+      cancel();
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+
+    if (signal) {
+      if (signal.aborted) return onAbort();
+      signal.addEventListener('abort', onAbort, { once: true });
+    }
+
+    if (timeoutMs) {
+      toId = window.setTimeout(() => {
+        cancel();
+        resolve();
+      }, timeoutMs);
+    }
+
     const loop = () => {
+      if (signal?.aborted) return;
       const d = Math.abs(getter() - target);
       ok = d < eps ? ok + 1 : 0;
-      if (ok >= stableFrames) return resolve();
-      requestAnimationFrame(loop);
+      if (ok >= stableFrames) {
+        cancel();
+        return resolve();
+      }
+      rafId = requestAnimationFrame(loop);
     };
-    requestAnimationFrame(loop);
+
+    rafId = requestAnimationFrame(loop);
   });
 };
 

@@ -214,8 +214,9 @@ export const useAudioPlayer = ({
 
   useEffect(() => {
     if (!audioUrls.length || !isUserInteracted) return;
-    const url = audioUrls[currentIndex];
-    playAudio(url);
+    if (isUserInteracted) {
+      playAudio(audioUrls[currentIndex]);
+    }
   }, [currentIndex, audioUrls, isUserInteracted]);
 
   // 언마운트

@@ -82,6 +82,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
     if (!container || !L) return;
 
     const idx = clampMod(audioPlayer.currentIndex, L);
+    const ac = new AbortController();
 
     // 최초 진입
     if (isFirstRender) {
@@ -93,7 +94,10 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
         lastScrollLeftRef.current = container.scrollLeft;
       }, 0);
       setIsFirstRender(false);
-      return;
+      return () => {
+        ac.abort();
+        isProgrammaticRef.current = false;
+      };
     }
 
     // 가장 가까운 슬롯으로 이동
@@ -106,18 +110,27 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
 
     // 정착 후 가운데 블록으로 이동
     (async () => {
-      await waitUntilSettled(() => container.scrollLeft, visibleLeft, 1, 3);
+      await waitUntilSettled(() => container.scrollLeft, visibleLeft, {
+        eps: 1,
+        stableFrames: 3,
+        signal: ac.signal,
+      });
+      if (ac.signal.aborted) return; // 취소된 경우 즉시 종료
+
       const middleLeft = centerToLeft(container, kMiddle(idx));
       container.scrollTo({ left: middleLeft, behavior: 'auto' });
-      const finalize = () => {
+
+      requestAnimationFrame(() => {
         isProgrammaticRef.current = false;
         lastScrollLeftRef.current = container.scrollLeft;
         lastDirectionRef.dir = 0;
-      };
-      requestAnimationFrame(() => {
-        requestAnimationFrame(finalize);
       });
     })();
+
+    return () => {
+      ac.abort();
+      isProgrammaticRef.current = false;
+    };
   }, [audioPlayer.currentIndex, L, isFirstRender, lastDirectionRef]);
 
   return { scrollContainerRef, carouselImages };

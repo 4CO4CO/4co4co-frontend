@@ -15,19 +15,6 @@ import { lanternType } from '@/mocks';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
 
-export const waitUntilSettled = (getter: () => number, target: number, eps = 1, stableFrames = 3) => {
-  return new Promise<void>((resolve) => {
-    let ok = 0;
-    const loop = () => {
-      const d = Math.abs(getter() - target);
-      ok = d < eps ? ok + 1 : 0;
-      if (ok >= stableFrames) return resolve();
-      requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
-  });
-};
-
 const LanternDetail = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
