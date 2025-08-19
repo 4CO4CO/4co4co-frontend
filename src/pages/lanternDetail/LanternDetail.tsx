@@ -219,11 +219,14 @@ const LanternDetail = () => {
       await waitUntilSettled(() => container.scrollLeft, visibleLeft, 1, 3);
       const middleLeft = centerToLeft(container, kMiddle(idx));
       container.scrollTo({ left: middleLeft, behavior: 'auto' });
-      setTimeout(() => {
+      const finalize = () => {
         isProgrammaticRef.current = false;
         lastScrollLeftRef.current = container.scrollLeft;
         lastDirectionRef.dir = 0;
-      }, 0);
+      };
+      requestAnimationFrame(() => {
+        requestAnimationFrame(finalize);
+      });
     })();
   }, [audioPlayer.currentIndex, L, isFirstRender, lastDirectionRef]);
 
