@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AudioVisualizer } from './components/AudioVisualizer/AudioVisualizer';
+import AudioVisualizer from './components/AudioVisualizer/AudioVisualizer';
 import { CloseButton } from './components/CloseButton/CloseButton';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCloseGesture } from './hooks/useCloseGesture';
