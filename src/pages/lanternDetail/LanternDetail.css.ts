@@ -78,13 +78,16 @@ export const panoramaImage = style({
   width: 'calc(100vw / 3)',
   objectFit: 'cover',
   flexShrink: 0,
-  filter: 'brightness(50%) blur(1rem)',
 });
 
 export const isActive = style({
   filter: 'brightness(1)',
   transform: `scale(1.5) translateX(-${(100 / 3) * 0.25}vw)`,
   width: 'calc(100vw / 3 * 1.5)',
+});
+
+export const isNotActive = style({
+  filter: 'brightness(50%) blur(1rem)',
 });
 
 export const handPointer = style({

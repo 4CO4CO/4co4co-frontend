@@ -102,7 +102,7 @@ const LanternDetail = () => {
                   key={index}
                   src={image}
                   className={`${styles.panoramaImage} ${
-                    audioPlayer.isPlaying && index === activeImageIndex ? styles.isActive : ''
+                    audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
                   }`}
                   alt={`풍등 이미지 ${index + 1}`}
                 />
