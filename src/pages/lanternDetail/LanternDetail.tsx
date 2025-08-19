@@ -12,6 +12,7 @@ import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
 import { useHandMark } from '@/hooks/useHandMark';
 import { useHandGestureScroll } from '@/hooks/useScrollGesture';
+import { useZoomGesture } from '@/hooks/useZoomGesture';
 import { lanternType } from '@/mocks';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
@@ -41,6 +42,19 @@ const LanternDetail = () => {
   });
 
   // 손동작 인식
+  useZoomGesture(
+    async () => {
+      setIsUserInteracted(true);
+      setShowInteractionMessage(false);
+    },
+    {
+      enabled: !isUserInteracted,
+      maxMovePx: 100,
+      minHoldMs: 0,
+      maxHoldMs: 1500,
+      cooldownMs: 800,
+    },
+  );
   useHandGestureScroll({ moveCarousel });
   const { handCenter } = useHandMark();
   useCloseGesture(closeButtonRef);
