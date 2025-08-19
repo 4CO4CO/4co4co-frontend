@@ -13,7 +13,7 @@ interface AudioVisualizerProps {
 const AudioVisualizer = ({ isPlaying, analyser }: AudioVisualizerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { ctxRef, sizeRef } = useCanvas(canvasRef); // 캔버스 초기화 및 크기 관리
-  //  오디오 시각화
+  // 오디오 시각화
   useAudioVisualizer({
     isPlaying,
     analyser,

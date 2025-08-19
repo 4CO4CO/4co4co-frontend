@@ -14,24 +14,51 @@ import { lanternType } from '@/mocks';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
 
+const COPIES = 3;
+const MIDDLE_BLOCK = Math.floor(COPIES / 2);
+const COOLDOWN_MS = 650;
+const DELTA_TRIGGER = 40;
+
+const clampMod = (i: number, L: number) => {
+  return ((i % L) + L) % L;
+};
+
+export const waitUntilSettled = (getter: () => number, target: number, eps = 1, stableFrames = 3) => {
+  return new Promise<void>((resolve) => {
+    let ok = 0;
+    const loop = () => {
+      const d = Math.abs(getter() - target);
+      ok = d < eps ? ok + 1 : 0;
+      if (ok >= stableFrames) return resolve();
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  });
+};
+
 const LanternDetail = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const isJumpingRef = useRef(false);
-  const visualIndexRef = useRef<number | null>(null);
+
+  const isProgrammaticRef = useRef(false);
+  const lastScrollLeftRef = useRef(0);
+  const skipCooldownRef = useRef(false);
+
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const [lastDirectionRef] = useState<{ dir: 1 | -1 | 0 }>({ dir: 0 }); // 최근 사용자 방향(보이는 이동에 사용)
 
   // API 데이터 가져오기
   // const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
   const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
-  // 상태 관리
+
+  // 상태
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  // 오디오 플레이어 (analyser 추가된 버전)
+  // 오디오
   const audioPlayer = useAudioPlayer({
     audioUrls: lanternData?.background_sounds || [],
     isUserInteracted,
@@ -60,16 +87,11 @@ const LanternDetail = () => {
       setIsUserInteracted(true);
       setShowInteractionMessage(false);
       document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('scroll', handleUserInteraction);
     };
 
     document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('scroll', handleUserInteraction);
 
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('scroll', handleUserInteraction);
-    };
+    return () => document.removeEventListener('click', handleUserInteraction);
   }, []);
 
   // 로딩 상태 Toast로 표시
@@ -90,63 +112,120 @@ const LanternDetail = () => {
     navigate(-1);
   };
 
+  const realImages = lanternData?.images ?? [];
+  const L = realImages.length;
+
   const carouselImages = useMemo(() => {
-    if (!lanternData?.images) return [];
-    return [...lanternData.images, ...lanternData.images];
-  }, [lanternData]);
+    if (!L) return [];
+    return Array.from({ length: COPIES }).flatMap(() => realImages);
+  }, [realImages, L]);
 
-  useEffect(() => {
-    if (!scrollContainerRef.current || carouselImages.length === 0) return;
-
-    const container = scrollContainerRef.current;
-    const realCount = lanternData?.images?.length ?? 0;
-    if (realCount === 0) return;
-
+  const centerToLeft = (container: HTMLDivElement, k: number) => {
     const imageWidth = container.clientWidth / 3;
-    const centerToLeft = (k: number) => (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2; // 음악 순서에 맞는 위치에 두고 가운데 정렬
+    return (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2;
+  };
 
+  const kMiddle = (idx: number) => idx + 1 + L * MIDDLE_BLOCK;
+
+  // 현재 스크롤 위치 기준, 같은 idx에 대한 가장 가까운 슬롯
+  const nearestDirectionalSlot = (container: HTMLDivElement, idx: number, dir: 1 | -1) => {
+    const k1 = idx + 1; // 블록 0
+    const k2 = idx + 1 + L; // 블록 1
+    const k3 = idx + 1 + 2 * L; // 블록 2
+    const kArr = [k1, k2, k3];
+    const x = container.scrollLeft;
+    const candidates = kArr
+      .map((k) => ({ k, left: centerToLeft(container, k) }))
+      .filter(({ left }) => (dir === 1 ? left > x + 1 : left < x - 1))
+      .sort((a, b) => (dir === 1 ? a.left - b.left : b.left - a.left));
+    if (!candidates.length) {
+      return kArr
+        .map((k) => ({ k, left: centerToLeft(container, k), d: Math.abs(centerToLeft(container, k) - x) }))
+        .sort((a, b) => a.d - b.d)[0].k;
+    }
+    return candidates[0].k;
+  };
+
+  // 사용자 스크롤
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !L) return;
+
+    const onScroll = () => {
+      if (isProgrammaticRef.current) return;
+      const prev = lastScrollLeftRef.current;
+      const curr = container.scrollLeft;
+      const delta = curr - prev;
+      lastScrollLeftRef.current = curr;
+
+      if (skipCooldownRef.current) return;
+      if (Math.abs(delta) < DELTA_TRIGGER) return;
+
+      // 방향 결정
+      const dir: 1 | -1 = delta > 0 ? 1 : -1;
+      lastDirectionRef.dir = dir;
+
+      // 사용자 스크롤 시 오디오 즉시 전환
+      if (dir === 1) {
+        audioPlayer.nextNow();
+      } else {
+        audioPlayer.prevNow();
+      }
+
+      skipCooldownRef.current = true;
+      window.setTimeout(() => (skipCooldownRef.current = false), COOLDOWN_MS);
+    };
+
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
+  }, [L, audioPlayer, COOLDOWN_MS, DELTA_TRIGGER, lastDirectionRef]);
+
+  // currentIndex 변경
+  // 이동(smooth) → 정착 → 가운데 블록으로 이동(auto)
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !L) return;
+
+    const idx = clampMod(audioPlayer.currentIndex, L);
+
+    // 최초 진입
     if (isFirstRender) {
-      const initialScrollLeft = centerToLeft(audioPlayer.currentIndex + 1);
-      container.scrollTo({ left: initialScrollLeft, behavior: 'auto' });
-      visualIndexRef.current = audioPlayer.currentIndex;
+      const left = centerToLeft(container, kMiddle(idx));
+      isProgrammaticRef.current = true;
+      container.scrollTo({ left, behavior: 'auto' });
+      setTimeout(() => {
+        isProgrammaticRef.current = false;
+        lastScrollLeftRef.current = container.scrollLeft;
+      }, 0);
       setIsFirstRender(false);
       return;
     }
 
-    const nextVisualIndex = (visualIndexRef.current ?? 0) + 1;
-    const targetScrollLeft = centerToLeft(nextVisualIndex);
-
-    container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
-    visualIndexRef.current = nextVisualIndex;
-
-    const reachedBoundary = (visualIndexRef.current ?? 0) >= realCount * 2 - 1;
-    if (reachedBoundary && !isJumpingRef.current) {
-      isJumpingRef.current = true;
-
-      let rafId: number;
-      const waitUntilArrived = () => {
-        if (Math.abs(container.scrollLeft - targetScrollLeft) < 1) {
-          const curr = visualIndexRef.current;
-          if (curr == null) {
-            isJumpingRef.current = false;
-            return;
-          }
-          const jumpedIndex = curr - realCount;
-
-          requestAnimationFrame(() => {
-            container.scrollTo({ left: centerToLeft(jumpedIndex), behavior: 'auto' });
-            visualIndexRef.current = jumpedIndex;
-            isJumpingRef.current = false;
-          });
-          return;
-        }
-        rafId = requestAnimationFrame(waitUntilArrived);
-      };
-      rafId = requestAnimationFrame(waitUntilArrived);
-
-      return () => cancelAnimationFrame(rafId);
+    // 사용자 방향이 있으면 그 방향의 가장 가까운 슬롯으로 이동
+    const dir = lastDirectionRef.dir;
+    let visibleK: number;
+    if (dir === 1 || dir === -1) {
+      visibleK = nearestDirectionalSlot(container, idx, dir);
+    } else {
+      visibleK = kMiddle(idx);
     }
-  }, [audioPlayer.currentIndex, carouselImages, lanternData?.images?.length, isFirstRender]);
+    const visibleLeft = centerToLeft(container, visibleK);
+
+    isProgrammaticRef.current = true;
+    container.scrollTo({ left: visibleLeft, behavior: 'smooth' });
+
+    // 정착 감지 후 가운데 블록으로 이동
+    (async () => {
+      await waitUntilSettled(() => container.scrollLeft, visibleLeft, 1, 3);
+      const middleLeft = centerToLeft(container, kMiddle(idx));
+      container.scrollTo({ left: middleLeft, behavior: 'auto' });
+      setTimeout(() => {
+        isProgrammaticRef.current = false;
+        lastScrollLeftRef.current = container.scrollLeft;
+        lastDirectionRef.dir = 0;
+      }, 0);
+    })();
+  }, [audioPlayer.currentIndex, L, isFirstRender, lastDirectionRef]);
 
   return (
     <div className={styles.overlay}>
@@ -169,7 +248,6 @@ const LanternDetail = () => {
 
           {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}
 
-          {/* 간단한 오디오 시각화 추가 */}
           <AudioVisualizer
             currentIndex={audioPlayer.currentIndex}
             totalTracks={audioPlayer.totalTracks}

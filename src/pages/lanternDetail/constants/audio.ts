@@ -1,4 +1,4 @@
-export const BAR_COUNT = 24;
+export const BAR_COUNT = 60;
 
 // 로그 스케일 집계에 사용할 최소/최대 대역 (사람 귀 감각에 가깝게)
 export const MIN_HZ = 80;

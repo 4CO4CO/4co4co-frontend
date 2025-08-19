@@ -106,7 +106,7 @@ export const useAudioVisualizer = ({
     const octx = off.getContext('2d')!;
     octx.fillStyle = gradient;
 
-    // 파형 경로
+    // 파형 생성
     octx.beginPath();
     octx.moveTo(0, height);
     pathCatmullRom(octx, [{ x: 0, y: height }, ...points, { x: width, y: height }]);
@@ -142,7 +142,7 @@ export const useAudioVisualizer = ({
     ctx.fillRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'source-over';
 
-    // 흰색 그라데이션을 덧씌워 파형의 윗부분에 빛이 비치는 효과
+    // 파형의 윗부분 빛나는 효과
     const shine = ctx.createLinearGradient(0, 0, 0, height);
     shine.addColorStop(0, 'rgba(255,255,255,0.30)');
     shine.addColorStop(0.5, 'rgba(255,255,255,0.10)');
@@ -159,7 +159,7 @@ export const useAudioVisualizer = ({
     }
   }, [analyser, isPlaying, extractFrequencyData, smoothBars, canvasContextRef, canvasDimensionsRef]);
 
-  // 초기화 및 애니메이션 제어 로직
+  // 초기화 및 애니메이션 제어
   useEffect(() => {
     initializeDataArray();
     buildLogBands();
