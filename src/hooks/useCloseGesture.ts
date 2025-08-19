@@ -1,26 +1,23 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useHandMark } from '@/components/common/lantern/hooks/useHandMark';
-import { isFist } from '@/components/common/lantern/utils';
+import { useHandMark } from '@/hooks/useHandMark';
+import { isFist, isInside } from '@/utils';
 
 export const useCloseGesture = (closeButtonRef: React.RefObject<HTMLButtonElement | null>) => {
   const navigate = useNavigate();
   const hasNavigatedRef = useRef(false);
-  const { marks, handedness } = useHandMark();
+  const { handCenter, marks, handedness } = useHandMark();
 
   useEffect(() => {
-    if (!marks || !handedness || !closeButtonRef.current) return;
+    if (!handCenter || !marks || !handedness || !closeButtonRef.current) return;
 
     const rect = closeButtonRef.current.getBoundingClientRect();
     const indexTip = marks.find((k) => k.name === 'index_finger_tip');
     if (!indexTip) return;
 
-    const isInCloseArea =
-      indexTip.x >= rect.left && indexTip.x <= rect.right && indexTip.y >= rect.top && indexTip.y <= rect.bottom;
+    const fist = isFist(marks);
 
-    const fist = isFist(marks, handedness);
-
-    if (fist && isInCloseArea && !hasNavigatedRef.current) {
+    if (fist && isInside(handCenter, rect) && !hasNavigatedRef.current) {
       hasNavigatedRef.current = true;
       navigate(-1);
     }

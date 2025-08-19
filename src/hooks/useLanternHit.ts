@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useHandMark } from './useHandMark';
-import { LanternWithRect } from '../constants';
-import { isFist, isInside } from '@/components/common/lantern/utils';
+import { LanternWithRect } from '../components/common/lantern/constants';
+import { isFist, isInside } from '@/utils';
 
 export const useLanternHit = (lanterns: LanternWithRect[]) => {
   const [hitLanternId, setHitLanternId] = useState<string | null>(null);
@@ -10,7 +10,7 @@ export const useLanternHit = (lanterns: LanternWithRect[]) => {
   useEffect(() => {
     if (!handCenter || !marks || !handedness) return;
 
-    const fist = isFist(marks, handedness);
+    const fist = isFist(marks);
     if (!fist) {
       setHitLanternId(null);
       return;
