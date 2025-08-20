@@ -23,7 +23,10 @@ const WatchPage = () => {
   return (
     <div className={styles.container}>
       {state === 'connected' ? (
-        <p className={styles.text}>연결 완료! 진동 신호를 기다립니다.</p>
+        <>
+          <p className={styles.text}>연결 완료</p>
+          <div className={styles.visualizerCircle} />
+        </>
       ) : (
         <p className={styles.text}>연결 중...</p>
       )}
