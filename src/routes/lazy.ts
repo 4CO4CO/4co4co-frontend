@@ -6,3 +6,4 @@ export const EntryPage = lazy(() => import('@/pages/entry/Entry'));
 export const LoadingPage = lazy(() => import('@/pages/loading/Loading'));
 export const LanternPage = lazy(() => import('@/pages/lantern/Lantern'));
 export const LanternDetailPage = lazy(() => import('@/pages/lanternDetail/LanternDetail'));
+export const WatchPage = lazy(() => import('@/pages/watch/Watch'));

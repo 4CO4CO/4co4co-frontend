@@ -1,15 +1,15 @@
 import chaehyun1 from './audios/chaehyun1.wav';
 import chaehyun2 from './audios/chaehyun2.wav';
 import chaehyun3 from './audios/chaehyun3.wav';
-import gabin1 from './audios/gabin1.wav';
-import gabin2 from './audios/gabin2.wav';
-import gabin3 from './audios/gabin3.wav';
 import jiye1 from './audios/jiye1.wav';
 import jiye2 from './audios/jiye2.wav';
 import jiye3 from './audios/jiye3.wav';
-import yuna1 from './audios/yuna1.wav';
-import yuna2 from './audios/yuna2.wav';
-import yuna3 from './audios/yuna3.wav';
+import kabeen1 from './audios/kabeen1.wav';
+import kabeen2 from './audios/kabeen2.wav';
+import kabeen3 from './audios/kabeen3.wav';
+import youna1 from './audios/youna1.wav';
+import youna2 from './audios/youna2.wav';
+import youna3 from './audios/youna3.wav';
 
 export interface lanternsType {
   lantern_id: string;
@@ -25,6 +25,8 @@ export interface lanternType {
   background_sounds: string[];
 }
 
+const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
+
 export const lanternsList: lanternsType[] = [
   { lantern_id: '김가빈-1435', owner_name: '김가빈', emotion: '', is_current_lantern: false },
   { lantern_id: '류지예-3292', owner_name: '류지예', emotion: '', is_current_lantern: false },
@@ -37,19 +39,19 @@ export const lanternsDetail: lanternType[] = [
     lantern_id: '김가빈-1435',
     owner_name: '김가빈',
     images: [
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/gabin1.HEIC.heic',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/gabin2.JPG.jpg',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/gabin3.heic',
+      `${S3_BASE_URL}/panorama/kabeen1.jpg`,
+      `${S3_BASE_URL}/panorama/kabeen2.jpg`,
+      `${S3_BASE_URL}/panorama/kabeen3.jpg`,
     ],
-    background_sounds: [gabin1, gabin2, gabin3],
+    background_sounds: [kabeen1, kabeen2, kabeen3],
   },
   {
     lantern_id: '류지예-3292',
     owner_name: '류지예',
     images: [
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/jiye1.jpeg',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/jiye2.jpg',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/jiye3.jpeg',
+      `${S3_BASE_URL}/panorama/jiye1.jpeg`,
+      `${S3_BASE_URL}/panorama/jiye2.jpeg`,
+      `${S3_BASE_URL}/panorama/jiye3.jpeg`,
     ],
     background_sounds: [jiye1, jiye2, jiye3],
   },
@@ -57,19 +59,19 @@ export const lanternsDetail: lanternType[] = [
     lantern_id: '박유나-4433',
     owner_name: '박유나',
     images: [
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/yuna1.png',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/yuna2.png',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/yuna3.png',
+      `${S3_BASE_URL}/panorama/youna1.png`,
+      `${S3_BASE_URL}/panorama/youna2.png`,
+      `${S3_BASE_URL}/panorama/youna3.png`,
     ],
-    background_sounds: [yuna1, yuna2, yuna3],
+    background_sounds: [youna1, youna2, youna3],
   },
   {
     lantern_id: '김채현-3897',
     owner_name: '김채현',
     images: [
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/chaehyun1.png',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/chaehyun2.png',
-      'https://4co4co-memory-assets.s3.ap-northeast-2.amazonaws.com/panorama/chaehyun3.png',
+      `${S3_BASE_URL}/panorama/chaehyun1.jpg`,
+      `${S3_BASE_URL}/panorama/chaehyun2.jpg`,
+      `${S3_BASE_URL}/panorama/chaehyun3.jpg`,
     ],
     background_sounds: [chaehyun3, chaehyun1, chaehyun2],
   },
