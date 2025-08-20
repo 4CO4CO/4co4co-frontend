@@ -86,3 +86,36 @@ export const centerToLeft = (container: HTMLDivElement, k: number) => {
   const imageWidth = container.clientWidth / 3;
   return (k - 1) * imageWidth - (container.clientWidth - imageWidth) / 2;
 };
+
+/* 햅틱 */
+// 주파수 bin을 계산
+export const hzToBin = (hz: number, sampleRate: number, fftSize: number) => {
+  const nyquist = sampleRate / 2;
+  const binCount = fftSize / 2;
+  const hzPerBin = nyquist / binCount;
+  return Math.max(0, Math.min(binCount - 1, Math.round(hz / hzPerBin)));
+};
+
+// 진동 패턴 매핑
+export type HapticPacket = { t: number; lvl: 0 | 1 | 2 | 3; hit: 0 | 1; dur?: number };
+
+export const levelFrom = (rms: number, bass: number, onset: boolean): 0 | 1 | 2 | 3 => {
+  const base = Math.max(rms, bass);
+  if (onset && base > 0.18) return 3;
+  if (base > 0.35) return 2;
+  if (base > 0.15) return 1;
+  return 0;
+};
+
+export const packetFrom = (ts: number, rms: number, bass: number, onset: boolean): HapticPacket => {
+  const lvl = levelFrom(rms, bass, onset);
+  const dur = lvl === 3 ? 70 : lvl === 2 ? 45 : lvl === 1 ? 22 : 0;
+  return { t: ts, lvl, hit: onset ? 1 : 0, dur };
+};
+
+export const PATTERNS: Record<0 | 1 | 2 | 3, number[]> = {
+  0: [],
+  1: [20],
+  2: [45, 30, 45],
+  3: [70, 30, 70, 30, 70],
+};

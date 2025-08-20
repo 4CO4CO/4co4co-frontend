@@ -18,7 +18,8 @@ export const useAudioPlayer = ({
   const audioContextRef = useRef<AudioContext | null>(null);
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
+  const analyserFeatRef = useRef<AnalyserNode | null>(null); // 분석용
+  const analyserVizRef = useRef<AnalyserNode | null>(null); // 시각화용
 
   // 타이머
   const fadeEndTimeoutRef = useRef<number | null>(null);
@@ -119,38 +120,50 @@ export const useAudioPlayer = ({
         cleanup();
       }
 
+      // 새 버퍼 로드
       const resp = await fetch(audioUrl);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
-
       const buf = await resp.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(buf);
 
+      // 그래프 준비
       const source = audioContext.createBufferSource();
       const gainNode = audioContext.createGain();
-      if (!analyserRef.current) {
-        analyserRef.current = audioContext.createAnalyser();
-        analyserRef.current.fftSize = 256;
+
+      // Analyser 한 번만 생성
+      if (!analyserFeatRef.current) {
+        const af = audioContext.createAnalyser();
+        af.fftSize = 512;
+        af.smoothingTimeConstant = 0.6;
+        analyserFeatRef.current = af;
+      }
+      if (!analyserVizRef.current) {
+        const av = audioContext.createAnalyser();
+        av.fftSize = 2048;
+        av.smoothingTimeConstant = 0.85;
+        analyserVizRef.current = av;
       }
 
+      // 연결
       source.buffer = audioBuffer;
       source.connect(gainNode);
-      gainNode.connect(analyserRef.current);
-      analyserRef.current.connect(audioContext.destination);
+      gainNode.connect(audioContext.destination); // 들리게
+      gainNode.connect(analyserFeatRef.current); // 분석용 탭
+      gainNode.connect(analyserVizRef.current); // 시각화용 탭
 
       currentSourceRef.current = source;
       gainNodeRef.current = gainNode;
 
-      // 이번 트랙 시작 시점의 "사용자 인터럽트"
+      // 이번 트랙 시작 시점의 사용자 인터럽트
       const interruptTickAtStart = userInterruptTickRef.current;
 
       source.onended = () => {
         setIsPlaying(false);
-        // "이번 트랙 시작 이후"에 인터럽트가 있었는지 여부만 확인
+        // 이번 트랙 시작 이후 인터럽트가 있었는지 여부만 확인
         const interruptedDuringThisTrack = userInterruptTickRef.current > interruptTickAtStart;
-
         cleanup();
-
         if (!interruptedDuringThisTrack) {
+          // 다음 트랙 자동 재생
           setTimeout(() => {
             playNext();
           }, 50);
@@ -223,12 +236,9 @@ export const useAudioPlayer = ({
   useEffect(() => {
     return () => {
       cleanup();
-      if (analyserRef.current) {
-        analyserRef.current.disconnect();
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
+      if (analyserFeatRef.current) analyserFeatRef.current.disconnect();
+      if (analyserVizRef.current) analyserVizRef.current.disconnect();
+      if (audioContextRef.current) audioContextRef.current.close();
     };
   }, []);
 
@@ -241,6 +251,7 @@ export const useAudioPlayer = ({
     prevNow,
     interruptAndSetIndex,
     totalTracks: audioUrls.length,
-    analyser: analyserRef.current,
+    analyserFeatures: analyserFeatRef.current,
+    analyserViz: analyserVizRef.current,
   };
 };

@@ -37,7 +37,7 @@ export const useAudioVisualizer = ({
   const buildLogBands = useCallback(() => {
     if (!analyser) return;
     const sampleRate = analyser.context.sampleRate;
-    const binHz = sampleRate / analyser.fftSize;
+    const binHz = sampleRate / 2 / analyser.frequencyBinCount;
     const bands: Array<{ start: number; end: number }> = [];
 
     for (let i = 0; i < BAR_COUNT; i++) {
@@ -166,7 +166,6 @@ export const useAudioVisualizer = ({
     buildLogBands();
 
     if (analyser) {
-      analyser.fftSize = 2048;
       analyser.smoothingTimeConstant = 0.85;
     }
   }, [analyser, initializeDataArray, buildLogBands]);
