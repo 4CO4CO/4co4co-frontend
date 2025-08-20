@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { RtcProvider } from '@/context/RtcProvider';
 import { useSubscribeStatus } from '@/queries/lantern/useSubscribeStatus';
 
 export const SSELayout = () => {
@@ -23,5 +24,9 @@ export const SSELayout = () => {
     }
   }, [isCompleted, navigate, entryCode]);
 
-  return <Outlet />;
+  return (
+    <RtcProvider roomId={currentLanternId} key={currentLanternId}>
+      <Outlet />
+    </RtcProvider>
+  );
 };

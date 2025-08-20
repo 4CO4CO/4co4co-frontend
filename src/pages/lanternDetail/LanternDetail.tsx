@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AudioVisualizer from './components/AudioVisualizer/AudioVisualizer';
 import { CloseButton } from './components/CloseButton/CloseButton';
+import { useAudioFeatures } from './hooks/useAudioFeature';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCarousel } from './hooks/useCarousel';
 import * as styles from './LanternDetail.css';
+import { packetFrom } from './utils';
 import { useCloseGesture } from '../../hooks/useCloseGesture';
 // import { useLanternDetail } from './hooks/useLanternDetail';
 import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
+import { useRtc } from '@/context/RtcProvider';
 import { useHandMark } from '@/hooks/useHandMark';
 import { useHandGestureScroll } from '@/hooks/useScrollGesture';
 import { useZoomGesture } from '@/hooks/useZoomGesture';
@@ -34,6 +37,16 @@ const LanternDetail = () => {
     isUserInteracted,
     startIndex: 1,
   });
+  // 분석용 Analyser로 특징 추출 (30Hz)
+  const { ready: rtcReady, send: rtcSend } = useRtc();
+  const feat = useAudioFeatures(audioPlayer.analyserFeatures, 30);
+  useEffect(() => {
+    if (!feat || !rtcReady) {
+      return;
+    }
+    const hapticPacket = packetFrom(feat.ts, feat.rms, feat.bass, feat.onset);
+    rtcSend(hapticPacket);
+  }, [feat, rtcReady, rtcSend]);
 
   // 캐러셀
   const { scrollContainerRef, carouselImages, moveCarousel, activeImageIndex } = useCarousel({

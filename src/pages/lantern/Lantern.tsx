@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import QRCode from 'react-qr-code';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
 import { generateNonOverlappingPositions, seededRandom } from './utils';
@@ -13,6 +14,7 @@ import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
 import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
+import { useRtc } from '@/context/RtcProvider';
 import { useLanternHit } from '@/hooks/useLanternHit';
 import { lanternsDetail, lanternsList } from '@/mocks';
 // import { useLanternList } from '@/queries/lantern/getLanternList';
@@ -69,9 +71,11 @@ const Lantern = () => {
   const navigate = useNavigate();
   const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { ready } = useRtc();
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -81,6 +85,7 @@ const Lantern = () => {
   }, [currentLanternId]);
 
   useEffect(() => {
+    setShowInfo(true);
     const updateCloseButtonRect = () => {
       if (closeButtonRef.current) {
         setCloseButtonRect(closeButtonRef.current.getBoundingClientRect());
@@ -196,6 +201,15 @@ const Lantern = () => {
         confirmText="전시 업로드 하러 가기"
         onConfirm={handleAlertConfirm}
       />
+      <Alert
+        isOpen={showInfo}
+        title="워치 연결 안내"
+        message={ready ? '워치와 연결되었습니다.' : 'QR 코드를 스캔하세요.'}
+        confirmText="닫기"
+        onConfirm={() => setShowInfo(false)}
+      >
+        <QRCode value={`${window.location.origin}/watch?currentLanternId=${currentLanternId}`} />
+      </Alert>
     </div>
   );
 };
