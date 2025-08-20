@@ -25,7 +25,7 @@ export const SSELayout = () => {
   }, [isCompleted, navigate, entryCode]);
 
   return (
-    <RtcProvider roomId={currentLanternId} key={currentLanternId}>
+    <RtcProvider roomId={entryCode ?? ''}>
       <Outlet />
     </RtcProvider>
   );
