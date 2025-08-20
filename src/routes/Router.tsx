@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainPage, LanternPage, UploadPage, EntryPage, LanternDetailPage, LoadingPage, WatchPage } from './lazy';
 import { SSELayout } from './SSELayout';
+import WatchMock from '@/pages/watch/WatchMock';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: '/watch',
     element: <WatchPage />,
+  },
+  {
+    path: '/watch/success',
+    element: <WatchMock />,
   },
   {
     element: <SSELayout />,
