@@ -21,7 +21,7 @@ export const useCloseGesture = (closeButtonRef: React.RefObject<HTMLButtonElemen
       hasNavigatedRef.current = true;
       navigate(-1);
     }
-  }, [marks, handedness, navigate, closeButtonRef]);
+  }, [marks, handCenter, handedness, navigate, closeButtonRef]);
 
   return { marks, handedness };
 };

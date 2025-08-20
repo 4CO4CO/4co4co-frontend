@@ -125,7 +125,12 @@ const LanternDetail = () => {
           </div>
 
           {handCenter && (
-            <img className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} src={hand} />
+            <img
+              className={styles.handPointer}
+              style={{ top: handCenter.y, left: handCenter.x }}
+              src={hand}
+              alt="손 포인터"
+            />
           )}
 
           {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}

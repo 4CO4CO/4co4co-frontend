@@ -16,6 +16,7 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [lastDirectionRef] = useState<{ dir: 1 | -1 | 0 }>({ dir: 0 });
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const cooldownTimerRef = useRef<number | null>(null);
 
   const L = realImages.length;
 
@@ -46,16 +47,25 @@ export const useCarousel = ({ audioPlayer, images: realImages }: UseCarouselProp
     if (skipCooldownRef.current) return;
 
     lastDirectionRef.dir = dir;
-
-    if (dir === 1) {
-      audioPlayer.nextNow();
-    } else {
-      audioPlayer.prevNow();
-    }
+    if (dir === 1) audioPlayer.nextNow();
+    else audioPlayer.prevNow();
 
     skipCooldownRef.current = true;
-    window.setTimeout(() => (skipCooldownRef.current = false), COOLDOWN_MS);
+    if (cooldownTimerRef.current) window.clearTimeout(cooldownTimerRef.current);
+    cooldownTimerRef.current = window.setTimeout(() => {
+      skipCooldownRef.current = false;
+      cooldownTimerRef.current = null;
+    }, COOLDOWN_MS);
   };
+
+  // 타이머 클린업
+  useEffect(() => {
+    return () => {
+      if (cooldownTimerRef.current) {
+        window.clearTimeout(cooldownTimerRef.current);
+      }
+    };
+  }, []);
 
   // 사용자 스크롤
   useEffect(() => {

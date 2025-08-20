@@ -118,7 +118,7 @@ export const useAudioVisualizer = ({
     ctx.globalAlpha = 1.0;
     ctx.drawImage(off, 0, 0);
     ctx.filter = 'blur(12px)';
-    ctx.globalAlpha = 0;
+    ctx.globalAlpha = 0.5;
     ctx.drawImage(off, 0, 0);
     ctx.filter = 'blur(12px)';
     ctx.globalAlpha = 1.0;
@@ -152,9 +152,10 @@ export const useAudioVisualizer = ({
     ctx.fillRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'source-over';
 
-    ctx.restore();
-
     if (isPlaying) {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
       animationRef.current = requestAnimationFrame(draw);
     }
   }, [analyser, isPlaying, extractFrequencyData, smoothBars, canvasContextRef, canvasDimensionsRef]);
