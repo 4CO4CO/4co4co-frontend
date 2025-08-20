@@ -139,7 +139,7 @@ const LanternDetail = () => {
             currentIndex={audioPlayer.currentIndex}
             totalTracks={audioPlayer.totalTracks}
             isPlaying={audioPlayer.isPlaying}
-            analyser={audioPlayer.analyser}
+            analyser={audioPlayer.analyserViz} // 시각화용 Analyser
           />
         </>
       )}
