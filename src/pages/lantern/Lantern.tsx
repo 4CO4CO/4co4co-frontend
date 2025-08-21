@@ -69,13 +69,17 @@ const Lantern = () => {
   // const { data } = useLanternList(currentLanternId);
   const data: LanternListResponse | undefined = queryClient.getQueryData(lanternKeys.list(currentLanternId ?? ''));
   const navigate = useNavigate();
-  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
+  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { qrUrl, state, reconnect } = useRtc();
+  const {
+    qrUrl,
+    state,
+    // reconnect
+  } = useRtc();
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -207,8 +211,8 @@ const Lantern = () => {
         message={state === 'connected' ? '워치와 연결되었습니다.' : 'QR 코드를 스캔하세요.'}
         confirmText="닫기"
         onConfirm={() => {
-          if (state === 'connected') setShowInfo(false);
-          else reconnect(); // 연결 재시도
+          setShowInfo(false);
+          // else reconnect(); // 연결 재시도
         }}
       >
         {qrUrl && <QRCode value={qrUrl} />}

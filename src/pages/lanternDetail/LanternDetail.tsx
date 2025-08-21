@@ -12,8 +12,8 @@ import { useCloseGesture } from '../../hooks/useCloseGesture';
 import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
-import { useRtc } from '@/context/RtcProvider';
 import { useHandMark } from '@/hooks/useHandMark';
+import { useRtcChannel } from '@/hooks/useRtcChannel';
 import { useHandGestureScroll } from '@/hooks/useScrollGesture';
 import { useZoomGesture } from '@/hooks/useZoomGesture';
 import { lanternType } from '@/mocks';
@@ -38,7 +38,7 @@ const LanternDetail = () => {
     startIndex: 1,
   });
   // 분석용 Analyser로 특징 추출 (30Hz)
-  const { ready: rtcReady, send: rtcSend } = useRtc();
+  const { ready: rtcReady, send: rtcSend } = useRtcChannel({ role: 'sender', roomId: lanternId ?? '' });
   const feat = useAudioFeatures(audioPlayer.analyserFeatures, 30);
   useEffect(() => {
     if (!feat || !rtcReady) {
