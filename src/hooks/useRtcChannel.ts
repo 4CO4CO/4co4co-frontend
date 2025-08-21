@@ -104,9 +104,9 @@ export function useRtcChannel(opts: Options) {
           offer,
         });
 
-        const url = `${window.location.origin}/watch?roomId=${encodeURIComponent(
-          roomId,
-        )}&sessionId=${encodeURIComponent(sessionId)}`;
+        const url = `http://172.20.20.66:5173/watch?roomId=${encodeURIComponent(roomId)}&sessionId=${encodeURIComponent(
+          sessionId,
+        )}`;
         setQrUrl(url);
 
         unsubsRef.current.push(
