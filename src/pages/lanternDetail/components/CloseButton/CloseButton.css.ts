@@ -7,11 +7,13 @@ export const closeButton = style([
   variantStyles.dangerous,
   {
     position: 'absolute',
-    top: '1.2rem',
-    left: '1.2rem',
+    top: '3rem',
+    right: '50%',
+    transform: 'translateX(50%)',
+    width: '50vw',
     zIndex: Z_INDEX.CLOSE_BUTTON,
-    padding: '1.7rem 2.6rem',
+    padding: '2rem 3.6rem',
     borderRadius: '1rem',
-    ...fonts.font.body_16_R,
+    ...fonts.font.title_18_B
   }
 ]);

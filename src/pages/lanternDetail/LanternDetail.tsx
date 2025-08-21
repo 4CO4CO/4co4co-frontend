@@ -12,7 +12,7 @@ import { useCloseGesture } from '../../hooks/useCloseGesture';
 import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
-import { useHandMark } from '@/hooks/useHandMark';
+import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext';
 import { useRtcChannel } from '@/hooks/useRtcChannel';
 import { useHandGestureScroll } from '@/hooks/useScrollGesture';
 import { useZoomGesture } from '@/hooks/useZoomGesture';
@@ -20,12 +20,14 @@ import { lanternType } from '@/mocks';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
 
-const LanternDetail = () => {
+const LanternDetailContent = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   // API 데이터 가져오기
   // const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
+  const { handCenter } = useHandMarkContext();
+
   const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
@@ -37,9 +39,11 @@ const LanternDetail = () => {
     isUserInteracted,
     startIndex: 1,
   });
+
   // 분석용 Analyser로 특징 추출 (30Hz)
   const { ready: rtcReady, send: rtcSend } = useRtcChannel({ role: 'sender', roomId: lanternId ?? '' });
   const feat = useAudioFeatures(audioPlayer.analyserFeatures, 30);
+
   useEffect(() => {
     if (!feat || !rtcReady) {
       return;
@@ -68,8 +72,8 @@ const LanternDetail = () => {
       cooldownMs: 800,
     },
   );
+
   useHandGestureScroll({ moveCarousel });
-  const { handCenter } = useHandMark();
   useCloseGesture(closeButtonRef);
 
   // 에러 처리 및 유효성 검사
@@ -128,9 +132,8 @@ const LanternDetail = () => {
                 <img
                   key={index}
                   src={image}
-                  className={`${styles.panoramaImage} ${
-                    audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
-                  }`}
+                  className={`${styles.panoramaImage} ${audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
+                    }`}
                   alt={`풍등 이미지 ${index + 1}`}
                 />
               ))}
@@ -152,13 +155,24 @@ const LanternDetail = () => {
             currentIndex={audioPlayer.currentIndex}
             totalTracks={audioPlayer.totalTracks}
             isPlaying={audioPlayer.isPlaying}
-            analyser={audioPlayer.analyserViz} // 시각화용 Analyser
+            analyser={audioPlayer.analyserViz}
           />
         </>
       )}
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
+  );
+};
+
+const LanternDetail = () => {
+  const { lanternId } = useParams();
+  const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
+
+  return (
+    <HandMarkProvider enabled={!!lanternData}>
+      <LanternDetailContent />
+    </HandMarkProvider>
   );
 };
 

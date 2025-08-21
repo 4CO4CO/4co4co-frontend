@@ -1,3 +1,4 @@
+// src/pages/lantern/Lantern.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -6,7 +7,6 @@ import { generateNonOverlappingPositions, seededRandom } from './utils';
 import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { useCloseGesture } from '../../hooks/useCloseGesture';
-import { useHandMark } from '../../hooks/useHandMark';
 import { LanternListResponse } from '@/apis/lantern';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
 import hand from '@/assets/hand.png';
@@ -14,10 +14,10 @@ import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
 import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
+import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext';
 import { useRtc } from '@/context/RtcProvider';
 import { useLanternHit } from '@/hooks/useLanternHit';
 import { lanternsDetail, lanternsList } from '@/mocks';
-// import { useLanternList } from '@/queries/lantern/getLanternList';
 import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
@@ -62,8 +62,8 @@ const LanternItem = ({
   );
 };
 
-const Lantern = () => {
-  const { handCenter } = useHandMark();
+const LanternContent = () => {
+  const { handCenter } = useHandMarkContext();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
   // const { data } = useLanternList(currentLanternId);
@@ -89,7 +89,19 @@ const Lantern = () => {
   }, [currentLanternId]);
 
   useEffect(() => {
-    setShowInfo(true);
+    const SEEN_KEY = 'lantern_show_info_seen';
+    try {
+      const seen = localStorage.getItem(SEEN_KEY);
+      if (!seen) {
+        setShowInfo(true);
+        localStorage.setItem(SEEN_KEY, '1');
+      }
+    } catch {
+      setShowInfo(true);
+    }
+  }, []);
+
+  useEffect(() => {
     const updateCloseButtonRect = () => {
       if (closeButtonRef.current) {
         setCloseButtonRect(closeButtonRef.current.getBoundingClientRect());
@@ -98,7 +110,6 @@ const Lantern = () => {
 
     // 컴포넌트 마운트 후 즉시 실행
     updateCloseButtonRect();
-
     window.addEventListener('resize', updateCloseButtonRect);
     return () => {
       window.removeEventListener('resize', updateCloseButtonRect);
@@ -114,7 +125,7 @@ const Lantern = () => {
     lanternsDetail.forEach((detail) => {
       queryClient.setQueryData(lanternKeys.detail(detail.lantern_id), detail);
     });
-  }, []);
+  }, [currentLanternId]);
 
   const handleAlertConfirm = () => {
     navigate('/upload');
@@ -166,7 +177,7 @@ const Lantern = () => {
     if (hitLanternId) {
       navigate(`/lanterns/${hitLanternId}?currentLanternId=${currentLanternId}`);
     }
-  }, [hitLanternId]);
+  }, [hitLanternId, navigate, currentLanternId]);
 
   const lanternsWithoutMine = lanterns.filter((l) => l.lantern_id !== currentLanternId);
   const myLantern = lanterns.find((l) => l.lantern_id === currentLanternId);
@@ -212,12 +223,22 @@ const Lantern = () => {
         confirmText="닫기"
         onConfirm={() => {
           setShowInfo(false);
-          // else reconnect(); // 연결 재시도
         }}
       >
         {qrUrl && <QRCode value={qrUrl} />}
       </Alert>
     </div>
+  );
+};
+
+const Lantern = () => {
+  const [searchParams] = useSearchParams();
+  const currentLanternId = searchParams.get('currentLanternId');
+
+  return (
+    <HandMarkProvider enabled={!!currentLanternId}>
+      <LanternContent />
+    </HandMarkProvider>
   );
 };
 
