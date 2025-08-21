@@ -67,7 +67,7 @@ const Upload = () => {
   };
 
   return (
-    <>
+    <div className={styles.mainContainer}>
       <div className={styles.container}>
         <section className={styles.header}>
           <div>
@@ -111,7 +111,7 @@ const Upload = () => {
         // disabled={isPending}
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </>
+    </div>
   );
 };
 

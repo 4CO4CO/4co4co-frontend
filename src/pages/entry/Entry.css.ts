@@ -33,8 +33,8 @@ export const container = style({
 
 export const contentWrapper = style({
   position: 'absolute',
-  top: '4rem',
-  left: '17rem',
+  top: '10rem',
+  left: '50rem',
   zIndex: 4,
   display: 'flex',
   flexDirection: 'column',
@@ -200,7 +200,7 @@ export const leftLantern1 = style([clearLanternCustom, {
 export const leftLantern2 = style([clearLanternCustom, {
   width: '4.8rem',
   height: '6.7rem',
-  top: '18.4rem',
+  top: '28.4rem',
   left: '6.3rem',
   vars: { '--base-rotation': '0deg' },
   transform: 'rotate(0deg)',
@@ -213,6 +213,60 @@ export const leftLantern2 = style([clearLanternCustom, {
     },
   },
 }]);
+
+export const leftLantern3 = style([clearLanternCustom, {
+  width: '8.8rem',
+  height: '9.7rem',
+  top: '18.4rem',
+  left: '16.3rem',
+  vars: { '--base-rotation': '-10deg' },
+  transform: 'rotate(deg)',
+  animationDelay: '1.5s',
+  zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '0rem',
+    },
+  },
+}]);
+
+
+export const leftLantern4 = style([clearLanternCustom, {
+  width: '4.8rem',
+  height: '6.7rem',
+  top: '8.4rem',
+  left: '36.3rem',
+  vars: { '--base-rotation': '0deg' },
+  transform: 'rotate(0deg)',
+  animationDelay: '1.5s',
+  zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '0rem',
+    },
+  },
+}]);
+
+
+export const leftLantern5 = style([clearLanternCustom, {
+  width: '4.8rem',
+  height: '6.7rem',
+  top: '21.4rem',
+  left: '32.3rem',
+  vars: { '--base-rotation': '7deg' },
+  transform: 'rotate(0deg)',
+  animationDelay: '1.5s',
+  zIndex: 3,
+
+  '@media': {
+    '(max-width: 798px)': {
+      width: '0rem',
+    },
+  },
+}]);
+
 
 // 오른쪽 섹션 (10개 - 9개)
 export const rightLantern1 = style([clearLanternCustom, {

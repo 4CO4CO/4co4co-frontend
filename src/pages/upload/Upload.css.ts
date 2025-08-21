@@ -3,10 +3,18 @@ import { colors } from './../../styles/color.css';
 import { fonts } from './../../styles/font.css';
 import { MOBILE_MEDIA_QUERY } from '@/styles/mediaQuery';
 
+export const mainContainer = style({
+  maxWidth: '1480px',
+  width: '100%',
+  margin: '0 auto',
+  alignItems: 'center',
+  padding: '9rem 0',
+});
+
 export const container = style({
   display: 'flex',
   flexDirection: 'column',
-  padding: '9rem 15.5rem',
+  // padding: '9rem 15.5rem',
 
   '@media': {
     [MOBILE_MEDIA_QUERY]: {
