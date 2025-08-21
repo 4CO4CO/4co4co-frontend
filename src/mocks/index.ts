@@ -73,6 +73,6 @@ export const lanternsDetail: lanternType[] = [
       `${S3_BASE_URL}/panorama/chaehyun2.jpg`,
       `${S3_BASE_URL}/panorama/chaehyun3.jpg`,
     ],
-    background_sounds: [chaehyun3, chaehyun1, chaehyun2],
+    background_sounds: [chaehyun1, chaehyun2, chaehyun3],
   },
 ];

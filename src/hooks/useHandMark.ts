@@ -64,11 +64,6 @@ export const useHandMark = () => {
       detectorManager.referenceCount += 1;
 
       try {
-        // 중복 초기화 방지
-        if (typeof window !== 'undefined') {
-          window.Module = undefined;
-        }
-
         await getOrCreateDetector(); // detector 준비
       } catch (error) {
         console.error('손 감지기 초기화 오류:', error);
