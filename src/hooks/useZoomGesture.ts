@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useHandMark } from '@/hooks/useHandMark';
+import { useHandMarkContext } from '@/context/HandMarkContext';
 import { isFist } from '@/utils';
 
 type Options = {
@@ -11,7 +11,7 @@ type Options = {
 };
 
 export const useZoomGesture = (onTrigger: () => void | boolean | Promise<void | boolean>, opts: Options = {}) => {
-  const { handCenter, marks } = useHandMark();
+  const { handCenter, marks } = useHandMarkContext();
   const { maxMovePx = 100, minHoldMs = 0, maxHoldMs = 1500, cooldownMs = 800, enabled = true } = opts;
 
   const fistRef = useRef(false);
