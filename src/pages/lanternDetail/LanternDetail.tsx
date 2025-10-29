@@ -21,6 +21,12 @@ const LanternDetailContent = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!lanternId) {
+      navigate('/');
+    }
+  }, [lanternId, navigate]);
   const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
   const { handCenter } = useHandMarkContext();
 

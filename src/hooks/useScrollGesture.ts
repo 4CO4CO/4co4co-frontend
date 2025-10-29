@@ -73,6 +73,7 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
         // 주먹을 쥐었을 때의 위치 저장
         lastHandPositionRef.current = { ...handCenter };
         isProcessingRef.current = false;
+        console.log('주먹쥐고~');
         return;
       }
 
@@ -81,6 +82,7 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
         setIsFistActive(false);
         lastHandPositionRef.current = null;
         isProcessingRef.current = false;
+        console.log('손을 펴서~');
         return;
       }
 
@@ -92,10 +94,11 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
 
       if (lastHandPositionRef.current) {
         const deltaX = handCenter.x - lastHandPositionRef.current.x;
-        const DELTA_TRIGGER = 200;
-
+        const DELTA_TRIGGER = 20;
+        console.log('deltaX', deltaX);
         // 오른쪽에서 왼쪽으로 이동 (다음 이미지)
         if (deltaX < -DELTA_TRIGGER) {
+          console.log('다음으로!');
           moveCarousel(1);
           // 다음 제스처를 위해 기준점 재설정
           lastHandPositionRef.current = { x: handCenter.x, y: handCenter.y };
@@ -103,6 +106,7 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
         }
         // 왼쪽에서 오른쪽으로 이동 (이전 이미지)
         else if (deltaX > DELTA_TRIGGER) {
+          console.log('이전으로!!');
           moveCarousel(-1);
           lastHandPositionRef.current = { x: handCenter.x, y: handCenter.y };
           setCooldown();
