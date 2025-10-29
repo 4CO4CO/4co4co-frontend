@@ -51,16 +51,6 @@ const Loading = () => {
     }
   }, [entryCode, navigate]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCompletionAlert(true);
-    }, 2000); // 2초 (2000ms)
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
-
   if (!entryCode) {
     return null;
   }

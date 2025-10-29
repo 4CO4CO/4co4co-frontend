@@ -5,10 +5,10 @@ import { CloseButton } from './components/CloseButton/CloseButton';
 import { useAudioFeatures } from './hooks/useAudioFeature';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useCarousel } from './hooks/useCarousel';
+import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
 import { packetFrom } from './utils';
 import { useCloseGesture } from '../../hooks/useCloseGesture';
-// import { useLanternDetail } from './hooks/useLanternDetail';
 import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
@@ -24,11 +24,9 @@ const LanternDetailContent = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  // API 데이터 가져오기
-  // const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
+  const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
   const { handCenter } = useHandMarkContext();
 
-  const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -77,16 +75,16 @@ const LanternDetailContent = () => {
   useCloseGesture(closeButtonRef);
 
   // 에러 처리 및 유효성 검사
-  // useEffect(() => {
-  //   if (!lanternId) {
-  //     navigate('/');
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!lanternId) {
+      navigate('/');
+      return;
+    }
 
-  //   if (error) {
-  //     setToast({ message: error, type: 'error' });
-  //   }
-  // }, [error, lanternId, navigate]);
+    if (error) {
+      setToast({ message: error, type: 'error' });
+    }
+  }, [error, lanternId, navigate]);
 
   // 사용자 상호작용 감지
   useEffect(() => {
@@ -102,18 +100,18 @@ const LanternDetailContent = () => {
   }, []);
 
   // 로딩 상태 Toast로 표시
-  // useEffect(() => {
-  //   if (isLoading) {
-  //     setToast({ message: '풍등을 불러오는 중입니다.', type: 'info' });
-  //   } else {
-  //     if (!error) {
-  //       setToast(null);
-  //       if (lanternData && !isUserInteracted) {
-  //         setShowInteractionMessage(true);
-  //       }
-  //     }
-  //   }
-  // }, [isLoading, error, lanternData, isUserInteracted]);
+  useEffect(() => {
+    if (isLoading) {
+      setToast({ message: '풍등을 불러오는 중입니다.', type: 'info' });
+    } else {
+      if (!error) {
+        setToast(null);
+        if (lanternData && !isUserInteracted) {
+          setShowInteractionMessage(true);
+        }
+      }
+    }
+  }, [isLoading, error, lanternData, isUserInteracted]);
 
   const handleCloseClick = () => {
     navigate(-1);
@@ -132,8 +130,9 @@ const LanternDetailContent = () => {
                 <img
                   key={index}
                   src={image}
-                  className={`${styles.panoramaImage} ${audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
-                    }`}
+                  className={`${styles.panoramaImage} ${
+                    audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
+                  }`}
                   alt={`풍등 이미지 ${index + 1}`}
                 />
               ))}

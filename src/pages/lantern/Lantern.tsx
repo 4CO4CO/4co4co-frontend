@@ -1,4 +1,3 @@
-// src/pages/lantern/Lantern.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -7,7 +6,6 @@ import { generateNonOverlappingPositions, seededRandom } from './utils';
 import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
 import { useCloseGesture } from '../../hooks/useCloseGesture';
-import { LanternListResponse } from '@/apis/lantern';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
 import hand from '@/assets/hand.png';
 import LanternImg1 from '@/assets/Lantern.svg?react';
@@ -18,6 +16,7 @@ import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext'
 import { useRtc } from '@/context/RtcProvider';
 import { useLanternHit } from '@/hooks/useLanternHit';
 import { lanternsDetail, lanternsList } from '@/mocks';
+import { useLanternList } from '@/queries/lantern/getLanternList';
 import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
 import { queryClient } from '@/queries/queryClient';
 import { lanternKeys } from '@/queries/queryKey';
@@ -66,10 +65,9 @@ const LanternContent = () => {
   const { handCenter } = useHandMarkContext();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
-  // const { data } = useLanternList(currentLanternId);
-  const data: LanternListResponse | undefined = queryClient.getQueryData(lanternKeys.list(currentLanternId ?? ''));
+  const { data } = useLanternList(currentLanternId);
   const navigate = useNavigate();
-  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(true);
+  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
