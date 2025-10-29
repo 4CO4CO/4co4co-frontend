@@ -15,11 +15,8 @@ import { LanternWithRect } from '@/components/common/lantern/constants';
 import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext';
 import { useRtc } from '@/context/RtcProvider';
 import { useLanternHit } from '@/hooks/useLanternHit';
-import { lanternsDetail, lanternsList } from '@/mocks';
 import { useLanternList } from '@/queries/lantern/getLanternList';
 import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
-import { queryClient } from '@/queries/queryClient';
-import { lanternKeys } from '@/queries/queryKey';
 import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
 const LanternItem = ({
@@ -113,17 +110,6 @@ const LanternContent = () => {
       window.removeEventListener('resize', updateCloseButtonRect);
     };
   }, []);
-
-  useEffect(() => {
-    queryClient.setQueryData(lanternKeys.list(currentLanternId ?? ''), {
-      status: 'success',
-      message: 'sucess',
-      data: lanternsList,
-    });
-    lanternsDetail.forEach((detail) => {
-      queryClient.setQueryData(lanternKeys.detail(detail.lantern_id), detail);
-    });
-  }, [currentLanternId]);
 
   const handleAlertConfirm = () => {
     navigate('/upload');

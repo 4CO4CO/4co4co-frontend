@@ -16,9 +16,6 @@ import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext'
 import { useRtcChannel } from '@/hooks/useRtcChannel';
 import { useHandGestureScroll } from '@/hooks/useScrollGesture';
 import { useZoomGesture } from '@/hooks/useZoomGesture';
-import { lanternType } from '@/mocks';
-import { queryClient } from '@/queries/queryClient';
-import { lanternKeys } from '@/queries/queryKey';
 
 const LanternDetailContent = () => {
   const { lanternId } = useParams();
@@ -166,7 +163,7 @@ const LanternDetailContent = () => {
 
 const LanternDetail = () => {
   const { lanternId } = useParams();
-  const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
+  const { data: lanternData } = useLanternDetail(lanternId);
 
   return (
     <HandMarkProvider enabled={!!lanternData}>

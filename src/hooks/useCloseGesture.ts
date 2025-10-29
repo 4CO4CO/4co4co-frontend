@@ -41,7 +41,7 @@ export const useCloseGesture = (closeButtonRef: React.RefObject<HTMLButtonElemen
     const now = Date.now();
 
     // 디버깅용 로그
-    console.info('손 상태:', { fist, handCenter, isInside: isInside(handCenter, rect) });
+    // console.info('손 상태:', { fist, handCenter, isInside: isInside(handCenter, rect) });
 
     if (fist && isInside(handCenter, rect)) {
       // 주먹을 처음 쥔 시점 기록
