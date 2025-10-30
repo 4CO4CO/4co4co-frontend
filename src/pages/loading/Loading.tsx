@@ -40,7 +40,8 @@ const Loading = () => {
   }, []);
 
   const location = useLocation();
-  const entryCode = (location.state as LocationState)?.lantern_id;
+  // const entryCode = (location.state as LocationState)?.lantern_id;
+  const entryCode = '방문자-5897'
   const hasRedirected = useRef(false);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const Loading = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowCompletionAlert(true);
-    }, 2000); // 2초 (2000ms)
+    }, 20000); // 2초 (2000ms)
 
     return () => {
       clearTimeout(timer);

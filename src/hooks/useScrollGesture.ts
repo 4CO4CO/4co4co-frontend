@@ -92,7 +92,7 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
 
       if (lastHandPositionRef.current) {
         const deltaX = handCenter.x - lastHandPositionRef.current.x;
-        const DELTA_TRIGGER = 200;
+        const DELTA_TRIGGER = 100;
 
         // 오른쪽에서 왼쪽으로 이동 (다음 이미지)
         if (deltaX < -DELTA_TRIGGER) {

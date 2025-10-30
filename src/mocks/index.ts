@@ -31,7 +31,7 @@ export const lanternsList: lanternsType[] = [
   { lantern_id: '김가빈-1435', owner_name: '김가빈', emotion: '', is_current_lantern: false },
   { lantern_id: '류지예-3292', owner_name: '류지예', emotion: '', is_current_lantern: false },
   { lantern_id: '박유나-4433', owner_name: '박유나', emotion: '', is_current_lantern: false },
-  { lantern_id: '김채현-3897', owner_name: '김채현', emotion: '', is_current_lantern: true },
+  { lantern_id: '방문자-5897', owner_name: '방문자', emotion: '', is_current_lantern: true },
 ];
 
 export const lanternsDetail: lanternType[] = [
@@ -39,9 +39,9 @@ export const lanternsDetail: lanternType[] = [
     lantern_id: '김가빈-1435',
     owner_name: '김가빈',
     images: [
-      `${S3_BASE_URL}/panorama/kabeen1.jpg`,
-      `${S3_BASE_URL}/panorama/kabeen2.jpg`,
-      `${S3_BASE_URL}/panorama/kabeen3.jpg`,
+      `${S3_BASE_URL}/mock/image/kabeen1.jpg`,
+      `${S3_BASE_URL}/mock/image/kabeen2.jpg`,
+      `${S3_BASE_URL}/mock/image/kabeen3.jpg`,
     ],
     background_sounds: [kabeen1, kabeen2, kabeen3],
   },
@@ -49,9 +49,9 @@ export const lanternsDetail: lanternType[] = [
     lantern_id: '류지예-3292',
     owner_name: '류지예',
     images: [
-      `${S3_BASE_URL}/panorama/jiye1.jpeg`,
-      `${S3_BASE_URL}/panorama/jiye2.jpeg`,
-      `${S3_BASE_URL}/panorama/jiye3.jpeg`,
+      `${S3_BASE_URL}/mock/image/jiye1.jpg`,
+      `${S3_BASE_URL}/mock/image/jiye2.jpg`,
+      `${S3_BASE_URL}/mock/image/jiye3.jpg`,
     ],
     background_sounds: [jiye1, jiye2, jiye3],
   },
@@ -59,19 +59,19 @@ export const lanternsDetail: lanternType[] = [
     lantern_id: '박유나-4433',
     owner_name: '박유나',
     images: [
-      `${S3_BASE_URL}/panorama/youna1.png`,
-      `${S3_BASE_URL}/panorama/youna2.png`,
-      `${S3_BASE_URL}/panorama/youna3.png`,
+      `${S3_BASE_URL}/mock/image/youna1.jpg`,
+      `${S3_BASE_URL}/mock/image/youna2.jpg`,
+      `${S3_BASE_URL}/mock/image/youna3.jpg`,
     ],
     background_sounds: [youna1, youna2, youna3],
   },
   {
-    lantern_id: '김채현-3897',
-    owner_name: '김채현',
+    lantern_id: '방문자-5897',
+    owner_name: '방문자',
     images: [
-      `${S3_BASE_URL}/panorama/chaehyun1.jpg`,
-      `${S3_BASE_URL}/panorama/chaehyun2.jpg`,
-      `${S3_BASE_URL}/panorama/chaehyun3.jpg`,
+      `${S3_BASE_URL}/mock/image/visit1.jpg`,
+      `${S3_BASE_URL}/mock/image/visit2.jpg`,
+      `${S3_BASE_URL}/mock/image/visit3.jpg`,
     ],
     background_sounds: [chaehyun1, chaehyun2, chaehyun3],
   },

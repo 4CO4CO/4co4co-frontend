@@ -55,15 +55,15 @@ export const cube = style({
   position: 'absolute',
   top: '48vh',
   left: '50%',
-  width: '20vw',
+  width: '15vw',
   minWidth: '350px',
   height: 'auto',
   zIndex: 3,
 
   '@media': {
     '(min-width: 3800px)': {
-      top: '47vh',
-      left: '50%',
+      top: '40vh',
+      left: '49%',
     },
     '(max-width: 798px)': {
       transform: 'translateX(-10%) translateY(-2vh)',
