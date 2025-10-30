@@ -42,6 +42,10 @@ export const contentWrapper = style({
   textAlign: 'left',
 
   '@media': {
+    '(min-width: 3800px)': {
+      top: '10rem',
+      left: '50rem',
+    },
     '(max-width: 798px)': {
       top: '4rem',
       left: '50%',
@@ -208,8 +212,67 @@ export const leftLantern2 = style([clearLanternCustom, {
   zIndex: 3,
 
   '@media': {
+    '(min-width: 3800px)': {
+      top: '28.4rem',
+    },
     '(max-width: 798px)': {
       width: '0rem',
+    },
+  },
+}]);
+
+export const leftLantern3 = style([clearLanternCustom, {
+  display: 'none',
+
+  '@media': {
+    '(min-width: 3800px)': {
+      display: 'block',
+      width: '8.8rem',
+      height: '9.7rem',
+      top: '18.4rem',
+      left: '16.3rem',
+      vars: { '--base-rotation': '-10deg' },
+      transform: 'rotate(-10deg)',
+      animationDelay: '1.0s',
+      zIndex: 3,
+    },
+  },
+}]);
+
+
+export const leftLantern4 = style([clearLanternCustom, {
+  display: 'none',
+
+  '@media': {
+    '(min-width: 3800px)': {
+      display: 'block',
+      width: '4.8rem',
+      height: '6.7rem',
+      top: '8.4rem',
+      left: '36.3rem',
+      vars: { '--base-rotation': '0deg' },
+      transform: 'rotate(0deg)',
+      animationDelay: '0.5s',
+      zIndex: 3,
+    }
+  },
+}]);
+
+
+export const leftLantern5 = style([clearLanternCustom, {
+  display: 'none',
+
+  '@media': {
+    '(min-width: 3800px)': {
+      display: 'block',
+      width: '4.8rem',
+      height: '6.7rem',
+      top: '21.4rem',
+      left: '32.3rem',
+      vars: { '--base-rotation': '7deg' },
+      transform: 'rotate(7deg)',
+      animationDelay: '1.5s',
+      zIndex: 3,
     },
   },
 }]);

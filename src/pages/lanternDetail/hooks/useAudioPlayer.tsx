@@ -13,201 +13,232 @@ export const useAudioPlayer = ({
   isUserInteracted,
   startIndex = 0,
   fadeInDuration = 2,
-  fadeOutDuration = 2
+  fadeOutDuration = 2,
 }: UseAudioPlayerProps) => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const fadeTimeoutRef = useRef<number | null>(null);
+  const analyserFeatRef = useRef<AnalyserNode | null>(null); // 분석용
+  const analyserVizRef = useRef<AnalyserNode | null>(null); // 시각화용
+
+  // 타이머
+  const fadeEndTimeoutRef = useRef<number | null>(null);
+  const fadeOutStartTimeoutRef = useRef<number | null>(null);
+
   const isCleaningUpRef = useRef<boolean>(false);
 
   const [currentIndex, setCurrentIndex] = useState(startIndex);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // 사용자 인터럽트 플래그
+  const userInterruptTickRef = useRef<number>(-1);
+
+  // 중복 방지
+  const globalTickRef = useRef<number>(0);
+  const nextTick = () => ++globalTickRef.current;
+
   // AudioContext 초기화
   const getAudioContext = () => {
     if (!audioContextRef.current) {
-      const AudioContextClass = window.AudioContext ||
-        (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-
-      if (!AudioContextClass) {
-        const errorMsg = '이 브라우저는 AudioContext를 지원하지 않습니다';
-        console.error(errorMsg);
-        throw new Error(errorMsg);
-      }
-
-      audioContextRef.current = new AudioContextClass();
+      const AC =
+        window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AC) throw new Error('이 브라우저는 AudioContext를 지원하지 않습니다');
+      audioContextRef.current = new AC();
     }
     return audioContextRef.current;
   };
 
-  // 오디오 리소스 정리 (메모리 누수 방지)
-  const cleanup = () => {
-    if (isCleaningUpRef.current) {
-      return;
+  const clearAllTimers = () => {
+    if (fadeEndTimeoutRef.current) {
+      clearTimeout(fadeEndTimeoutRef.current);
+      fadeEndTimeoutRef.current = null;
     }
+    if (fadeOutStartTimeoutRef.current) {
+      clearTimeout(fadeOutStartTimeoutRef.current);
+      fadeOutStartTimeoutRef.current = null;
+    }
+  };
 
+  const cleanup = () => {
+    if (isCleaningUpRef.current) return;
     isCleaningUpRef.current = true;
 
-    // 페이드 타이머 정리
-    if (fadeTimeoutRef.current) {
-      clearTimeout(fadeTimeoutRef.current);
-      fadeTimeoutRef.current = null;
-    }
+    clearAllTimers();
 
-    // 현재 재생 중인 소스가 있다면 정지 및 해제
     if (currentSourceRef.current) {
-      try {
-        currentSourceRef.current.stop();
-        currentSourceRef.current.disconnect();
-      } catch (error) {
-        console.warn('오디오 소스 정지 실패:', error instanceof Error ? error.message : String(error));
-      }
+      currentSourceRef.current.onended = null;
+      currentSourceRef.current.stop(0);
+      currentSourceRef.current.disconnect();
       currentSourceRef.current = null;
     }
-
     if (gainNodeRef.current) {
       gainNodeRef.current.disconnect();
       gainNodeRef.current = null;
     }
 
-    // 정리 완료 후 플래그 리셋
     setTimeout(() => {
       isCleaningUpRef.current = false;
-    }, 100);
+    }, 50);
   };
 
-  // 페이드인 효과 (0에서 1까지 부드럽게)
+  // 페이드
   const fadeIn = (gainNode: GainNode, duration: number) => {
-    const currentTime = gainNode.context.currentTime;
-    gainNode.gain.cancelScheduledValues(currentTime);
-    gainNode.gain.setValueAtTime(0, currentTime);
-    gainNode.gain.linearRampToValueAtTime(1, currentTime + duration);
+    const t = gainNode.context.currentTime;
+    gainNode.gain.cancelScheduledValues(t);
+    gainNode.gain.setValueAtTime(0, t);
+    gainNode.gain.linearRampToValueAtTime(1, t + duration);
   };
 
-  // 페이드아웃 효과 (1에서 0까지 부드럽게)
   const fadeOut = (gainNode: GainNode, duration: number): Promise<void> => {
     return new Promise((resolve) => {
-      const currentTime = gainNode.context.currentTime;
-      const currentVolume = gainNode.gain.value;
-
-      gainNode.gain.cancelScheduledValues(currentTime);
-      gainNode.gain.setValueAtTime(currentVolume, currentTime);
-      gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
-
-      fadeTimeoutRef.current = window.setTimeout(() => {
-        resolve();
-      }, duration * 1000);
+      const t = gainNode.context.currentTime;
+      const v = gainNode.gain.value;
+      gainNode.gain.cancelScheduledValues(t);
+      gainNode.gain.setValueAtTime(v, t);
+      gainNode.gain.linearRampToValueAtTime(0, t + duration);
+      fadeEndTimeoutRef.current = window.setTimeout(resolve, duration * 1000);
     });
   };
 
-  // 다음 곡으로 넘어가기
+  // 다음 오디오 재생
   const playNext = () => {
-    const nextIndex = (currentIndex + 1) % audioUrls.length;
-    setCurrentIndex(nextIndex);
+    if (!audioUrls.length) return;
+    setCurrentIndex((i) => (i + 1) % audioUrls.length);
   };
 
-  // 메인 오디오 재생 함수
+  // 오디오 재생
   const playAudio = async (audioUrl: string) => {
     try {
       const audioContext = getAudioContext();
+      if (audioContext.state === 'suspended') await audioContext.resume();
 
-      // 브라우저 정책으로 인한 일시정지 상태 해제
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
-
-      // 이전 곡이 재생 중이면 페이드아웃 후 정리
+      // 이전 곡 정리
       if (currentSourceRef.current && gainNodeRef.current && !isCleaningUpRef.current) {
         await fadeOut(gainNodeRef.current, fadeOutDuration);
         cleanup();
-      } else {
-        // 정리 중이 아닐 때만 cleanup 호출
-        if (!isCleaningUpRef.current) {
-          cleanup();
-        }
+      } else if (!isCleaningUpRef.current) {
+        cleanup();
       }
 
-      // 새로운 오디오 파일 로드 및 디코딩
-      const response = await fetch(audioUrl);
+      // 새 버퍼 로드
+      const resp = await fetch(audioUrl);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      const buf = await resp.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(buf);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      // 오디오 그래프 생성: Source → GainNode → AnalyserNode → Destination
+      // 그래프 준비
       const source = audioContext.createBufferSource();
       const gainNode = audioContext.createGain();
 
-      if (!analyserRef.current) {
-        analyserRef.current = audioContext.createAnalyser();
-        analyserRef.current.fftSize = 256;
+      // Analyser 한 번만 생성
+      if (!analyserFeatRef.current) {
+        const af = audioContext.createAnalyser();
+        af.fftSize = 512;
+        af.smoothingTimeConstant = 0.6;
+        analyserFeatRef.current = af;
+      }
+      if (!analyserVizRef.current) {
+        const av = audioContext.createAnalyser();
+        av.fftSize = 2048;
+        av.smoothingTimeConstant = 0.85;
+        analyserVizRef.current = av;
       }
 
+      // 연결
       source.buffer = audioBuffer;
       source.connect(gainNode);
-      gainNode.connect(analyserRef.current);
-      analyserRef.current.connect(audioContext.destination);
+      gainNode.connect(audioContext.destination); // 들리게
+      gainNode.connect(analyserFeatRef.current); // 분석용 탭
+      gainNode.connect(analyserVizRef.current); // 시각화용 탭
 
       currentSourceRef.current = source;
       gainNodeRef.current = gainNode;
 
-      // 곡이 자연스럽게 끝나면 다음 곡으로
+      // 이번 트랙 시작 시점의 사용자 인터럽트
+      const interruptTickAtStart = userInterruptTickRef.current;
+
       source.onended = () => {
         setIsPlaying(false);
+        // 이번 트랙 시작 이후 인터럽트가 있었는지 여부만 확인
+        const interruptedDuringThisTrack = userInterruptTickRef.current > interruptTickAtStart;
         cleanup();
-        // race condition 방지용 지연
-        setTimeout(() => {
-          playNext();
-        }, 50);
+        if (!interruptedDuringThisTrack) {
+          // 다음 트랙 자동 재생
+          setTimeout(() => {
+            playNext();
+          }, 50);
+        }
       };
 
-      // 재생 시작과 동시에 페이드인 효과 적용
       setIsPlaying(true);
       source.start(0);
       fadeIn(gainNode, fadeInDuration);
 
-      // 곡이 끝나기 전에 미리 페이드아웃 시작
+      // 페이드 아웃
       const fadeOutStartTime = Math.max(0, audioBuffer.duration - fadeOutDuration - 0.5);
-
-      setTimeout(() => {
+      fadeOutStartTimeoutRef.current = window.setTimeout(() => {
         if (gainNodeRef.current && currentSourceRef.current) {
-          fadeOut(gainNodeRef.current, fadeOutDuration).catch(() => {
-            console.error('페이드아웃 중 오류 발생');
-          });
+          fadeOut(gainNodeRef.current, fadeOutDuration).catch(() => {});
         }
       }, fadeOutStartTime * 1000);
-
-    } catch (error) {
-      console.error('오디오 재생 실패:', error instanceof Error ? error.message : String(error));
+    } catch (e) {
+      console.error('오디오 재생 실패:', e);
       setIsPlaying(false);
-      playNext(); // 실패하면 다음 곡 시도
+      playNext(); // 실패 시엔 자동으로 다음 시도
     }
   };
 
-  // 사용자가 상호작용하면 음악 재생 시작
-  useEffect(() => {
-    if (!audioUrls.length || !isUserInteracted) {
-      return;
+  // 사용자 스크롤 인터럽트 발생시 즉시 오디오 정리
+  const stopImmediately = () => {
+    clearAllTimers();
+    if (currentSourceRef.current) {
+      currentSourceRef.current.onended = null;
+      currentSourceRef.current.stop(0);
+      currentSourceRef.current.disconnect();
+      currentSourceRef.current = null;
     }
+    if (gainNodeRef.current) {
+      gainNodeRef.current.disconnect();
+      gainNodeRef.current = null;
+    }
+    setIsPlaying(false);
+  };
 
-    const audioUrl = audioUrls[currentIndex];
-    playAudio(audioUrl);
+  // 외부 호출
+  // 사용자 스크롤 우선 전환 (next/prev)
+  const interruptAndSetIndex = (idx: number) => {
+    userInterruptTickRef.current = nextTick();
+    stopImmediately();
+    if (audioUrls.length) {
+      const L = audioUrls.length;
+      const safe = ((idx % L) + L) % L;
+      setCurrentIndex(safe);
+    }
+  };
+
+  const nextNow = () => {
+    if (!audioUrls.length) return;
+    interruptAndSetIndex(currentIndex + 1);
+  };
+  const prevNow = () => {
+    if (!audioUrls.length) return;
+    interruptAndSetIndex(currentIndex - 1);
+  };
+
+  useEffect(() => {
+    if (!audioUrls.length || !isUserInteracted) return;
+    if (isUserInteracted) {
+      playAudio(audioUrls[currentIndex]);
+    }
   }, [currentIndex, audioUrls, isUserInteracted]);
 
+  // 언마운트
   useEffect(() => {
     return () => {
       cleanup();
-      if (analyserRef.current) {
-        analyserRef.current.disconnect();
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
+      if (analyserFeatRef.current) analyserFeatRef.current.disconnect();
+      if (analyserVizRef.current) analyserVizRef.current.disconnect();
+      if (audioContextRef.current) audioContextRef.current.close();
     };
   }, []);
 
@@ -216,7 +247,11 @@ export const useAudioPlayer = ({
     isPlaying,
     currentTrack: audioUrls[currentIndex] || null,
     playNext,
+    nextNow,
+    prevNow,
+    interruptAndSetIndex,
     totalTracks: audioUrls.length,
-    analyser: analyserRef.current
+    analyserFeatures: analyserFeatRef.current,
+    analyserViz: analyserVizRef.current,
   };
 };

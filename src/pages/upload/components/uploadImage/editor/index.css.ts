@@ -20,7 +20,7 @@ globalStyle(`${modalContainer} button`, {
 
 export const customReactCropVariants = styleVariants({
   landscape: {
-    width: '70vw',
+    width: '40vw',
     height: 'auto',
     maxWidth: '70vw',
     maxHeight: '70vh',

@@ -49,12 +49,11 @@ const Upload = () => {
       images: images,
       is_public: isOn,
     };
-
     mutate(requestBody);
   };
 
   return (
-    <>
+    <div className={styles.mainContainer}>
       <div className={styles.container}>
         <section className={styles.header}>
           <div>
@@ -98,7 +97,7 @@ const Upload = () => {
         disabled={isPending}
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </>
+    </div>
   );
 };
 

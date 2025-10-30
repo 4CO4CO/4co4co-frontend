@@ -13,7 +13,7 @@ const Main = () => {
       if (containerRef.current) {
         containerRef.current.scrollTo({
           top: window.innerHeight,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     }, 5000);

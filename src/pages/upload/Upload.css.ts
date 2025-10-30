@@ -3,12 +3,27 @@ import { colors } from './../../styles/color.css';
 import { fonts } from './../../styles/font.css';
 import { MOBILE_MEDIA_QUERY } from '@/styles/mediaQuery';
 
+export const mainContainer = style({
+  '@media': {
+    '(min-width: 3800px)': {
+      maxWidth: '1480px',
+      width: '100%',
+      margin: '0 auto',
+      alignItems: 'center',
+      padding: '9rem 0',
+    }
+  }
+});
+
 export const container = style({
   display: 'flex',
   flexDirection: 'column',
   padding: '9rem 15.5rem',
 
   '@media': {
+    '(min-width: 3800px)': {
+      padding: 0
+    },
     [MOBILE_MEDIA_QUERY]: {
       padding: '6rem 3.2rem',
     },

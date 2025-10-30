@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { get, ApiError } from '@/apis';
 import { LanternData } from '@/components/common/lantern/constants';
+import { lanternKeys } from '@/queries/queryKey';
 
 interface LanternDetailApiResponse {
   status: 'success';
@@ -13,15 +14,7 @@ interface LanternDetailApiResponse {
   };
 }
 
-// 이미지 URL 변환
-const getFullImageUrl = (imagePath: string): string => {
-  const s3BaseUrl = import.meta.env.VITE_S3_BASE_URL;
-  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-
-  return `${s3BaseUrl}${normalizedPath}`;
-};
-
-// 오디오 URL 변환 (새로 추가)
+// 오디오 URL 변환
 const getFullAudioUrl = (audioPath: string): string => {
   if (audioPath.startsWith('http://') || audioPath.startsWith('https://')) {
     return audioPath;
@@ -40,7 +33,7 @@ const fetchLanternDetail = async (lanternId: string, currentLanternId?: string):
   return {
     lantern_id: response.data.lantern_id,
     owner_name: response.data.owner_name,
-    images: response.data.images.map(getFullImageUrl),
+    images: response.data.images,
     background_sounds: response.data.background_sounds.map(getFullAudioUrl),
   };
 };
@@ -60,43 +53,34 @@ const getErrorMessage = (error: ApiError): string => {
   }
 };
 
-export const useLanternDetail = (lanternId: string | undefined) => {
-  const [data, setData] = useState<LanternData>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const useLanternDetail = (lanternId?: string, currentLanternId?: string) => {
+  const query = useQuery({
+    queryKey: lanternKeys.detail(lanternId ?? '__nil__'),
+    queryFn: () => fetchLanternDetail(lanternId as string, currentLanternId),
+    enabled: !!lanternId,
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    retry: (failureCount, error) => {
+      if (error instanceof ApiError) {
+        if ([400, 403, 404].includes(error.status)) return false;
+      }
+      return failureCount < 2;
+    },
+  });
 
-  const fetchData = async () => {
-    if (!lanternId) return;
+  const isLoading = query.isPending;
 
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await fetchLanternDetail(lanternId);
-      setData(result);
-    } catch (err) {
-      console.error('풍등 데이터 조회 실패:', err);
-
-      const errorMessage = err instanceof ApiError ? getErrorMessage(err) : '풍등 데이터를 불러오는데 실패했습니다.';
-
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [lanternId]);
-
-  const retry = () => {
-    fetchData();
-  };
+  const errorMessage =
+    query.error instanceof ApiError
+      ? getErrorMessage(query.error)
+      : query.error
+      ? '풍등 데이터를 불러오는데 실패했습니다.'
+      : null;
 
   return {
-    data,
+    data: query.data,
     isLoading,
-    error,
-    retry,
+    error: errorMessage,
+    refetch: query.refetch,
   };
 };

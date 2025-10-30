@@ -1,38 +1,80 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AudioVisualizer } from './components/AudioVisualizer/AudioVisualizer';
+import AudioVisualizer from './components/AudioVisualizer/AudioVisualizer';
 import { CloseButton } from './components/CloseButton/CloseButton';
+import { useAudioFeatures } from './hooks/useAudioFeature';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
-import { useCloseGesture } from './hooks/useCloseGesture';
+import { useCarousel } from './hooks/useCarousel';
 import { useLanternDetail } from './hooks/useLanternDetail';
 import * as styles from './LanternDetail.css';
-import { useHandMark } from '@/components/common/lantern/hooks/useHandMark';
+import { packetFrom } from './utils';
+import { useCloseGesture } from '../../hooks/useCloseGesture';
+import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
+import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext';
+import { useRtcChannel } from '@/hooks/useRtcChannel';
+import { useHandGestureScroll } from '@/hooks/useScrollGesture';
+import { useZoomGesture } from '@/hooks/useZoomGesture';
 
-const LanternDetail = () => {
+const LanternDetailContent = () => {
   const { lanternId } = useParams();
   const navigate = useNavigate();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // API 데이터 가져오기
+  useEffect(() => {
+    if (!lanternId) {
+      navigate('/');
+    }
+  }, [lanternId, navigate]);
   const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
+  const { handCenter } = useHandMarkContext();
 
-  // 상태 관리
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  // 오디오 플레이어 (analyser 추가된 버전)
+  // 오디오
   const audioPlayer = useAudioPlayer({
     audioUrls: lanternData?.background_sounds || [],
     isUserInteracted,
     startIndex: 1,
   });
 
+  // 분석용 Analyser로 특징 추출 (30Hz)
+  const { ready: rtcReady, send: rtcSend } = useRtcChannel({ role: 'sender', roomId: lanternId ?? '' });
+  const feat = useAudioFeatures(audioPlayer.analyserFeatures, 30);
+
+  useEffect(() => {
+    if (!feat || !rtcReady) {
+      return;
+    }
+    const hapticPacket = packetFrom(feat.ts, feat.rms, feat.bass, feat.onset);
+    rtcSend(hapticPacket);
+  }, [feat, rtcReady, rtcSend]);
+
+  // 캐러셀
+  const { scrollContainerRef, carouselImages, moveCarousel, activeImageIndex } = useCarousel({
+    audioPlayer,
+    images: lanternData?.images ?? [],
+  });
+
   // 손동작 인식
-  const { handCenter } = useHandMark();
+  useZoomGesture(
+    async () => {
+      setIsUserInteracted(true);
+      setShowInteractionMessage(false);
+    },
+    {
+      enabled: !isUserInteracted,
+      maxMovePx: 100,
+      minHoldMs: 0,
+      maxHoldMs: 1500,
+      cooldownMs: 800,
+    },
+  );
+
+  useHandGestureScroll({ moveCarousel });
   useCloseGesture(closeButtonRef);
 
   // 에러 처리 및 유효성 검사
@@ -47,48 +89,17 @@ const LanternDetail = () => {
     }
   }, [error, lanternId, navigate]);
 
-  // 가운데 이미지(2번째 이미지)가 화면 중앙에 오도록 스크롤 위치 설정
-  useEffect(() => {
-    if (lanternData && scrollContainerRef.current) {
-      const adjustScrollPosition = () => {
-        if (scrollContainerRef.current) {
-          const scrollWidth = scrollContainerRef.current.scrollWidth;
-          const containerWidth = scrollContainerRef.current.clientWidth;
-
-          // 가운데 이미지로 스크롤 위치 조정
-          const centerPosition = (scrollWidth - containerWidth) / 2;
-          scrollContainerRef.current.scrollLeft = centerPosition;
-        }
-      };
-
-      // 첫 번째 이미지의 로드를 기준으로 스크롤 조정
-      const firstImage = scrollContainerRef.current.querySelector('img');
-      if (firstImage) {
-        if (firstImage.complete) {
-          adjustScrollPosition();
-        } else {
-          firstImage.addEventListener('load', adjustScrollPosition, { once: true });
-        }
-      }
-    }
-  }, [lanternData]);
-
   // 사용자 상호작용 감지
   useEffect(() => {
     const handleUserInteraction = () => {
       setIsUserInteracted(true);
       setShowInteractionMessage(false);
       document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('scroll', handleUserInteraction);
     };
 
     document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('scroll', handleUserInteraction);
 
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('scroll', handleUserInteraction);
-    };
+    return () => document.removeEventListener('click', handleUserInteraction);
   }, []);
 
   // 로딩 상태 Toast로 표시
@@ -114,32 +125,56 @@ const LanternDetail = () => {
       <VideoFeed />
       <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
 
-      {!isLoading && lanternData && (
+      {lanternData && (
         <>
           <div ref={scrollContainerRef} className={styles.scrollContainer}>
             <div className={styles.panoramaWrapper}>
-              {lanternData.images.map((image, index) => (
-                <img key={index} src={image} className={styles.panoramaImage} alt={`풍등 이미지 ${index + 1}`} />
+              {carouselImages.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  className={`${styles.panoramaImage} ${
+                    audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
+                  }`}
+                  alt={`풍등 이미지 ${index + 1}`}
+                />
               ))}
             </div>
           </div>
 
-          {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
+          {handCenter && (
+            <img
+              className={styles.handPointer}
+              style={{ top: handCenter.y, left: handCenter.x }}
+              src={hand}
+              alt="손 포인터"
+            />
+          )}
 
           {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}
 
-          {/* 간단한 오디오 시각화 추가 */}
           <AudioVisualizer
             currentIndex={audioPlayer.currentIndex}
             totalTracks={audioPlayer.totalTracks}
             isPlaying={audioPlayer.isPlaying}
-            analyser={audioPlayer.analyser}
+            analyser={audioPlayer.analyserViz}
           />
         </>
       )}
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
+  );
+};
+
+const LanternDetail = () => {
+  const { lanternId } = useParams();
+  const { data: lanternData } = useLanternDetail(lanternId);
+
+  return (
+    <HandMarkProvider enabled={!!lanternData}>
+      <LanternDetailContent />
+    </HandMarkProvider>
   );
 };
 
