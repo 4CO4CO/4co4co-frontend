@@ -32,7 +32,7 @@ const Entry = () => {
     }
 
     setErrorMessage('');
-    navigate(`/lanterns?currentLanternId=${entryCode}`);
+    navigate('/loading', { state: { lantern_id: entryCode } });
   };
 
   const handleCancel = () => {
