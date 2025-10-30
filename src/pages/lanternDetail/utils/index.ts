@@ -97,11 +97,10 @@ export const hzToBin = (hz: number, sampleRate: number, fftSize: number) => {
 };
 
 // 진동 패턴 매핑
-export type HapticPacket = { t: number; lvl: 0 | 1 | 2 | 3; hit: 0 | 1; dur?: number };
-
+export type HapticPacket = { t: number; lvl: 0 | 1 | 2 | 3; hit: 0 | 1; pattern: number[] };
 export const levelFrom = (rms: number, bass: number, onset: boolean): 0 | 1 | 2 | 3 => {
   const base = Math.max(rms, bass);
-  if (onset && base > 0.18) return 3;
+  if (onset && base > 0.25) return 3;
   if (base > 0.35) return 2;
   if (base > 0.15) return 1;
   return 0;
@@ -109,13 +108,13 @@ export const levelFrom = (rms: number, bass: number, onset: boolean): 0 | 1 | 2 
 
 export const packetFrom = (ts: number, rms: number, bass: number, onset: boolean): HapticPacket => {
   const lvl = levelFrom(rms, bass, onset);
-  const dur = lvl === 3 ? 70 : lvl === 2 ? 45 : lvl === 1 ? 22 : 0;
-  return { t: ts, lvl, hit: onset ? 1 : 0, dur };
+  const pattern = PATTERNS[lvl];
+  return { t: ts, lvl, hit: onset ? 1 : 0, pattern };
 };
 
 export const PATTERNS: Record<0 | 1 | 2 | 3, number[]> = {
   0: [],
-  1: [20],
-  2: [45, 30, 45],
-  3: [70, 30, 70, 30, 70],
+  1: [80],
+  2: [100, 50, 100],
+  3: [200, 120, 200, 120, 200],
 };

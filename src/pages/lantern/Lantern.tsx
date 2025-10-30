@@ -111,8 +111,13 @@ const LanternContent = () => {
     updateCloseButtonRect();
     window.addEventListener('resize', updateCloseButtonRect);
 
-      lanternsList.push(  { lantern_id: currentLanternId as string, owner_name: (currentLanternId as string).slice(0, -5), emotion: '', is_current_lantern: false });
-  const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
+    lanternsList.push({
+      lantern_id: currentLanternId as string,
+      owner_name: (currentLanternId as string).slice(0, -5),
+      emotion: '',
+      is_current_lantern: false,
+    });
+    const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
     const storedImageUrls = localStorage.getItem('visit_image');
 
@@ -202,7 +207,7 @@ const LanternContent = () => {
   useCloseGesture(closeButtonRef);
   const handleCloseClick = () => {
     navigate('/');
-    localStorage.removeItem('lantern_show_info_seen')
+    localStorage.removeItem('lantern_show_info_seen');
   };
 
   return (
@@ -243,7 +248,7 @@ const LanternContent = () => {
           setShowInfo(false);
         }}
       >
-        {qrUrl && <QRCode value={qrUrl} />}
+        {qrUrl && state !== 'connected' && <QRCode value={qrUrl} />}
       </Alert>
     </div>
   );

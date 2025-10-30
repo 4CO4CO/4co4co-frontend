@@ -13,7 +13,7 @@ import hand from '@/assets/hand.png';
 import { VideoFeed } from '@/components/common/lantern/VideoFeed';
 import { Toast } from '@/components/common/toast';
 import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext';
-import { useRtcChannel } from '@/hooks/useRtcChannel';
+import { useRtc } from '@/context/RtcProvider';
 import { useHandGestureScroll } from '@/hooks/useScrollGesture';
 import { useZoomGesture } from '@/hooks/useZoomGesture';
 import { lanternType } from '@/mocks';
@@ -27,7 +27,6 @@ const LanternDetailContent = () => {
   // API 데이터 가져오기
   // const { data: lanternData, isLoading, error } = useLanternDetail(lanternId);
   const { handCenter } = useHandMarkContext();
-
   const lanternData: lanternType | undefined = queryClient.getQueryData(lanternKeys.detail(lanternId ?? ''));
   const [isUserInteracted, setIsUserInteracted] = useState(false);
   const [showInteractionMessage, setShowInteractionMessage] = useState(false);
@@ -41,8 +40,8 @@ const LanternDetailContent = () => {
   });
 
   // 분석용 Analyser로 특징 추출 (30Hz)
-  const { ready: rtcReady, send: rtcSend } = useRtcChannel({ role: 'sender', roomId: lanternId ?? '' });
-  const feat = useAudioFeatures(audioPlayer.analyserFeatures, 30);
+  const { ready: rtcReady, send: rtcSend } = useRtc();
+  const feat = useAudioFeatures(audioPlayer.analyserFeatures, 3);
 
   useEffect(() => {
     if (!feat || !rtcReady) {
@@ -140,15 +139,6 @@ const LanternDetailContent = () => {
               </div>
             </div>
 
-            {handCenter && (
-              <img
-                className={styles.handPointer}
-                style={{ top: handCenter.y, left: handCenter.x }}
-                src={hand}
-                alt="손 포인터"
-              />
-            )}
-
             {showInteractionMessage && (
               <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>
             )}
@@ -161,13 +151,20 @@ const LanternDetailContent = () => {
             />
           </>
         )}
-
-        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </div>
 
       {audioPlayer.isPlaying && (
         <img src={activeImageUrl} className={styles.isActive} alt={`풍등 이미지 ${activeImageIndex + 1}`} />
       )}
+      {handCenter && (
+        <img
+          className={styles.handPointer}
+          style={{ top: handCenter.y, left: handCenter.x }}
+          src={hand}
+          alt="손 포인터"
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
 };

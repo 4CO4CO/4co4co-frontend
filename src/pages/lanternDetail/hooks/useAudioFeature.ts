@@ -23,7 +23,7 @@ export function useAudioFeatures(analyser: AnalyserNode | null, fps = 30) {
     if (!analyser) return;
 
     const ctx = analyser.context;
-    analyser.smoothingTimeConstant = 0.6;
+    analyser.smoothingTimeConstant = 0.8;
 
     if (!timeBufRef.current) timeBufRef.current = new Float32Array(analyser.fftSize);
     if (!freqRef.current) freqRef.current = new Uint8Array(analyser.frequencyBinCount);
@@ -67,7 +67,7 @@ export function useAudioFeatures(analyser: AnalyserNode | null, fps = 30) {
 
       // AGC(EMA)
       // 전체적인 음량 안정화
-      const A = 0.2;
+      const A = 0.1;
       emaRef.current.rms = (1 - A) * emaRef.current.rms + A * rmsRaw;
       emaRef.current.bass = (1 - A) * emaRef.current.bass + A * bassRaw;
 
@@ -80,13 +80,13 @@ export function useAudioFeatures(analyser: AnalyserNode | null, fps = 30) {
       const threshold = mean + 1.5 * std;
 
       let onset = false;
-      if (now > onsetCooldownRef.current && flux > threshold && bassRaw > 0.08) {
+      if (now > onsetCooldownRef.current && flux > threshold && bassRaw > 0.2) {
         onset = true;
-        onsetCooldownRef.current = now + 120;
+        onsetCooldownRef.current = now + 700;
       }
 
-      const rmsN = Math.min(1, emaRef.current.rms * 3.0);
-      const bassN = Math.min(1, emaRef.current.bass * 1.8);
+      const rmsN = Math.min(1, emaRef.current.rms * 2.5);
+      const bassN = Math.min(1, emaRef.current.bass * 1.5);
 
       setFeat({ ts: now, rms: rmsN, bass: bassN, onset });
       setTimeout(loop, frameMs);
