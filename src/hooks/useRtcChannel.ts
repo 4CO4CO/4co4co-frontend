@@ -104,7 +104,7 @@ export function useRtcChannel(opts: Options) {
           offer,
         });
 
-        const url = `http://10.113.238.38:5173/watch?roomId=${encodeURIComponent(
+        const url = `${import.meta.env.VITE_CLIENT_BASE_URL}/watch?roomId=${encodeURIComponent(
           roomId,
         )}&sessionId=${encodeURIComponent(sessionId)}`;
         setQrUrl(url);
