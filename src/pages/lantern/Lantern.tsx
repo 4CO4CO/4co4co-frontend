@@ -1,4 +1,3 @@
-// src/pages/lantern/Lantern.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -111,6 +110,22 @@ const LanternContent = () => {
     // 컴포넌트 마운트 후 즉시 실행
     updateCloseButtonRect();
     window.addEventListener('resize', updateCloseButtonRect);
+
+      lanternsList.push(  { lantern_id: currentLanternId as string, owner_name: (currentLanternId as string).slice(0, -5), emotion: '', is_current_lantern: false });
+  const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
+
+  lanternsDetail.push({
+    lantern_id: currentLanternId as string,
+    owner_name: (currentLanternId as string).slice(0, -5),
+    images: [
+      `${S3_BASE_URL}/mock/image/visit1.jpeg`,
+      `${S3_BASE_URL}/mock/image/visit2.jpeg`,
+      `${S3_BASE_URL}/mock/image/visit3.jpeg`,
+    ],
+    background_sounds: [ `${S3_BASE_URL}/mock/wav/visit1.wav`,
+      `${S3_BASE_URL}/mock/wav/visit2.wav`,
+      `${S3_BASE_URL}/mock/wav/visit3.wav`,],
+  });
     return () => {
       window.removeEventListener('resize', updateCloseButtonRect);
     };
@@ -185,6 +200,7 @@ const LanternContent = () => {
   useCloseGesture(closeButtonRef);
   const handleCloseClick = () => {
     navigate('/');
+    localStorage.removeItem('lantern_show_info_seen')
   };
 
   return (

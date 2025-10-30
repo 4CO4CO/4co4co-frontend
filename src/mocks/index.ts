@@ -1,6 +1,4 @@
-import chaehyun1 from './audios/chaehyun1.wav';
-import chaehyun2 from './audios/chaehyun2.wav';
-import chaehyun3 from './audios/chaehyun3.wav';
+
 import jiye1 from './audios/jiye1.wav';
 import jiye2 from './audios/jiye2.wav';
 import jiye3 from './audios/jiye3.wav';
@@ -31,7 +29,6 @@ export const lanternsList: lanternsType[] = [
   { lantern_id: '김가빈-1435', owner_name: '김가빈', emotion: '', is_current_lantern: false },
   { lantern_id: '류지예-3292', owner_name: '류지예', emotion: '', is_current_lantern: false },
   { lantern_id: '박유나-4433', owner_name: '박유나', emotion: '', is_current_lantern: false },
-  { lantern_id: '방문자-5897', owner_name: '방문자', emotion: '', is_current_lantern: true },
 ];
 
 export const lanternsDetail: lanternType[] = [
@@ -64,15 +61,5 @@ export const lanternsDetail: lanternType[] = [
       `${S3_BASE_URL}/mock/image/youna3.jpg`,
     ],
     background_sounds: [youna1, youna2, youna3],
-  },
-  {
-    lantern_id: '방문자-5897',
-    owner_name: '방문자',
-    images: [
-      `${S3_BASE_URL}/mock/image/visit1.jpg`,
-      `${S3_BASE_URL}/mock/image/visit2.jpg`,
-      `${S3_BASE_URL}/mock/image/visit3.jpg`,
-    ],
-    background_sounds: [chaehyun1, chaehyun2, chaehyun3],
   },
 ];

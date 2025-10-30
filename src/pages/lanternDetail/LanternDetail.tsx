@@ -118,50 +118,57 @@ const LanternDetailContent = () => {
   const handleCloseClick = () => {
     navigate(-1);
   };
-
+  const activeImageUrl = carouselImages[activeImageIndex];
   return (
-    <div className={styles.overlay}>
-      <VideoFeed />
-      <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
+    <>
+      <div className={styles.overlay}>
+        <VideoFeed />
+        <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
 
-      {lanternData && (
-        <>
-          <div ref={scrollContainerRef} className={styles.scrollContainer}>
-            <div className={styles.panoramaWrapper}>
-              {carouselImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  className={`${styles.panoramaImage} ${audioPlayer.isPlaying ? (index === activeImageIndex ? styles.isActive : styles.isNotActive) : ''
-                    }`}
-                  alt={`풍등 이미지 ${index + 1}`}
-                />
-              ))}
+        {lanternData && (
+          <>
+            <div ref={scrollContainerRef} className={styles.scrollContainer}>
+              <div className={styles.panoramaWrapper}>
+                {carouselImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    className={`${styles.panoramaImage} ${audioPlayer.isPlaying && styles.isNotActive}`}
+                    alt={`풍등 이미지 ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
 
-          {handCenter && (
-            <img
-              className={styles.handPointer}
-              style={{ top: handCenter.y, left: handCenter.x }}
-              src={hand}
-              alt="손 포인터"
+            {handCenter && (
+              <img
+                className={styles.handPointer}
+                style={{ top: handCenter.y, left: handCenter.x }}
+                src={hand}
+                alt="손 포인터"
+              />
+            )}
+
+            {showInteractionMessage && (
+              <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>
+            )}
+
+            <AudioVisualizer
+              currentIndex={audioPlayer.currentIndex}
+              totalTracks={audioPlayer.totalTracks}
+              isPlaying={audioPlayer.isPlaying}
+              analyser={audioPlayer.analyserViz}
             />
-          )}
+          </>
+        )}
 
-          {showInteractionMessage && <div className={styles.interactionMessage}>화면을 클릭하면 음악이 재생됩니다</div>}
+        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      </div>
 
-          <AudioVisualizer
-            currentIndex={audioPlayer.currentIndex}
-            totalTracks={audioPlayer.totalTracks}
-            isPlaying={audioPlayer.isPlaying}
-            analyser={audioPlayer.analyserViz}
-          />
-        </>
+      {audioPlayer.isPlaying && (
+        <img src={activeImageUrl} className={styles.isActive} alt={`풍등 이미지 ${activeImageIndex + 1}`} />
       )}
-
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </div>
+    </>
   );
 };
 

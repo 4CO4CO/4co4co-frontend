@@ -32,14 +32,14 @@ export const overlay = style({
       position: 'fixed',
       left: '50%',
       translate: '-50% 0',
-      width: '420%',
+      width: '350%',
       height: '500%',
       borderRadius: '50%',
       zIndex: 2,
       pointerEvents: 'none',
     },
-    '&::before': { top: '-480%', background: 'linear-gradient(180deg, #000 0%, #05121F 100%)' },
-    '&::after': { bottom: '-480%', background: 'linear-gradient(180deg, #14457A 0%, #185393 100%)' },
+    '&::before': { top: '-485%', background: 'linear-gradient(180deg, #000 0%, #05121F 100%)' },
+    '&::after': { bottom: '-485%', background: 'linear-gradient(180deg, #14457A 0%, #185393 100%)' },
   },
 });
 
@@ -69,7 +69,7 @@ export const panoramaWrapper = style({
   left: 0,
   top: '50%',
   display: 'flex',
-  width: 'calc(100vh * 10 / 9 * 3)',
+  width: '100vw',
   minWidth: '100vw',
   transform: 'translateY(-50%)',
 });
@@ -82,8 +82,13 @@ export const panoramaImage = style({
 
 export const isActive = style({
   filter: 'brightness(1)',
-  transform: `scale(1.5) translateX(-${(100 / 3) * 0.25}vw)`,
-  width: 'calc(100vw / 3 * 1.5)',
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 'calc(80vh * 16/ 9)',
+  height: '80vh',
+  objectFit: 'cover',
 });
 
 export const isNotActive = style({
