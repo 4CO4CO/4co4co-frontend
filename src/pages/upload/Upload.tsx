@@ -61,6 +61,9 @@ const Upload = () => {
       is_current_lantern: true,
     };
 
+    const temporaryImageUrls = JSON.stringify(images.map(file => URL.createObjectURL(file)));
+    localStorage.setItem('visit_image', temporaryImageUrls);
+
     setTimeout(() => {
       navigate('/loading', { state: { lantern_id: newLantern.lantern_id } });
     }, 1000);

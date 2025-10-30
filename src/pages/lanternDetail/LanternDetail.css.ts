@@ -75,7 +75,8 @@ export const panoramaWrapper = style({
 });
 
 export const panoramaImage = style({
-  width: 'calc(100vw / 3)',
+  width: 'calc(100vw/3)',
+  height: '100vh',
   objectFit: 'cover',
   flexShrink: 0,
 });

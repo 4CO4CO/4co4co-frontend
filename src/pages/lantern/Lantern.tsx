@@ -114,18 +114,20 @@ const LanternContent = () => {
       lanternsList.push(  { lantern_id: currentLanternId as string, owner_name: (currentLanternId as string).slice(0, -5), emotion: '', is_current_lantern: false });
   const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
-  lanternsDetail.push({
-    lantern_id: currentLanternId as string,
-    owner_name: (currentLanternId as string).slice(0, -5),
-    images: [
-      `${S3_BASE_URL}/mock/image/visit1.jpeg`,
-      `${S3_BASE_URL}/mock/image/visit2.jpeg`,
-      `${S3_BASE_URL}/mock/image/visit3.jpeg`,
-    ],
-    background_sounds: [ `${S3_BASE_URL}/mock/wav/visit1.wav`,
-      `${S3_BASE_URL}/mock/wav/visit2.wav`,
-      `${S3_BASE_URL}/mock/wav/visit3.wav`,],
-  });
+    const storedImageUrls = localStorage.getItem('visit_image');
+
+    const imagesFromStorage = storedImageUrls ? JSON.parse(storedImageUrls) : [];
+
+    lanternsDetail.push({
+      lantern_id: currentLanternId as string,
+      owner_name: (currentLanternId as string).slice(0, -5),
+      images: imagesFromStorage,
+      background_sounds: [
+        `${S3_BASE_URL}/mock/wav/visit1.wav`,
+        `${S3_BASE_URL}/mock/wav/visit2.wav`,
+        `${S3_BASE_URL}/mock/wav/visit3.wav`,
+      ],
+    });
     return () => {
       window.removeEventListener('resize', updateCloseButtonRect);
     };
