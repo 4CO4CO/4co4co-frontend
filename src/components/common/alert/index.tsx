@@ -13,6 +13,7 @@ interface AlertProps {
   onConfirm: () => void;
   onCancel?: () => void;
   disabled?: boolean;
+  children?: React.ReactNode;
 }
 
 export const Alert = ({
@@ -25,6 +26,7 @@ export const Alert = ({
   onConfirm,
   onCancel,
   disabled = false,
+  children,
 }: AlertProps) => {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -76,7 +78,7 @@ export const Alert = ({
         <h2 className={styles.titleSize[alertSize]}>{title}</h2>
 
         <pre className={styles.messageSize[alertSize]}>{message}</pre>
-
+        {children}
         <div className={styles.buttonContainer[alertSize]}>
           {cancelText && (
             <Button variant="secondary" size={alertSize} onClick={onCancel}>

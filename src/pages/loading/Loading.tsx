@@ -41,6 +41,7 @@ const Loading = () => {
 
   const location = useLocation();
   const entryCode = (location.state as LocationState)?.lantern_id;
+  // const entryCode = '방문자-5897'
   const hasRedirected = useRef(false);
 
   useEffect(() => {
@@ -50,6 +51,16 @@ const Loading = () => {
       navigate(-1);
     }
   }, [entryCode, navigate]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowCompletionAlert(true);
+    }, 80000); // 2초 (2000ms)
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   if (!entryCode) {
     return null;
@@ -66,12 +77,12 @@ const Loading = () => {
   };
 
   const handleEnterLanternFestival = async () => {
-    await navigator.clipboard.writeText(entryCode);
+    // await navigator.clipboard.writeText(entryCode);
     navigate(`/lanterns?currentLanternId=${entryCode}`);
   };
 
   const handleEnterExhibition = async () => {
-    await navigator.clipboard.writeText(entryCode);
+    // await navigator.clipboard.writeText(entryCode);
     setShowCompletionAlert(false);
     navigate(`/lanterns?currentLanternId=${entryCode}`);
   };

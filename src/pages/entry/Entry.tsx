@@ -55,6 +55,9 @@ const Entry = () => {
         {/* 왼쪽 섹션 */}
         <Lantern className={styles.leftLantern1} role="img" aria-label="Left Big Lantern 1" />
         <RoundLantern className={styles.leftLantern2} role="img" aria-label="Left Big Lantern 2" />
+        <Lantern className={styles.leftLantern3} role="img" aria-label="Left Big Lantern 3" />
+        <RoundLantern className={styles.leftLantern4} role="img" aria-label="Left Big Lantern 4" />
+        <Lantern className={styles.leftLantern5} role="img" aria-label="Left Big Lantern 5" />
 
         {/* 오른쪽 섹션 */}
         <Lantern className={styles.rightLantern1} role="img" aria-label="Right Lantern 1" />

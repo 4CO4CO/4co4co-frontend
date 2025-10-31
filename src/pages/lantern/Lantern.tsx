@@ -1,19 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import QRCode from 'react-qr-code';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as styles from './Lantern.css';
 import { generateNonOverlappingPositions, seededRandom } from './utils';
 import { CloseButton } from '../lanternDetail/components/CloseButton/CloseButton';
-import { useCloseGesture } from '../lanternDetail/hooks/useCloseGesture';
-import { useHandMark } from '../../components/common/lantern/hooks/useHandMark';
 import { VideoFeed } from '../../components/common/lantern/VideoFeed';
+import { useCloseGesture } from '../../hooks/useCloseGesture';
+import { LanternListResponse } from '@/apis/lantern';
 import { MusicStatusData } from '@/apis/lantern/subscribeStatus';
+import hand from '@/assets/hand.png';
 import LanternImg1 from '@/assets/Lantern.svg?react';
 import LanternImg2 from '@/assets/RoundLantern.svg?react';
 import { Alert } from '@/components/common/alert';
 import { LanternWithRect } from '@/components/common/lantern/constants';
-import { useLanternHit } from '@/components/common/lantern/hooks/useLanternHit';
-import { useLanternList } from '@/queries/lantern/getLanternList';
+import { HandMarkProvider, useHandMarkContext } from '@/context/HandMarkContext';
+import { useRtc } from '@/context/RtcProvider';
+import { useLanternHit } from '@/hooks/useLanternHit';
+import { lanternsDetail, lanternsList } from '@/mocks';
 import { useCachedLanternProgress } from '@/queries/lantern/useLanternProgress';
+import { queryClient } from '@/queries/queryClient';
+import { lanternKeys } from '@/queries/queryKey';
 import { MOBILE_MIN_WIDTH } from '@/styles/mediaQuery';
 
 const LanternItem = ({
@@ -55,16 +61,24 @@ const LanternItem = ({
   );
 };
 
-const Lantern = () => {
-  const { handCenter } = useHandMark();
+const LanternContent = () => {
+  const { handCenter } = useHandMarkContext();
   const [searchParams] = useSearchParams();
   const currentLanternId = searchParams.get('currentLanternId');
-  const { data } = useLanternList(currentLanternId);
+  // const { data } = useLanternList(currentLanternId);
+  const data: LanternListResponse | undefined = queryClient.getQueryData(lanternKeys.list(currentLanternId ?? ''));
   const navigate = useNavigate();
-  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(false);
+  const [isMyLanternCompleted, setIsMyLanternCompleted] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [closeButtonRect, setCloseButtonRect] = useState<DOMRect | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const {
+    qrUrl,
+    state,
+    // reconnect
+  } = useRtc();
 
   // 풍등 정보 없을 경우 리다이렉트
   useEffect(() => {
@@ -72,6 +86,19 @@ const Lantern = () => {
       setShowAlert(true);
     }
   }, [currentLanternId]);
+
+  useEffect(() => {
+    const SEEN_KEY = 'lantern_show_info_seen';
+    try {
+      const seen = localStorage.getItem(SEEN_KEY);
+      if (!seen) {
+        setShowInfo(true);
+        localStorage.setItem(SEEN_KEY, '1');
+      }
+    } catch {
+      setShowInfo(true);
+    }
+  }, []);
 
   useEffect(() => {
     const updateCloseButtonRect = () => {
@@ -82,12 +109,45 @@ const Lantern = () => {
 
     // 컴포넌트 마운트 후 즉시 실행
     updateCloseButtonRect();
-
     window.addEventListener('resize', updateCloseButtonRect);
+
+    lanternsList.push({
+      lantern_id: currentLanternId as string,
+      owner_name: (currentLanternId as string).slice(0, -5),
+      emotion: '',
+      is_current_lantern: false,
+    });
+    const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
+
+    const storedImageUrls = localStorage.getItem('visit_image');
+
+    const imagesFromStorage = storedImageUrls ? JSON.parse(storedImageUrls) : [];
+
+    lanternsDetail.push({
+      lantern_id: currentLanternId as string,
+      owner_name: (currentLanternId as string).slice(0, -5),
+      images: imagesFromStorage,
+      background_sounds: [
+        `${S3_BASE_URL}/mock/wav/visit1.wav`,
+        `${S3_BASE_URL}/mock/wav/visit2.wav`,
+        `${S3_BASE_URL}/mock/wav/visit3.wav`,
+      ],
+    });
     return () => {
       window.removeEventListener('resize', updateCloseButtonRect);
     };
   }, []);
+
+  useEffect(() => {
+    queryClient.setQueryData(lanternKeys.list(currentLanternId ?? ''), {
+      status: 'success',
+      message: 'sucess',
+      data: lanternsList,
+    });
+    lanternsDetail.forEach((detail) => {
+      queryClient.setQueryData(lanternKeys.detail(detail.lantern_id), detail);
+    });
+  }, [currentLanternId]);
 
   const handleAlertConfirm = () => {
     navigate('/upload');
@@ -139,7 +199,7 @@ const Lantern = () => {
     if (hitLanternId) {
       navigate(`/lanterns/${hitLanternId}?currentLanternId=${currentLanternId}`);
     }
-  }, [hitLanternId]);
+  }, [hitLanternId, navigate, currentLanternId]);
 
   const lanternsWithoutMine = lanterns.filter((l) => l.lantern_id !== currentLanternId);
   const myLantern = lanterns.find((l) => l.lantern_id === currentLanternId);
@@ -147,10 +207,11 @@ const Lantern = () => {
   useCloseGesture(closeButtonRef);
   const handleCloseClick = () => {
     navigate('/');
+    localStorage.removeItem('lantern_show_info_seen');
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={containerRef}>
       <CloseButton ref={closeButtonRef} onClick={handleCloseClick} />
       <VideoFeed />
       {lanternsWithoutMine.map((lantern) => (
@@ -168,7 +229,9 @@ const Lantern = () => {
           onClick={() => navigate(`/lanterns/${myLantern.lantern_id}?currentLanternId=${currentLanternId}`)}
         />
       )}
-      {handCenter && <div className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} />}
+      {handCenter && (
+        <img className={styles.handPointer} style={{ top: handCenter.y, left: handCenter.x }} src={hand} />
+      )}
       <Alert
         isOpen={showAlert}
         title="입장 코드 없음"
@@ -176,7 +239,29 @@ const Lantern = () => {
         confirmText="전시 업로드 하러 가기"
         onConfirm={handleAlertConfirm}
       />
+      <Alert
+        isOpen={showInfo}
+        title="워치 연결 안내"
+        message={state === 'connected' ? '워치와 연결되었습니다.' : 'QR 코드를 스캔하세요.'}
+        confirmText="닫기"
+        onConfirm={() => {
+          setShowInfo(false);
+        }}
+      >
+        {qrUrl && state !== 'connected' && <QRCode value={qrUrl} />}
+      </Alert>
     </div>
+  );
+};
+
+const Lantern = () => {
+  const [searchParams] = useSearchParams();
+  const currentLanternId = searchParams.get('currentLanternId');
+
+  return (
+    <HandMarkProvider enabled={!!currentLanternId}>
+      <LanternContent />
+    </HandMarkProvider>
   );
 };
 

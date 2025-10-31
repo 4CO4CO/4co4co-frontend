@@ -98,7 +98,7 @@ const UploadPhoto = ({ onImagesChange, uploadedImages }: UploadImageProps) => {
       {isEditorOpen && editingImageIndex !== null && (
         <ImageEditor
           file={URL.createObjectURL(originalFiles[editingImageIndex])}
-          aspectRatio={10 / 9}
+          aspectRatio={16/9}
           onCropped={handleCroppedImage}
           onClose={() => handleEditorClose(editingImageIndex)}
         />

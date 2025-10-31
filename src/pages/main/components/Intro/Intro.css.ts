@@ -23,6 +23,9 @@ export const beamBack = style({
   zIndex: 0,
 
   '@media': {
+    '(min-width: 3800px)': {
+      left: '49%'
+    },
     '(max-width: 798px)': {
       top: '40vh',
       width: '330px',
@@ -33,7 +36,7 @@ export const beamBack = style({
 export const beamFront = style({
   position: 'absolute',
   top: '55vh',
-  left: '55%',
+  left: '53%',
   transform: 'translate(-50%, -50%)',
   width: '400px',
   flexShrink: 0,
@@ -52,19 +55,22 @@ export const cube = style({
   position: 'absolute',
   top: '48vh',
   left: '50%',
-  width: '20vw',
+  width: '15vw',
   minWidth: '350px',
   height: 'auto',
   zIndex: 3,
 
   '@media': {
+    '(min-width: 3800px)': {
+      top: '40vh',
+      left: '49%',
+    },
     '(max-width: 798px)': {
       transform: 'translateX(-10%) translateY(-2vh)',
       minWidth: '250px',
       top: '45vh',
       left: '55%',
     },
-
     '(max-width: 425px)': {
       transform: 'translateX(-10%) translateY(-2vh)',
       minWidth: '200px',
