@@ -27,7 +27,7 @@ const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
 export const lanternsList: lanternsType[] = [
   { lantern_id: '김가빈-1435', owner_name: '김가빈', emotion: '', is_current_lantern: false },
-  { lantern_id: '류지예-3292', owner_name: '류지예', emotion: '', is_current_lantern: false },
+  { lantern_id: '류지예-8292', owner_name: '류지예', emotion: '', is_current_lantern: false },
   { lantern_id: '박유나-4433', owner_name: '박유나', emotion: '', is_current_lantern: false },
 ];
 
@@ -43,7 +43,7 @@ export const lanternsDetail: lanternType[] = [
     background_sounds: [kabeen1, kabeen2, kabeen3],
   },
   {
-    lantern_id: '류지예-3292',
+    lantern_id: '류지예-8292',
     owner_name: '류지예',
     images: [
       `${S3_BASE_URL}/mock/image/jiye1.jpg`,

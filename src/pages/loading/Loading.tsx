@@ -77,12 +77,12 @@ const Loading = () => {
   };
 
   const handleEnterLanternFestival = async () => {
-    await navigator.clipboard.writeText(entryCode);
+    // await navigator.clipboard.writeText(entryCode);
     navigate(`/lanterns?currentLanternId=${entryCode}`);
   };
 
   const handleEnterExhibition = async () => {
-    await navigator.clipboard.writeText(entryCode);
+    // await navigator.clipboard.writeText(entryCode);
     setShowCompletionAlert(false);
     navigate(`/lanterns?currentLanternId=${entryCode}`);
   };

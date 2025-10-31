@@ -92,11 +92,12 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
 
       if (lastHandPositionRef.current) {
         const deltaX = handCenter.x - lastHandPositionRef.current.x;
-        const DELTA_TRIGGER = 100;
+        const DELTA_TRIGGER = 150;
 
         // 오른쪽에서 왼쪽으로 이동 (다음 이미지)
         if (deltaX < -DELTA_TRIGGER) {
           moveCarousel(1);
+          console.log("다음");
           // 다음 제스처를 위해 기준점 재설정
           lastHandPositionRef.current = { x: handCenter.x, y: handCenter.y };
           setCooldown();
@@ -104,6 +105,8 @@ export const useHandGestureScroll = ({ moveCarousel }: UseHandGestureScrollProps
         // 왼쪽에서 오른쪽으로 이동 (이전 이미지)
         else if (deltaX > DELTA_TRIGGER) {
           moveCarousel(-1);
+           console.log("이전");
+
           lastHandPositionRef.current = { x: handCenter.x, y: handCenter.y };
           setCooldown();
         } else {
